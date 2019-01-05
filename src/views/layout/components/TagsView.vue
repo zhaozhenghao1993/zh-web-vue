@@ -72,7 +72,7 @@ export default {
       }
       return false
     },
-    moveTocurrentTag () {
+    moveToCurrentTag () {
       const tags = this.$refs.tag
       this.$nextTick(() => {
         for (const tag of tags) {

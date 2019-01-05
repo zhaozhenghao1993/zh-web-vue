@@ -76,7 +76,7 @@ const tagsView = {
       commit('ADD_VISITED_VIEW', view)
     },
     addCachedView ({ commit }, view) {
-      commit('ADD_CACHED_VIEW', view)
+      commit('ADD_CACHE_VIEW', view)
     },
     delView ({ dispatch, state }, view) {
       return new Promise(resolve => {

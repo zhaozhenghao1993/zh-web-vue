@@ -10,7 +10,7 @@ const app = {
     language: Cookies.get('language') || 'zh',
     size: Cookies.get('size') || 'medium'
   },
-  mytations: {
+  mutations: {
     TOGGLE_SIDEBAR: state => {
       if (state.sidebar.opened) {
         Cookies.set('sidebarStatus', 1)

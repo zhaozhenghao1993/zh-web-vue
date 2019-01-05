@@ -35,22 +35,28 @@ export const constantRouterMap = [
         component: () => import('@/views/redirect/index')
       }
     ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/login.vue'),
+    hidden: true
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index'),
+        name: 'Dashboard',
+        meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+      }
+    ]
   }
 ]
 
 export default new Router({
-  routes: [
-    {
-      path: '/login',
-      component: () => import('@/views/login/login.vue'),
-      name: '登陆zh-admin',
-      hidden: true
-    },
-    {
-      path: '/',
-      name: 'index',
-      component: () => import('@/views/index/index.vue'),
-      hidden: true
-    }
-  ]
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
 })

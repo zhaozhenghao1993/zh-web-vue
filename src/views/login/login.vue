@@ -56,6 +56,14 @@ export default {
       eyeStatus: ''
     }
   },
+  watch: {
+    $route: {
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect
+      },
+      immediate: true
+    }
+  },
   methods: {
     showPassword () {
       if (this.pwdType === 'password') {
@@ -72,7 +80,7 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
-            this.$router.push({ path: '/' })
+            this.$router.push({ path: this.redirect || '/' })
           }).catch((e) => {
             this.loading = false
           })
