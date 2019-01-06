@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout, getUserInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { setStore, getStore, removeStore } from '@/utils/store'
 
@@ -6,7 +6,7 @@ const user = {
   state: {
     token: getToken(),
     name: '',
-    avatar: '',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     roles: [],
     isLock: getStore({ name: 'isLock' }) || false,
     lockPasswd: getStore({ name: 'lockPasswd' }) || ''
@@ -70,18 +70,18 @@ const user = {
     },
 
     // 获取用户信息
-    GetInfo ({ commit, state }) {
+    GetUserInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
+        getUserInfo().then(response => {
           const data = response
-          if (data.roles && data.roles.length > 0) {
+          /* if (data.roles && data.roles.length > 0) {
             // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
-          }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+          } */
+          commit('SET_NAME', data.user.username)
+          // commit('SET_AVATAR', data.avatar)
           resolve(response)
         }).catch(error => {
           reject(error)

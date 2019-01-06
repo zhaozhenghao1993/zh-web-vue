@@ -9,7 +9,7 @@ export function login (username, password) {
   })
 }
 
-export function getInfo (token) {
+export function getUserInfo (token) {
   return request({
     url: '/sys/user/info',
     method: 'get'

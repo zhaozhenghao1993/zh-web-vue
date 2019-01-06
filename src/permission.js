@@ -2,8 +2,9 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-// import { Message } from 'element-ui'
+import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
+import { validateIsNull } from '@/utils/validate'
 
 // permission judge function
 /* function hasPermission (roles, permissionRoles) {
@@ -23,7 +24,22 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      next()
+      if (validateIsNull(store.getters.name)) { // 判断当前用户是否已拉取完user_info信息
+        store.dispatch('GetUserInfo').then(response => { // 拉取user_info
+          store.dispatch('GenerateRoutes', { }).then(() => { // 根据roles权限生成可访问的路由表
+            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+          })
+        }).catch((err) => {
+          store.dispatch('FedLogOut').then(() => {
+            Message.error(err || 'Verification failed, please login again')
+            next({ path: '/' })
+          })
+        })
+      } else {
+        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
+        next()
+      }
     }
   } else {
     /* has no token */

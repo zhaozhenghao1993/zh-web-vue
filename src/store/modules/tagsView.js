@@ -12,7 +12,7 @@ const tagsView = {
         })
       )
     },
-    ADD_CACHE_VIEW: (state, view) => {
+    ADD_CACHED_VIEW: (state, view) => {
       if (state.cachedViews.includes(view.name)) return
       if (!view.meta.noCache) {
         state.cachedViews.push(view.name)
@@ -76,7 +76,7 @@ const tagsView = {
       commit('ADD_VISITED_VIEW', view)
     },
     addCachedView ({ commit }, view) {
-      commit('ADD_CACHE_VIEW', view)
+      commit('ADD_CACHED_VIEW', view)
     },
     delView ({ dispatch, state }, view) {
       return new Promise(resolve => {

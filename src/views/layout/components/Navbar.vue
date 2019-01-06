@@ -73,7 +73,7 @@ export default {
     ...mapGetters([
       'sidebar',
       'name',
-      'avatat',
+      'avatar',
       'device'
     ])
   },

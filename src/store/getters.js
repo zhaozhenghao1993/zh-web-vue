@@ -11,6 +11,8 @@ const getters = {
   roles: state => state.user.roles,
   isLock: state => state.user.isLock,
   lockPasswd: state => state.user.lockPasswd,
+  permission_routers: state => state.permission.routers,
+  addRouters: state => state.permission.routers,
   errorLogs: state => state.errorLog.logs
 }
 
