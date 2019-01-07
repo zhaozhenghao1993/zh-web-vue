@@ -4,6 +4,7 @@ import Vue from 'vue'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/icon/iconfont.css'
+import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import Cookies from 'js-cookie'
 
@@ -17,12 +18,19 @@ import i18n from './lang' // Internationalization
 import './permission' // permission control
 import './icons' // icon
 
+import * as filters from './filters' // global filters
+
 /* 设置为 false 以阻止 vue 在启动时生成生产提示 */
 Vue.config.productionTip = false
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)
+})
+
+// register global utility filters.
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
 })
 
 /* eslint-disable no-new */
