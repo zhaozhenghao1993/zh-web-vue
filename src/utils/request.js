@@ -33,8 +33,8 @@ service.interceptors.response.use(response => {
       duration: 5 * 1000
     })
 
-    // code为401 非法token， token过期
-    if (res.code === 401) {
+    // code为403 非法token， token过期
+    if (res.code === 403) {
       MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登陆', '确定登出', {
         confirmButtonText: '重新登陆',
         cancelButtonText: '取消',
