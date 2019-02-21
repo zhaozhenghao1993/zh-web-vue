@@ -5,7 +5,7 @@ import Layout from '@/views/layout/Layout'
 
 Vue.use(Router)
 
-/** note: Submenu only appear when children.length>=1
+/** note: sub-menu only appear when children.length>=1
  *  detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
  **/
 
@@ -21,6 +21,8 @@ Vue.use(Router)
     title: 'title'               the name show in submenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar,
     noCache: true                if true ,the page will no be cached(default is false)
+    breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
+    affix: true                  if true, the tag will affix in the tags-view
   }
  **/
 
@@ -50,7 +52,7 @@ export const constantRouterMap = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+        meta: { title: 'dashboard', icon: 'dashboard', noCache: true, affix: true }
       }
     ]
   }
@@ -60,3 +62,10 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
+
+export const asyncRouterMap = [
+  {
+    path: '/sys',
+    component: Layout
+  }
+]
