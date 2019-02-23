@@ -1,15 +1,19 @@
-import Cookies from 'js-cookie'
+/**
+ * 弃用
+ */
+import { setStore, getStore, clearStore } from '@/utils/storage'
 
-const TokenKey = 'ZH-TOKEN'
+export const TokenKey = 'Access-Token'
 
 export function getToken () {
-  return Cookies.get(TokenKey)
+  return getStore(TokenKey)
 }
 
 export function setToken (token) {
-  return Cookies.set(TokenKey, token)
+  // key, token, timeout = 86400s
+  return setStore(TokenKey, token, 86400)
 }
 
 export function removeToken () {
-  return Cookies.remove(TokenKey)
+  return clearStore(TokenKey)
 }

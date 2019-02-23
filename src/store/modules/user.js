@@ -1,23 +1,25 @@
-import { login, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { setStore, getStore, removeStore } from '@/utils/store'
+import Vue from 'vue'
+import { login, getInfo, logout } from '@/api/login'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { welcome } from '@/utils/util'
 
 const user = {
   state: {
-    token: getToken(),
+    token: '',
     name: '',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    welcome: '',
+    avatar: '',
     roles: [],
-    isLock: getStore({ name: 'isLock' }) || false,
-    lockPasswd: getStore({ name: 'lockPasswd' }) || ''
+    info: {}
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_NAME: (state, name) => {
+    SET_NAME: (state, { name, welcome }) => {
       state.name = name
+      state.welcome = welcome
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -25,43 +27,19 @@ const user = {
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
-    SET_LOCK: (state, action) => {
-      state.isLock = true
-      setStore({
-        name: 'isLock',
-        content: state.isLock,
-        type: 'session'
-      })
-    },
-    SET_LOCK_PASSWD: (state, lockPasswd) => {
-      state.lockPasswd = lockPasswd
-      setStore({
-        name: 'lockPasswd',
-        content: state.lockPasswd,
-        type: 'session'
-      })
-    },
-    CLEAR_LOCK: (state, action) => {
-      state.isLock = false
-      state.lockPasswd = ''
-      removeStore({
-        name: 'lockPasswd'
-      })
-      removeStore({
-        name: 'isLock'
-      })
+    SET_INFO: (state, info) => {
+      state.info = info
     }
   },
 
   actions: {
-    // 登陆
+    // 登录
     Login ({ commit }, userInfo) {
-      const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
+        login(userInfo).then(response => {
+          const result = response.result
+          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', result.token)
           resolve()
         }).catch(error => {
           reject(error)
@@ -70,18 +48,30 @@ const user = {
     },
 
     // 获取用户信息
-    GetUserInfo ({ commit, state }) {
+    GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
-        getUserInfo().then(response => {
-          const data = response
-          /* if (data.roles && data.roles.length > 0) {
-            // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
+        getInfo().then(response => {
+          const result = response.result
+
+          if (result.role && result.role.permissions.length > 0) {
+            const role = result.role
+            role.permissions = result.role.permissions
+            role.permissions.map(per => {
+              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
+                const action = per.actionEntitySet.map(action => { return action.action })
+                per.actionList = action
+              }
+            })
+            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+            commit('SET_ROLES', result.role)
+            commit('SET_INFO', result)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
-          } */
-          commit('SET_NAME', data.data.username)
-          // commit('SET_AVATAR', data.avatar)
+          }
+
+          commit('SET_NAME', { name: result.name, welcome: welcome() })
+          commit('SET_AVATAR', result.avatar)
+
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -91,36 +81,19 @@ const user = {
 
     // 登出
     Logout ({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          commit('CLEAR_LOCK')
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    // 前端 登出
-    FedLogOut ({ commit }) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
-        commit('CLEAR_LOCK')
-        removeToken()
-        resolve()
-      })
-    },
+        Vue.ls.remove(ACCESS_TOKEN)
 
-    // 动态修改权限
-    ChangeRoles ({ commit }, role) {
-      return new Promise(resolve => {
-        console.log('动态修改权限')
+        logout(state.token).then(() => {
+          resolve()
+        }).catch(() => {
+          resolve()
+        })
       })
     }
+
   }
 }
 

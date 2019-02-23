@@ -1,57 +1,109 @@
+import Vue from 'vue'
 import router from './router'
 import store from './store'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth'
-import { validateIsNull } from '@/utils/validate'
 
-// permission judge function
-/* function hasPermission (roles, permissionRoles) {
-  if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
-  if (!permissionRoles) return true
-  return roles.some(role => permissionRoles.indexOf(role) >= 0)
-} */
-const whiteList = ['/login'] // 不重定向白名单
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
+import notification from 'ant-design-vue/es/notification'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+
+NProgress.configure({ showSpinner: false }) // NProgress Configuration
+
+const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
+
 router.beforeEach((to, from, next) => {
-  NProgress.start()
-  if (getToken()) {
+  NProgress.start() // start progress bar
+
+  if (Vue.ls.get(ACCESS_TOKEN)) {
     /* has token */
-    if (store.getters.isLock && to.path !== '/lock') {
-      next({ path: '/lock' })
-      NProgress.done()
-    } else if (to.path === '/login') {
-      next({ path: '/' })
+    if (to.path === '/user/login') {
+      next({ path: '/dashboard/workplace' })
       NProgress.done()
     } else {
-      if (validateIsNull(store.getters.name)) { // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetUserInfo').then(response => { // 拉取user_info
-          store.dispatch('GenerateRoutes', { }).then(() => { // 根据roles权限生成可访问的路由表
-            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+      if (store.getters.roles.length === 0) {
+        store
+          .dispatch('GetInfo')
+          .then(res => {
+            const roles = res.result && res.result.role
+            store.dispatch('GenerateRoutes', { roles }).then(() => {
+              // 根据roles权限生成可访问的路由表
+              // 动态添加可访问路由表
+              router.addRoutes(store.getters.addRouters)
+              const redirect = decodeURIComponent(from.query.redirect || to.path)
+              if (to.path === redirect) {
+                // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+                next({ ...to, replace: true })
+              } else {
+                // 跳转到目的路由
+                next({ path: redirect })
+              }
+            })
           })
-        }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
+          .catch(() => {
+            notification.error({
+              message: '错误',
+              description: '请求用户信息失败，请重试'
+            })
+            store.dispatch('Logout').then(() => {
+              next({ path: '/user/login', query: { redirect: to.fullPath } })
+            })
           })
-        })
       } else {
-        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
         next()
       }
     }
   } else {
-    /* has no token */
-    if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+    if (whiteList.includes(to.name)) {
+      // 在免登录白名单，直接进入
       next()
     } else {
-      next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
-      NProgress.done()
+      next({ path: '/user/login', query: { redirect: to.fullPath } })
+      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }
 })
 
 router.afterEach(() => {
-  NProgress.done() // 结束Progress
+  NProgress.done() // finish progress bar
 })
+
+/**
+ * Action 权限指令
+ * 指令用法：
+ *  - 在需要控制 action 级别权限的组件上使用 v-action:[method] , 如下：
+ *    <i-button v-action:add >添加用户</a-button>
+ *    <a-button v-action:delete>删除用户</a-button>
+ *    <a v-action:edit @click="edit(record)">修改</a>
+ *
+ *  - 当前用户没有权限时，组件上使用了该指令则会被隐藏
+ *  - 当后台权限跟 pro 提供的模式不同时，只需要针对这里的权限过滤进行修改即可
+ *
+ *  @see https://github.com/sendya/ant-design-pro-vue/pull/53
+ */
+const action = Vue.directive('action', {
+  bind: function (el, binding, vnode) {
+    const actionName = binding.arg
+    const roles = store.getters.roles
+    const permissionId = vnode.context.$route.meta.permission
+    let actions = []
+    roles.permissions.forEach(p => {
+      if (p.permissionId !== permissionId) {
+        return
+      }
+      actions = p.actionList
+    })
+    if (actions.indexOf(actionName) < 0) {
+      setTimeout(() => {
+        if (el.parentNode == null) {
+          el.style.display = 'none'
+        } else {
+          el.parentNode.removeChild(el)
+        }
+      }, 10)
+    }
+  }
+})
+
+export {
+  action
+}
