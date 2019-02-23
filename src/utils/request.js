@@ -7,7 +7,7 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: '/api', // api base_url
+  baseURL: '/api/v1', // api base_url
   timeout: 6000 // 请求超时时间
 })
 
@@ -36,14 +36,36 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {
-    config.headers[ 'Access-Token' ] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+    config.headers[ 'ZH-TOKEN' ] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
   }
   return config
 }, err)
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  return response.data
+  const data = response.data
+  if (data.code !== 0) {
+    const token = Vue.ls.get(ACCESS_TOKEN)
+    if (data.code === 500) {
+      notification.error({ message: 'Error', description: data.message })
+    }
+    if (data.code === 40101 || data.code === 40401) {
+      notification.error({ message: 'Forbidden', description: data.message })
+    }
+    if (data.code === 40102 || data.code === 40104 || data.code === 40301 || data.code === 40302 || data.code === 40303 || data.code === 40304) {
+      notification.error({ message: 'Unauthorized', description: 'Authorization verification failed' })
+      if (token) {
+        store.dispatch('Logout').then(() => {
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500)
+        })
+      }
+    }
+    return Promise.reject(response)
+  } else {
+    return response.data
+  }
 }, err)
 
 const installer = {
