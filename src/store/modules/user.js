@@ -10,6 +10,8 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
+    routes: [],
+    perms: [],
     info: {}
   },
 
@@ -26,6 +28,12 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_ROUTES: (state, routes) => {
+      state.routes = routes
+    },
+    SET_PERMS: (state, perms) => {
+      state.perms = perms
     },
     SET_INFO: (state, info) => {
       state.info = info
@@ -51,26 +59,29 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const result = response
-
-          if (result.role && result.role.permissions.length > 0) {
-            const role = result.role
-            role.permissions = result.role.permissions
-            role.permissions.map(per => {
-              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                const action = per.actionEntitySet.map(action => { return action.action })
-                per.actionList = action
+          const routes = []
+          const perms = []
+          const data = response.data
+          if (data.roles.length > 0 && data.perms.length > 0) {
+            data.perms.map(perm => {
+              if (perm.type === 0 || perm.type === 1) {
+                routes.push(perm.perms)
+              }
+              if (perm.type === 2) {
+                perms.push(perm.perms)
               }
             })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
+            response.data.routes = routes
+            commit('SET_ROUTES', routes)
+            commit('SET_PERMS', perms)
+            commit('SET_ROLES', data.roles)
+            commit('SET_INFO', data)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
-          commit('SET_AVATAR', result.avatar)
+          commit('SET_NAME', { name: data.username, welcome: welcome() })
+          commit('SET_AVATAR', data.avatar)
 
           resolve(response)
         }).catch(error => {
