@@ -42,26 +42,26 @@ export const asyncRouterMap = [
 
       // list
       {
-        path: '/list',
-        name: 'list',
+        path: '/sys',
+        name: 'sys',
         component: PageView,
-        redirect: '/list/user-list',
-        meta: { title: '系统管理', icon: 'table', hiddenHeaderContent: true, permission: [ 'sys' ] },
+        redirect: '/sys/user',
+        meta: { title: '系统管理', icon: 'desktop', hiddenHeaderContent: true, permission: [ 'sys' ] },
         children: [
           {
-            path: '/list/user-list',
+            path: '/sys/user',
             name: 'UserList',
-            component: () => import('@/views/list/UserList'),
+            component: () => import('@/views/system/user/UserList'),
             meta: { title: '用户管理', keepAlive: true, permission: [ 'sys:user' ] }
           },
           {
-            path: '/list/role-list',
+            path: '/sys/role',
             name: 'RoleList',
             component: () => import('@/views/list/RoleList'),
             meta: { title: '角色管理', keepAlive: true, permission: [ 'sys:role' ] }
           },
           {
-            path: '/list/tree-list',
+            path: '/sys/menu',
             name: 'TreeList',
             component: () => import('@/views/list/TreeList'),
             meta: { title: '权限管理', keepAlive: true, permission: [ 'sys:menu' ] }
