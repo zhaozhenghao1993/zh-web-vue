@@ -48,7 +48,7 @@ export default {
     HeaderNotice
   },
   methods: {
-    ...mapActions(['Logout']),
+    ...mapActions(['Logout', 'FedLogOut']),
     ...mapGetters(['nickname', 'avatar']),
     handleLogout () {
       const that = this
@@ -57,7 +57,7 @@ export default {
         title: '提示',
         content: '真的要注销登录吗 ?',
         onOk () {
-          return that.Logout({}).then(() => {
+          return that.FedLogOut({}).then(() => {
             window.location.reload()
           }).catch(err => {
             that.$message.error({

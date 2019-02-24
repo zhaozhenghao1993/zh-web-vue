@@ -103,6 +103,16 @@ const user = {
           resolve()
         })
       })
+    },
+
+    // 前端登出
+    FedLogOut ({ commit }) {
+      return new Promise((resolve) => {
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        Vue.ls.remove(ACCESS_TOKEN)
+        resolve()
+      })
     }
 
   }
