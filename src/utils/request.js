@@ -47,10 +47,10 @@ service.interceptors.response.use((response) => {
   if (data.code !== 0) {
     const token = Vue.ls.get(ACCESS_TOKEN)
     if (data.code === 500) {
-      notification.error({ message: 'Error', description: data.message })
+      notification.error({ message: 'Error', description: data.msg })
     }
     if (data.code === 40101 || data.code === 40401) {
-      notification.error({ message: 'Forbidden', description: data.message })
+      notification.error({ message: 'Forbidden', description: data.msg })
     }
     if (data.code === 40102 || data.code === 40104 || data.code === 40301 || data.code === 40302 || data.code === 40303 || data.code === 40304) {
       notification.error({ message: 'Unauthorized', description: 'Authorization verification failed' })
