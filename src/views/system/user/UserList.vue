@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="角色ID">
+            <a-form-item label="用户名">
               <a-input placeholder="请输入"/>
             </a-form-item>
           </a-col>
@@ -12,8 +12,8 @@
             <a-form-item label="状态">
               <a-select placeholder="请选择" default-value="0">
                 <a-select-option value="0">全部</a-select-option>
-                <a-select-option value="1">关闭</a-select-option>
-                <a-select-option value="2">运行中</a-select-option>
+                <a-select-option value="1">禁用</a-select-option>
+                <a-select-option value="2">正常</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
