@@ -185,7 +185,7 @@ export default {
         },
         {
           title: '角色名称',
-          dataIndex: 'name'
+          dataIndex: 'username'
         },
         {
           title: '状态',

@@ -1,3 +1,5 @@
+import { userList } from '@/api/system/user'
+
 const user = {
 
   state: {
@@ -16,8 +18,16 @@ const user = {
   },
 
   actions: {
-    UserList ({ commit, state }) {
-
+    UserList ({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        userList(params).then(response => {
+          const data = response
+          commit('SET_USER_LIST', data)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
     }
   }
 }
