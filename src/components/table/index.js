@@ -68,7 +68,7 @@ export default {
       this.$router.push({
         name: this.$route.name,
         params: Object.assign({}, this.$route.params, {
-          pageNo: val
+          pageNum: val
         })
       })
     },
@@ -115,7 +115,7 @@ export default {
     loadData (pagination, filters, sorter) {
       this.localLoading = true
       var result = this.data(Object.assign({
-        pageNo: (pagination && pagination.current) ||
+        pageNum: (pagination && pagination.current) ||
           this.localPagination.current,
         pageSize: (pagination && pagination.pageSize) ||
           this.localPagination.pageSize
@@ -129,13 +129,13 @@ export default {
         ...filters
       }
       ))
-      // 对接自己的通用数据接口需要修改下方代码中的 r.pageNo, r.totalCount, r.data
+      // 对接自己的通用数据接口需要修改下方代码中的 r.pageNum, r.total, r.data
       // eslint-disable-next-line
       if (result instanceof Promise || '[object Promise]' === result.toString()) {
         result.then(r => {
           this.localPagination = Object.assign({}, this.localPagination, {
-            current: r.pageNo, // 返回结果中的当前分页数
-            total: r.totalCount, // 返回结果中的总记录数
+            current: r.pageNum, // 返回结果中的当前分页数
+            total: r.total, // 返回结果中的总记录数
             showSizeChanger: this.showSizeChanger,
             pageSize: (pagination && pagination.pageSize) ||
               this.localPagination.pageSize
@@ -148,9 +148,9 @@ export default {
             return
           }
 
-          // 这里用于判断接口是否有返回 r.totalCount 或 this.showPagination = false
+          // 这里用于判断接口是否有返回 r.total 或 this.showPagination = false
           // 当情况满足时，表示数据不满足分页大小，关闭 table 分页功能
-          !r.totalCount && ['auto', false].includes(this.showPagination) && (this.localPagination = false)
+          !r.total && ['auto', false].includes(this.showPagination) && (this.localPagination = false)
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
@@ -271,7 +271,7 @@ export default {
     })
     const table = (
       <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData}>
-        {this.$slots.default}
+        { Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>)) }
       </a-table>
     )
 

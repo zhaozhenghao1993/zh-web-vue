@@ -27,29 +27,29 @@
       </a-form>
     </div>
 
+    <div class="table-operator">
+      <a-button type="primary" icon="plus">新建</a-button>
+      <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-menu slot="overlay">
+          <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+          <!-- lock | unlock -->
+          <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+        </a-menu>
+        <a-button style="margin-left: 8px">
+          批量操作 <a-icon type="down" />
+        </a-button>
+      </a-dropdown>
+    </div>
+
     <s-table
+      ref="table"
       size="default"
       :columns="columns"
       :data="loadData"
+      rowKey="userId"
+      :alert="options.alert"
+      :rowSelection="options.rowSelection"
     >
-      <div
-        slot="expandedRowRender"
-        slot-scope="record"
-        style="margin: 0">
-        <a-row
-          :gutter="24"
-          :style="{ marginBottom: '12px' }">
-          <a-col :span="12" v-for="(role, index) in record.permissions" :key="index" :style="{ marginBottom: '12px' }">
-            <a-col :lg="4" :md="24">
-              <span>{{ role.permissionName }}：</span>
-            </a-col>
-            <a-col :lg="20" :md="24" v-if="role.actionEntitySet.length > 0">
-              <a-tag color="cyan" v-for="(action, k) in role.actionEntitySet" :key="k">{{ action.describe }}</a-tag>
-            </a-col>
-            <a-col :span="20" v-else>-</a-col>
-          </a-col>
-        </a-row>
-      </div>
       <span slot="action" slot-scope="text, record">
         <a @click="handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
@@ -150,10 +150,10 @@
 
 <script>
 import STable from '@/components/table/'
-import { getRoleList, getServiceList } from '@/api/manage'
+import { userList } from '@/api/system/user'
 
 export default {
-  name: 'TableList',
+  name: 'UserList',
   components: {
     STable
   },
@@ -180,12 +180,20 @@ export default {
       // 表头
       columns: [
         {
-          title: '唯一识别码',
-          dataIndex: 'id'
+          title: 'ID',
+          dataIndex: 'userId'
         },
         {
-          title: '角色名称',
+          title: '用户名称',
           dataIndex: 'username'
+        },
+        {
+          title: '邮箱',
+          dataIndex: 'email'
+        },
+        {
+          title: '手机号',
+          dataIndex: 'mobile'
         },
         {
           title: '状态',
@@ -204,24 +212,27 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return getRoleList(parameter)
+        console.log(parameter)
+        return userList(Object.assign(parameter, this.queryParam))
           .then(res => {
-            return res.result
+            return res
+          }).catch(e => {
           })
       },
 
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      // custom table alert & rowSelection
+      options: {
+        alert: { show: true, clear: true },
+        rowSelection: {
+          selectedRowKeys: this.selectedRowKeys,
+          onChange: this.onSelectChange
+        }
+      }
     }
   },
   created () {
-    getServiceList().then(res => {
-      console.log('getServiceList.call()', res)
-    })
-
-    getRoleList().then(res => {
-      console.log('getRoleList.call()', res)
-    })
   },
   methods: {
     handleEdit (record) {
@@ -238,7 +249,7 @@ export default {
     handleOk () {
 
     },
-    onChange (selectedRowKeys, selectedRows) {
+    onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
@@ -247,18 +258,16 @@ export default {
     }
   },
   watch: {
-    /*
-      'selectedRows': function (selectedRows) {
-        this.needTotalList = this.needTotalList.map(item => {
-          return {
-            ...item,
-            total: selectedRows.reduce( (sum, val) => {
-              return sum + val[item.dataIndex]
-            }, 0)
-          }
-        })
-      }
-      */
+    /* 'selectedRows': function (selectedRows) {
+      this.needTotalList = this.needTotalList.map(item => {
+        return {
+          ...item,
+          total: selectedRows.reduce((sum, val) => {
+            return sum + val[item.dataIndex]
+          }, 0)
+        }
+      })
+    } */
   }
 }
 </script>
