@@ -5,22 +5,22 @@
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
             <a-form-item label="用户名">
-              <a-input placeholder="请输入"/>
+              <a-input placeholder="请输入" v-model="queryParam.username"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="状态">
-              <a-select placeholder="请选择" default-value="0">
-                <a-select-option value="0">全部</a-select-option>
-                <a-select-option value="1">禁用</a-select-option>
-                <a-select-option value="2">正常</a-select-option>
+              <a-select placeholder="请选择" default-value="" v-model="queryParam.status">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option value="0">锁定</a-select-option>
+                <a-select-option value="1">正常</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <span class="table-page-search-submitButtons">
-              <a-button type="primary">查询</a-button>
-              <a-button style="margin-left: 8px">重置</a-button>
+              <a-button type="primary" @click="handleFilter">查询</a-button>
+              <a-button style="margin-left: 8px" @click="clearFilter">重置</a-button>
             </span>
           </a-col>
         </a-row>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus">新建</a-button>
+      <a-button type="primary" icon="plus" @click="handleCreate">新建</a-button>
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -50,6 +50,11 @@
       :alert="options.alert"
       :rowSelection="options.rowSelection"
     >
+      <template
+        slot="status"
+        slot-scope="status">
+        <a-badge :status="status | statusFilterIcon" :text="status | statusFilterText"/>
+      </template>
       <span slot="action" slot-scope="text, record">
         <a @click="handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
@@ -79,26 +84,38 @@
       v-model="visible"
       @ok="handleOk"
     >
-      <a-form :autoFormCreate="(form)=>{this.form = form}">
+      <a-form
+        :form="form"
+      >
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="唯一识别码"
+          label="ID"
           hasFeedback
           validateStatus="success"
         >
-          <a-input placeholder="唯一识别码" v-model="mdl.id" id="no" disabled="disabled" />
+          <a-input placeholder="ID" v-model="mdl.id" id="no" disabled="disabled" />
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="角色名称"
+          label="用户名"
           hasFeedback
-          validateStatus="success"
+          validateStatus
         >
           <a-input placeholder="起一个名字" v-model="mdl.name" id="role_name" />
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="E-mail"
+        >
+          <a-input
+            v-decorator="['email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"
+          />
         </a-form-item>
 
         <a-form-item
@@ -114,33 +131,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="描述"
-          hasFeedback
-        >
-          <a-textarea :rows="5" v-model="mdl.describe" placeholder="..." id="describe"/>
-        </a-form-item>
-
         <a-divider />
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="拥有权限"
-          hasFeedback
-        >
-          <a-row :gutter="16" v-for="(permission, index) in mdl.permissions" :key="index">
-            <a-col :span="4">
-              {{ permission.permissionName }}：
-            </a-col>
-            <a-col :span="20">
-              <a-checkbox-group :options="permission.actionsOptions"/>
-            </a-col>
-          </a-row>
-
-        </a-form-item>
 
       </a-form>
     </a-modal>
@@ -172,11 +163,13 @@ export default {
       },
       form: null,
       mdl: {},
-
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParam: {
+        username: '',
+        status: ''
+      },
       // 表头
       columns: [
         {
@@ -184,7 +177,7 @@ export default {
           dataIndex: 'userId'
         },
         {
-          title: '用户名称',
+          title: '用户名',
           dataIndex: 'username'
         },
         {
@@ -197,7 +190,8 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'status'
+          dataIndex: 'status',
+          scopedSlots: { customRender: 'status' }
         },
         {
           title: '创建时间',
@@ -212,7 +206,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        console.log(parameter)
+        console.log(Object.assign(parameter, this.queryParam))
         return userList(Object.assign(parameter, this.queryParam))
           .then(res => {
             return res
@@ -229,12 +223,52 @@ export default {
           selectedRowKeys: this.selectedRowKeys,
           onChange: this.onSelectChange
         }
+      },
+      decorator: {
+        email: [
+          'email',
+          {
+            rules: [{
+              type: 'email', message: 'The input is not valid E-mail!'
+            }, {
+              required: true, message: 'Please input your E-mail!'
+            }]
+          }
+        ]
       }
     }
   },
-  created () {
+  filters: {
+    statusFilterIcon (status) {
+      const statusMap = {
+        1: 'success',
+        null: 'success',
+        undefined: 'success',
+        0: 'error'
+      }
+      return statusMap[status]
+    },
+    statusFilterText (status) {
+      const statusMap = {
+        1: '正常',
+        null: '正常',
+        undefined: '正常',
+        0: '锁定'
+      }
+      return statusMap[status]
+    }
   },
   methods: {
+    handleFilter () {
+      this.$refs.table.refresh(true)
+    },
+    clearFilter () {
+      this.queryParam.username = ''
+      this.queryParam.status = ''
+    },
+    handleCreate () {
+      this.visible = true
+    },
     handleEdit (record) {
       this.mdl = Object.assign({}, record)
 
