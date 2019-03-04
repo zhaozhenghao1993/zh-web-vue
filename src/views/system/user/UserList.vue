@@ -82,11 +82,10 @@
       style="top: 20px;"
       :width="800"
       v-model="visible"
+      :confirmLoading="confirmLoading"
       @ok="handleOk"
     >
-      <a-form
-        :form="form"
-      >
+      <a-form :form="form">
 
         <a-form-item
           :labelCol="labelCol"
@@ -102,10 +101,8 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="用户名"
-          hasFeedback
-          validateStatus
         >
-          <a-input placeholder="起一个名字" v-model="mdl.name" id="role_name" />
+          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: 'Please input your username!'}]}]"/>
         </a-form-item>
 
         <a-form-item
@@ -113,9 +110,15 @@
           :wrapperCol="wrapperCol"
           label="E-mail"
         >
-          <a-input
-            v-decorator="['email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"
-          />
+          <a-input v-decorator="['email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"/>
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="mobile"
+        >
+          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: 'The input is not valid mobile!' }, {required: true, message: 'Please input your mobile!'}], validateTrigger: 'change'}]"/>
         </a-form-item>
 
         <a-form-item
@@ -132,7 +135,6 @@
         </a-form-item>
 
         <a-divider />
-
       </a-form>
     </a-modal>
 
@@ -153,6 +155,7 @@ export default {
       description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
 
       visible: false,
+      confirmLoading: false,
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 }
@@ -268,6 +271,7 @@ export default {
     },
     handleCreate () {
       this.visible = true
+      this.form = this.$form.createForm(this)
     },
     handleEdit (record) {
       this.mdl = Object.assign({}, record)
@@ -281,7 +285,18 @@ export default {
       this.visible = true
     },
     handleOk () {
+      this.confirmLoading = true
 
+      this.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          // eslint-disable-next-line no-console
+          console.log('Received values of form: ', values)
+        }
+      })
+      setTimeout(() => {
+        // this.visible = false
+        this.confirmLoading = false
+      }, 2000)
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
