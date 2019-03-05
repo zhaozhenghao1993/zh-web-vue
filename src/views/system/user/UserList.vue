@@ -94,7 +94,7 @@
           hasFeedback
           validateStatus="success"
         >
-          <a-input placeholder="ID" v-model="mdl.id" id="no" disabled="disabled" />
+          <a-input placeholder="ID" v-model="user.userId" id="no" disabled="disabled" />
         </a-form-item>
 
         <a-form-item
@@ -102,7 +102,7 @@
           :wrapperCol="wrapperCol"
           label="用户名"
         >
-          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: 'Please input your username!'}]}]"/>
+          <a-input placeholder="起一个名字" v-decorator="['user.username',{rules: [{required: true, message: 'Please input your username!'}]}]"/>
         </a-form-item>
 
         <a-form-item
@@ -110,7 +110,7 @@
           :wrapperCol="wrapperCol"
           label="E-mail"
         >
-          <a-input v-decorator="['email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"/>
+          <a-input v-decorator="['user.email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"/>
         </a-form-item>
 
         <a-form-item
@@ -118,19 +118,17 @@
           :wrapperCol="wrapperCol"
           label="mobile"
         >
-          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: 'The input is not valid mobile!' }, {required: true, message: 'Please input your mobile!'}], validateTrigger: 'change'}]"/>
+          <a-input v-decorator="['user.mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: 'The input is not valid mobile!' }, {required: true, message: 'Please input your mobile!'}], validateTrigger: 'change'}]"/>
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="状态"
-          hasFeedback
-          validateStatus="warning"
         >
-          <a-select v-model="mdl.status">
+          <a-select v-model="user.status">
             <a-select-option value="1">正常</a-select-option>
-            <a-select-option value="2">禁用</a-select-option>
+            <a-select-option value="0">锁定</a-select-option>
           </a-select>
         </a-form-item>
 
@@ -165,6 +163,16 @@ export default {
         sm: { span: 16 }
       },
       form: null,
+      user: {
+        userId: null,
+        username: '',
+        password: '',
+        email: '',
+        mobile: '',
+        avatar: '',
+        status: 1,
+        roleIdList: []
+      },
       mdl: {},
       // 高级搜索 展开/关闭
       advanced: false,
@@ -226,18 +234,6 @@ export default {
           selectedRowKeys: this.selectedRowKeys,
           onChange: this.onSelectChange
         }
-      },
-      decorator: {
-        email: [
-          'email',
-          {
-            rules: [{
-              type: 'email', message: 'The input is not valid E-mail!'
-            }, {
-              required: true, message: 'Please input your E-mail!'
-            }]
-          }
-        ]
       }
     }
   },
