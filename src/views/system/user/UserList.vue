@@ -79,7 +79,6 @@
 
     <a-modal
       title="操作"
-      style="top: 20px;"
       :width="800"
       v-model="visible"
       :confirmLoading="confirmLoading"
@@ -94,41 +93,45 @@
           hasFeedback
           validateStatus="success"
         >
-          <a-input placeholder="ID" v-model="user.userId" id="no" disabled="disabled" />
+          <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="用户名"
+          hasFeedback
         >
-          <a-input placeholder="起一个名字" v-decorator="['user.username',{rules: [{required: true, message: 'Please input your username!'}]}]"/>
+          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: 'Please input your username!'}]}]"/>
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="E-mail"
+          hasFeedback
         >
-          <a-input v-decorator="['user.email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"/>
+          <a-input v-decorator="['email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"/>
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="mobile"
+          hasFeedback
         >
-          <a-input v-decorator="['user.mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: 'The input is not valid mobile!' }, {required: true, message: 'Please input your mobile!'}], validateTrigger: 'change'}]"/>
+          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: 'The input is not valid mobile!' }, {required: true, message: 'Please input your mobile!'}], validateTrigger: 'change'}]"/>
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="状态"
+          hasFeedback
         >
-          <a-select v-model="user.status">
-            <a-select-option value="1">正常</a-select-option>
-            <a-select-option value="0">锁定</a-select-option>
+          <a-select v-decorator="[ 'status', {rules: []} ]">
+            <a-select-option :value="1">正常</a-select-option>
+            <a-select-option :value="0">锁定</a-select-option>
           </a-select>
         </a-form-item>
 
@@ -162,15 +165,15 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      form: null,
+      form: this.$form.createForm(this),
       user: {
         userId: null,
         username: '',
         password: '',
-        email: '',
+        email: '111',
         mobile: '',
         avatar: '',
-        status: 1,
+        status: '1',
         roleIdList: []
       },
       mdl: {},
@@ -266,8 +269,11 @@ export default {
       this.queryParam.status = ''
     },
     handleCreate () {
+      this.mdl = Object.assign({}, this.user)
       this.visible = true
-      this.form = this.$form.createForm(this)
+      this.$nextTick(() => {
+        this.form.setFieldsValue(this.mdl, 'id', 'name', 'status', 'email')
+      })
     },
     handleEdit (record) {
       this.mdl = Object.assign({}, record)
