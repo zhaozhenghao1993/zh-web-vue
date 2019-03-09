@@ -12,8 +12,7 @@
             <a-form-item label="状态">
               <a-select placeholder="请选择" default-value="" v-model="queryParam.status">
                 <a-select-option value="">全部</a-select-option>
-                <a-select-option value="0">锁定</a-select-option>
-                <a-select-option value="1">正常</a-select-option>
+                <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -102,7 +101,25 @@
           label="用户名"
           hasFeedback
         >
-          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: 'Please input your username!'}]}]"/>
+          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]"/>
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="密码"
+          hasFeedback
+        >
+          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="passwordInputDisabled" />
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="请确认密码"
+          hasFeedback
+        >
+          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="passwordInputDisabled" @blur="handleConfirmBlur"/>
         </a-form-item>
 
         <a-form-item
@@ -111,16 +128,16 @@
           label="E-mail"
           hasFeedback
         >
-          <a-input v-decorator="['email',{rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!'}]}]"/>
+          <a-input v-decorator="['email',{rules: [{type: 'email', message: '输入的E-mail格式不正确!'}]}]"/>
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="mobile"
+          label="手机号"
           hasFeedback
         >
-          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: 'The input is not valid mobile!' }, {required: true, message: 'Please input your mobile!'}], validateTrigger: 'change'}]"/>
+          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: '输入的手机号格式不正确!' }], validateTrigger: 'change'}]"/>
         </a-form-item>
 
         <a-form-item
@@ -129,9 +146,8 @@
           label="状态"
           hasFeedback
         >
-          <a-select v-decorator="[ 'status', {rules: []} ]">
-            <a-select-option :value="1">正常</a-select-option>
-            <a-select-option :value="0">锁定</a-select-option>
+          <a-select v-decorator="['status', {rules: []}]">
+            <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
           </a-select>
         </a-form-item>
 
@@ -145,6 +161,7 @@
 <script>
 import STable from '@/components/table/'
 import { userList } from '@/api/system/user'
+import pick from 'lodash.pick'
 
 export default {
   name: 'UserList',
@@ -166,17 +183,12 @@ export default {
         sm: { span: 16 }
       },
       form: this.$form.createForm(this),
-      user: {
-        userId: null,
-        username: '',
-        password: '',
-        email: '111',
-        mobile: '',
-        avatar: '',
-        status: '1',
-        roleIdList: []
-      },
-      mdl: {},
+      modal: {},
+      passwordInputDisabled: false,
+      selectStatus: [
+        { statusCode: 1, statusText: '正常' },
+        { statusCode: 0, statusText: '锁定' }
+      ],
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
@@ -269,36 +281,49 @@ export default {
       this.queryParam.status = ''
     },
     handleCreate () {
-      this.mdl = Object.assign({}, this.user)
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(this.mdl, 'id', 'name', 'status', 'email')
-      })
+      this.handleEdit({ userId: 0, status: 1 })
     },
     handleEdit (record) {
-      this.mdl = Object.assign({}, record)
-
-      this.mdl.permissions.forEach(permission => {
-        permission.actionsOptions = permission.actionEntitySet.map(action => {
-          return { label: action.describe, value: action.action, defaultCheck: action.defaultCheck }
-        })
+      // 每次都重置form表单
+      this.form.resetFields()
+      this.passwordInputDisabled = false
+      this.modal = Object.assign({}, record)
+      // 如果是修改操作, 则password disabled 制空
+      if (this.modal.userId !== 0) {
+        this.passwordInputDisabled = true
+        this.modal.password = '******'
+        this.modal.confirm = '******'
+      }
+      console.log('this.modal', this.modal)
+      console.log('this.passwordInputDisabled', this.passwordInputDisabled)
+      this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
       })
-
       this.visible = true
     },
     handleOk () {
       this.confirmLoading = true
 
       this.form.validateFieldsAndScroll((err, values) => {
+        console.log('err', err)
+        console.log('values', values)
         if (!err) {
-          // eslint-disable-next-line no-console
-          console.log('Received values of form: ', values)
+          new Promise((resolve) => {
+            setTimeout(() => resolve(), 2000)
+          }).then(() => {
+            // Do something
+            this.$message.success('保存成功')
+            this.$emit('ok')
+          }).catch(() => {
+            // Do something
+          }).finally(() => {
+            this.$refs.table.refresh(true)
+            this.confirmLoading = false
+            this.visible = false
+          })
         }
       })
-      setTimeout(() => {
-        // this.visible = false
-        this.confirmLoading = false
-      }, 2000)
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -306,6 +331,25 @@ export default {
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    handleConfirmBlur  (e) {
+      const value = e.target.value
+      this.confirmDirty = this.confirmDirty || !!value
+    },
+    compareToFirstPassword  (rule, value, callback) {
+      const form = this.form
+      if (value && value !== form.getFieldValue('password')) {
+        callback(new Error('Two passwords that you enter is inconsistent!'))
+      } else {
+        callback()
+      }
+    },
+    validateToNextPassword  (rule, value, callback) {
+      const form = this.form
+      if (value && this.confirmDirty) {
+        form.validateFields(['confirm'], { force: true })
+      }
+      callback()
     }
   },
   watch: {
