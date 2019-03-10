@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/store'
+import router from '../router'
 import { VueAxios } from './axios'
 import notification from 'ant-design-vue/es/notification'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
@@ -55,6 +56,7 @@ service.interceptors.response.use((response) => {
     }
     if (data.code === 40101 || data.code === 40401) {
       notification.error({ message: 'Forbidden', description: data.msg })
+      router.push({ path: '/exception/403' })
     }
     if (data.code === 40102 || data.code === 40104 || data.code === 40301 || data.code === 40302 || data.code === 40303 || data.code === 40304) {
       notification.error({ message: 'Unauthorized', description: 'Authorization verification failed' })

@@ -69,7 +69,12 @@
               <a href="javascript:;">禁用</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="javascript:;">删除</a>
+              <a-popconfirm placement="leftBottom" okText="Yes" cancelText="No" @confirm="handleDelete(record)">
+                <template slot="title">
+                  <p>你确定要删除用户<{{ record.username }}></p>
+                </template>
+                <a>删除</a>
+              </a-popconfirm>
             </a-menu-item>
           </a-menu>
         </a-dropdown>
@@ -77,7 +82,7 @@
     </s-table>
 
     <a-modal
-      title="操作"
+      :title="modalStatus === 'create' ? '新增':'编辑'"
       :width="800"
       v-model="visible"
       :confirmLoading="confirmLoading"
@@ -160,7 +165,7 @@
 
 <script>
 import STable from '@/components/table/'
-import { userList } from '@/api/system/user'
+import { userList, userSave, userEdit, userDelete } from '@/api/system/user'
 import pick from 'lodash.pick'
 
 export default {
@@ -184,6 +189,7 @@ export default {
       },
       form: this.$form.createForm(this),
       modal: {},
+      modalStatus: 'create',
       passwordInputDisabled: false,
       selectStatus: [
         { statusCode: 1, statusText: '正常' },
@@ -281,26 +287,29 @@ export default {
       this.queryParam.status = ''
     },
     handleCreate () {
-      this.handleEdit({ userId: 0, status: 1 })
-    },
-    handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
       this.passwordInputDisabled = false
-      this.modal = Object.assign({}, record)
-      // 如果是修改操作, 则password disabled 制空
-      if (this.modal.userId !== 0) {
-        this.passwordInputDisabled = true
-        this.modal.password = '******'
-        this.modal.confirm = '******'
-      }
-      console.log('this.modal', this.modal)
-      console.log('this.passwordInputDisabled', this.passwordInputDisabled)
+      this.modalStatus = 'create'
+      this.modal = Object.assign({}, { userId: 0, status: 1 })
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
       })
+    },
+    handleEdit (record) {
+      // 每次都重置form表单
+      this.form.resetFields()
+      // 如果是修改操作, 则password disabled 制空
+      this.passwordInputDisabled = true
+      this.modalStatus = 'edit'
+      this.modal = Object.assign({}, record)
+      this.modal.password = '******'
+      this.modal.confirm = '******'
       this.visible = true
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
+      })
     },
     handleOk () {
       this.confirmLoading = true
@@ -309,21 +318,63 @@ export default {
         console.log('err', err)
         console.log('values', values)
         if (!err) {
-          new Promise((resolve) => {
-            setTimeout(() => resolve(), 2000)
-          }).then(() => {
-            // Do something
-            this.$message.success('保存成功')
-            this.$emit('ok')
-          }).catch(() => {
-            // Do something
-          }).finally(() => {
-            this.$refs.table.refresh(true)
-            this.confirmLoading = false
-            this.visible = false
-          })
+          if (this.modalStatus === 'create') {
+            userSave(values).then(() => {
+              // Do something
+              this.$message.success('保存成功')
+              this.$emit('ok')
+            }).catch(() => {
+              // Do something
+              this.$message.error('保存失败')
+            }).finally(() => {
+              this.$refs.table.refresh(true)
+              this.confirmLoading = false
+              this.visible = false
+            })
+          } else if (this.modalStatus === 'edit') {
+            userEdit(values.userId, values).then(() => {
+              // Do something
+              this.$message.success('保存成功')
+              this.$emit('ok')
+            }).catch(() => {
+              // Do something
+              this.$message.error('保存失败')
+            }).finally(() => {
+              this.$refs.table.refresh(false)
+              this.confirmLoading = false
+              this.visible = false
+            })
+          }
         }
       })
+    },
+    handleDelete (record) {
+      userDelete(record.userId).then(() => {
+        this.$message.success('删除成功')
+      }).catch(() => {
+        // Do something
+        this.$message.error('删除失败')
+      }).finally(() => {
+        this.$refs.table.refresh(false)
+      })
+      /* console.log('record', record)
+      userDelete
+      this.$confirm({
+        title: '提示',
+        content: '真的要删除该用户吗 ?',
+        onOk () {
+          return that.FedLogOut({}).then(() => {
+            window.location.reload()
+          }).catch(err => {
+            that.$message.error({
+              title: '错误',
+              description: err.message
+            })
+          })
+        },
+        onCancel () {
+        }
+      }) */
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys

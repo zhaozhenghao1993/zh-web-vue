@@ -7,3 +7,26 @@ export function userList (parameter) {
     params: parameter
   })
 }
+
+export function userSave (parameter) {
+  return axios({
+    url: '/sys/user',
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function userEdit (id, parameter) {
+  return axios({
+    url: '/sys/user/' + id,
+    method: 'put',
+    data: parameter
+  })
+}
+
+export function userDelete (id) {
+  return axios({
+    url: '/sys/user/' + id,
+    method: 'delete'
+  })
+}

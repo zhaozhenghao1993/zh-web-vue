@@ -123,6 +123,31 @@ export const asyncRouterMap = [
             ]
           }
         ]
+      },
+      {
+        path: '/exception',
+        component: RouteView,
+        name: 'exception',
+        hidden: true,
+        meta: { title: '异常页', icon: 'exception', keepAlive: true },
+        children: [
+          {
+            path: '/exception/404',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+          },
+          {
+            path: '/exception/403',
+            name: 'Exception403',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
+            meta: { title: '403' }
+          },
+          {
+            path: '/exception/500',
+            name: 'Exception500',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
+            meta: { title: '500' }
+          }
+        ]
       }
     ]
   },
@@ -176,18 +201,5 @@ export const constantRouterMap = [
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
-  },
-  {
-    path: '/403',
-    name: 'Exception403',
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
-    meta: { title: '403' }
-  },
-  {
-    path: '/500',
-    name: 'Exception500',
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
-    meta: { title: '500' }
   }
-
 ]
