@@ -30,9 +30,10 @@
       <a-button type="primary" icon="plus" @click="handleCreate">新建</a-button>
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
-          <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+          <a-menu-item key="1" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
           <!-- lock | unlock -->
           <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+          <a-menu-item key="3"><a-icon type="unlock" />解锁</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px">
           批量操作 <a-icon type="down" />
@@ -165,7 +166,7 @@
 
 <script>
 import STable from '@/components/table/'
-import { userList, userSave, userEdit, userDelete } from '@/api/system/user'
+import { userList, userSave, userEdit, userDelete, batchUserDelete } from '@/api/system/user'
 import pick from 'lodash.pick'
 
 export default {
@@ -311,9 +312,9 @@ export default {
         this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
       })
     },
-    handleOk () {
+    handleOk (e) {
       this.confirmLoading = true
-
+      e.preventDefault()
       this.form.validateFieldsAndScroll((err, values) => {
         console.log('err', err)
         console.log('values', values)
@@ -345,6 +346,8 @@ export default {
               this.visible = false
             })
           }
+        } else {
+          this.confirmLoading = false
         }
       })
     },
@@ -357,24 +360,32 @@ export default {
       }).finally(() => {
         this.$refs.table.refresh(false)
       })
-      /* console.log('record', record)
-      userDelete
+    },
+    handleBatchDelete (selectedRowKeys) {
+      const that = this
       this.$confirm({
+        type: 'error',
         title: '提示',
-        content: '真的要删除该用户吗 ?',
+        content: '真的要删除选中用户吗 ?',
+        okType: 'danger',
+        okText: '删除',
         onOk () {
-          return that.FedLogOut({}).then(() => {
-            window.location.reload()
+          return batchUserDelete(selectedRowKeys).then(() => {
+            that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error({
               title: '错误',
-              description: err.message
+              description: err.msg
             })
+          }).finally(() => {
+            that.$refs.table.refresh(false)
+            // 批量删除完毕后清空复选框
+            that.$refs.table.clearSelected()
           })
         },
         onCancel () {
         }
-      }) */
+      })
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
