@@ -67,15 +67,10 @@
               <a href="javascript:;">详情</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="javascript:;">禁用</a>
+              <a href="javascript:;" @click="handleResetPassword(record)">重置密码</a>
             </a-menu-item>
             <a-menu-item>
-              <a-popconfirm placement="leftBottom" okText="Yes" cancelText="No" @confirm="handleDelete(record)">
-                <template slot="title">
-                  <p>你确定要删除用户<{{ record.username }}></p>
-                </template>
-                <a>删除</a>
-              </a-popconfirm>
+              <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>
           </a-menu>
         </a-dropdown>
@@ -161,6 +156,33 @@
       </a-form>
     </a-modal>
 
+    <a-modal
+      title="重置密码"
+      :visible="visibleResetPassword"
+      @ok="handleOkForResetPassword"
+      :confirmLoading="resetPasswordConfirmLoading"
+    >
+      <a-form :form="formResetPassword">
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="新密码"
+          hasFeedback
+        >
+          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="passwordInputDisabled" />
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="请确认新密码"
+          hasFeedback
+        >
+          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="passwordInputDisabled" @blur="handleConfirmBlur"/>
+        </a-form-item>
+      </a-form>
+    </a-modal>
+
   </a-card>
 </template>
 
@@ -196,6 +218,9 @@ export default {
         { statusCode: 1, statusText: '正常' },
         { statusCode: 0, statusText: '锁定' }
       ],
+      visibleResetPassword: false,
+      resetPasswordConfirmLoading: false,
+      formResetPassword: this.$form.createForm(this),
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
@@ -313,11 +338,9 @@ export default {
       })
     },
     handleOk (e) {
-      this.confirmLoading = true
       e.preventDefault()
+      this.confirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
-        console.log('err', err)
-        console.log('values', values)
         if (!err) {
           if (this.modalStatus === 'create') {
             userSave(values).then(() => {
@@ -352,13 +375,29 @@ export default {
       })
     },
     handleDelete (record) {
-      userDelete(record.userId).then(() => {
-        this.$message.success('删除成功')
-      }).catch(() => {
-        // Do something
-        this.$message.error('删除失败')
-      }).finally(() => {
-        this.$refs.table.refresh(false)
+      const that = this
+      this.$confirm({
+        type: 'error',
+        title: '提示',
+        content: '真的要删除用户' + record.username + '吗 ?',
+        okType: 'danger',
+        okText: '删除',
+        onOk () {
+          return userDelete(record.userId).then(() => {
+            that.$message.success('删除成功')
+          }).catch(err => {
+            that.$message.error({
+              title: '错误',
+              description: err.msg
+            })
+          }).finally(() => {
+            that.$refs.table.refresh(false)
+            // 批量删除完毕后清空复选框
+            that.$refs.table.clearSelected()
+          })
+        },
+        onCancel () {
+        }
       })
     },
     handleBatchDelete (selectedRowKeys) {
@@ -385,6 +424,18 @@ export default {
         },
         onCancel () {
         }
+      })
+    },
+    handleResetPassword () {
+      // 每次都重置form表单
+      this.formResetPassword.resetFields()
+      this.visibleResetPassword = true
+    },
+    handleOkForResetPassword (e) {
+      e.preventDefault()
+      this.resetPasswordConfirmLoading = true
+      this.formResetPassword.validateFieldsAndScroll((err, values) => {
+        if (!err) {}
       })
     },
     onSelectChange (selectedRowKeys, selectedRows) {
