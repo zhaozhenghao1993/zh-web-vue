@@ -214,9 +214,10 @@ export default {
       }, 1000)
     },
     requestFailed (err) {
+      console.log('err', err)
       this.$notification['error']({
         message: '错误',
-        description: ((err || {}).data || {}).msg || '请求出现错误，请稍后再试',
+        description: (err || {}).msg || '请求出现错误，请稍后再试',
         duration: 4
       })
     }

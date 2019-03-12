@@ -38,3 +38,11 @@ export function batchUserDelete (parameter) {
     data: parameter
   })
 }
+
+export function userResetPassword (id, parameter) {
+  return axios({
+    url: '/sys/user/' + id + '/reset',
+    method: 'put',
+    data: parameter
+  })
+}
