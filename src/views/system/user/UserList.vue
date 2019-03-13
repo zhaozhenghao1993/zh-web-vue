@@ -32,8 +32,8 @@
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
           <!-- lock | unlock -->
-          <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-          <a-menu-item key="3"><a-icon type="unlock" />解锁</a-menu-item>
+          <a-menu-item key="2" @click="handleBatchDisable(selectedRowKeys)"><a-icon type="lock" />锁定</a-menu-item>
+          <a-menu-item key="3" @click="handleBatchEnable(selectedRowKeys)"><a-icon type="unlock" />解锁</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px">
           批量操作 <a-icon type="down" />
@@ -206,7 +206,7 @@
 
 <script>
 import STable from '@/components/table/'
-import { userList, userSave, userEdit, userDelete, batchUserDelete, userResetPassword } from '@/api/system/user'
+import { userList, userSave, userEdit, userDelete, batchUserDelete, userResetPassword, userEnable, userDisable } from '@/api/system/user'
 import pick from 'lodash.pick'
 
 export default {
@@ -403,10 +403,7 @@ export default {
           return userDelete(record.userId).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
-            that.$message.error({
-              title: '错误',
-              description: err.msg
-            })
+            that.$message.error(err.msg)
           }).finally(() => {
             that.$refs.table.refresh(false)
             // 批量删除完毕后清空复选框
@@ -429,10 +426,53 @@ export default {
           return batchUserDelete(selectedRowKeys).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
-            that.$message.error({
-              title: '错误',
-              description: err.msg
-            })
+            that.$message.error(err.msg)
+          }).finally(() => {
+            that.$refs.table.refresh(false)
+            // 批量删除完毕后清空复选框
+            that.$refs.table.clearSelected()
+          })
+        },
+        onCancel () {
+        }
+      })
+    },
+    handleBatchDisable (selectedRowKeys) {
+      const that = this
+      this.$confirm({
+        type: 'error',
+        title: '提示',
+        content: '真的要锁定选中用户吗 ?',
+        okType: 'danger',
+        okText: '锁定',
+        onOk () {
+          return userDisable(selectedRowKeys).then(() => {
+            that.$message.success('锁定成功')
+          }).catch(err => {
+            that.$message.error(err.msg)
+          }).finally(() => {
+            that.$refs.table.refresh(false)
+            // 批量删除完毕后清空复选框
+            that.$refs.table.clearSelected()
+          })
+        },
+        onCancel () {
+        }
+      })
+    },
+    handleBatchEnable (selectedRowKeys) {
+      const that = this
+      this.$confirm({
+        type: 'error',
+        title: '提示',
+        content: '真的要解锁选中用户吗 ?',
+        okType: 'danger',
+        okText: '解锁',
+        onOk () {
+          return userEnable(selectedRowKeys).then(() => {
+            that.$message.success('解锁成功')
+          }).catch(err => {
+            that.$message.error(err.msg)
           }).finally(() => {
             that.$refs.table.refresh(false)
             // 批量删除完毕后清空复选框

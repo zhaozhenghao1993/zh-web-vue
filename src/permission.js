@@ -85,6 +85,9 @@ const action = Vue.directive('action', {
     const actionName = binding.arg
     const roles = store.getters.roles
     const permissionId = vnode.context.$route.meta.permission
+    console.log('actionName', actionName)
+    console.log('roles', roles)
+    console.log('permissionId', permissionId)
     let actions = []
     roles.permissions.forEach(p => {
       if (p.permissionId !== permissionId) {

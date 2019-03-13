@@ -46,3 +46,19 @@ export function userResetPassword (id, parameter) {
     data: parameter
   })
 }
+
+export function userEnable (parameter) {
+  return axios({
+    url: '/sys/user/enable',
+    method: 'put',
+    data: parameter
+  })
+}
+
+export function userDisable (parameter) {
+  return axios({
+    url: '/sys/user/disable',
+    method: 'put',
+    data: parameter
+  })
+}
