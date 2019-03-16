@@ -1,4 +1,4 @@
-import store from './store'
+import store from '@/store'
 
 export function actionToObject (json) {
   try {
@@ -14,7 +14,7 @@ export function actionToObject (json) {
  * @returns {Boolean}
  * @example see @/views/permission/directive.vue
  */
-export default function checkPermission (value) {
+export function checkPermission (value) {
   if (value && value instanceof Array && value.length > 0) {
     const roles = store.getters && store.getters.roles
     const permissionRoles = value

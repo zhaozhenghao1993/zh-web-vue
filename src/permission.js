@@ -17,7 +17,7 @@ router.beforeEach((to, from, next) => {
   if (Vue.ls.get(ACCESS_TOKEN)) {
     /* has token */
     if (to.path === '/user/login') {
-      next({ path: '/dashboard/workplace' })
+      next({ path: '/' })
       NProgress.done()
     } else {
       if (store.getters.roles.length === 0) {
@@ -85,9 +85,6 @@ const action = Vue.directive('action', {
     const actionName = binding.arg
     const roles = store.getters.roles
     const permissionId = vnode.context.$route.meta.permission
-    console.log('actionName', actionName)
-    console.log('roles', roles)
-    console.log('permissionId', permissionId)
     let actions = []
     roles.permissions.forEach(p => {
       if (p.permissionId !== permissionId) {

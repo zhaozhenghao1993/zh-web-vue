@@ -148,6 +148,13 @@ export default {
             return
           }
 
+          // 防止当前数据为空，长度为0  再次搜索导致 “ Invalid prop: custom validator check failed for prop "pagination" ”
+          if (r.data.length === 0 && this.localPagination.current === 1) {
+            this.localDataSource = r.data // 返回结果中的数组数据
+            this.localLoading = false
+            return
+          }
+
           // 这里用于判断接口是否有返回 r.total 或 this.showPagination = false
           // 当情况满足时，表示数据不满足分页大小，关闭 table 分页功能
           !r.total && ['auto', false].includes(this.showPagination) && (this.localPagination = false)

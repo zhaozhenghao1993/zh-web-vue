@@ -27,7 +27,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="handleCreate">新建</a-button>
+      <a-button type="primary" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
@@ -56,7 +56,7 @@
         <a-badge :status="status | statusFilterIcon" :text="status | statusFilterText"/>
       </template>
       <span slot="action" slot-scope="text, record">
-        <a @click="handleEdit(record)">编辑</a>
+        <a @click="$refs.modal.handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link">
@@ -67,7 +67,7 @@
               <a href="javascript:;">详情</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="javascript:;" @click="handleResetPassword(record)">重置密码</a>
+              <a href="javascript:;" @click="$refs.modalResetPassword.handleResetPassword(record)">重置密码</a>
             </a-menu-item>
             <a-menu-item>
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
@@ -77,161 +77,29 @@
       </span>
     </s-table>
 
-    <a-modal
-      :title="modalStatus === 'create' ? '新增':'编辑'"
-      :width="800"
-      v-model="visible"
-      :confirmLoading="confirmLoading"
-      @ok="handleOk"
-    >
-      <a-form :form="form">
+    <user-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></user-modal>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="ID"
-          hasFeedback
-          validateStatus="success"
-        >
-          <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="用户名"
-          hasFeedback
-        >
-          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="密码"
-          hasFeedback
-        >
-          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="passwordInputDisabled" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="请确认密码"
-          hasFeedback
-        >
-          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="passwordInputDisabled" @blur="handleConfirmBlur"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="E-mail"
-          hasFeedback
-        >
-          <a-input v-decorator="['email',{rules: [{type: 'email', message: '输入的E-mail格式不正确!'}]}]"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="手机号"
-          hasFeedback
-        >
-          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: '输入的手机号格式不正确!' }], validateTrigger: 'change'}]"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="状态"
-          hasFeedback
-        >
-          <a-select v-decorator="['status', {rules: []}]">
-            <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <a-divider />
-      </a-form>
-    </a-modal>
-
-    <a-modal
-      title="重置密码"
-      :visible="visibleResetPassword"
-      @ok="handleOkForResetPassword"
-      @cancel="handleCancelForResetPassword"
-      :confirmLoading="resetPasswordConfirmLoading"
-    >
-      <a-form :form="form">
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="ID"
-        >
-          <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="用户名"
-        >
-          <a-input v-decorator="['username',{rules: []}]" disabled="disabled"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="新密码"
-          hasFeedback
-        >
-          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="请确认密码"
-          hasFeedback
-        >
-          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" @blur="handleConfirmBlur"/>
-        </a-form-item>
-      </a-form>
-    </a-modal>
+    <user-modal-reset-password ref="modalResetPassword"></user-modal-reset-password>
 
   </a-card>
 </template>
 
 <script>
 import STable from '@/components/table/'
-import { userList, userSave, userEdit, userDelete, batchUserDelete, userResetPassword, userEnable, userDisable } from '@/api/system/user'
-import pick from 'lodash.pick'
+import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
+import UserModal from './UserModal'
+import UserModalResetPassword from './UserModalResetPassword'
 
 export default {
   name: 'UserList',
   components: {
+    UserModalResetPassword,
+    UserModal,
     STable
   },
   data () {
     return {
       description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
-
-      visible: false,
-      confirmLoading: false,
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
-      },
-      form: this.$form.createForm(this),
-      modal: {},
-      modalStatus: 'create',
-      passwordInputDisabled: false,
       selectStatus: [
         { statusCode: 1, statusText: '正常' },
         { statusCode: 0, statusText: '锁定' }
@@ -281,7 +149,6 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        console.log(Object.assign(parameter, this.queryParam))
         return userList(Object.assign(parameter, this.queryParam))
           .then(res => {
             return res
@@ -329,67 +196,8 @@ export default {
       this.queryParam.username = ''
       this.queryParam.status = ''
     },
-    handleCreate () {
-      // 每次都重置form表单
-      this.form.resetFields()
-      this.passwordInputDisabled = false
-      this.modalStatus = 'create'
-      this.modal = Object.assign({}, { userId: 0, status: 1 })
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
-      })
-    },
-    handleEdit (record) {
-      // 每次都重置form表单
-      this.form.resetFields()
-      // 如果是修改操作, 则password disabled 制空
-      this.passwordInputDisabled = true
-      this.modalStatus = 'edit'
-      this.modal = Object.assign({}, record)
-      this.modal.password = '******'
-      this.modal.confirm = '******'
-      this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
-      })
-    },
-    handleOk (e) {
-      e.preventDefault()
-      this.confirmLoading = true
-      this.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          if (this.modalStatus === 'create') {
-            userSave(values).then(() => {
-              // Do something
-              this.$message.success('保存成功')
-              this.$emit('ok')
-            }).catch(() => {
-              // Do something
-              this.$message.error('保存失败')
-            }).finally(() => {
-              this.$refs.table.refresh(true)
-              this.confirmLoading = false
-              this.visible = false
-            })
-          } else if (this.modalStatus === 'edit') {
-            userEdit(values.userId, values).then(() => {
-              // Do something
-              this.$message.success('保存成功')
-              this.$emit('ok')
-            }).catch(() => {
-              // Do something
-              this.$message.error('保存失败')
-            }).finally(() => {
-              this.$refs.table.refresh(false)
-              this.confirmLoading = false
-              this.visible = false
-            })
-          }
-        } else {
-          this.confirmLoading = false
-        }
-      })
+    handleTableRefresh (boolean) {
+      this.$refs.table.refresh(boolean)
     },
     handleDelete (record) {
       const that = this
@@ -483,64 +291,12 @@ export default {
         }
       })
     },
-    handleResetPassword (record) {
-      // 每次都重置form表单
-      this.form.resetFields()
-      this.visibleResetPassword = true
-      this.modal = Object.assign({}, record)
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm'))
-      })
-    },
-    handleOkForResetPassword (e) {
-      e.preventDefault()
-      this.modal = {}
-      this.resetPasswordConfirmLoading = true
-      this.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          userResetPassword(values.userId, values).then(() => {
-            // Do something
-            this.$message.success('保存成功')
-            this.$emit('ok')
-          }).catch(() => {
-            // Do something
-            this.$message.error('保存失败')
-          }).finally(() => {
-            this.resetPasswordConfirmLoading = false
-            this.visibleResetPassword = false
-          })
-        }
-      })
-    },
-    handleCancelForResetPassword () {
-      this.resetPasswordConfirmLoading = false
-      this.visibleResetPassword = false
-    },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
-    },
-    handleConfirmBlur  (e) {
-      const value = e.target.value
-      this.confirmDirty = this.confirmDirty || !!value
-    },
-    compareToFirstPassword  (rule, value, callback) {
-      const form = this.form
-      if (value && value !== form.getFieldValue('password')) {
-        callback(new Error('Two passwords that you enter is inconsistent!'))
-      } else {
-        callback()
-      }
-    },
-    validateToNextPassword  (rule, value, callback) {
-      const form = this.form
-      if (value && this.confirmDirty) {
-        form.validateFields(['confirm'], { force: true })
-      }
-      callback()
     }
   },
   watch: {
