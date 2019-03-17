@@ -4,16 +4,13 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="用户名">
-              <a-input placeholder="请输入" v-model="queryParam.username"/>
+            <a-form-item label="角色名">
+              <a-input placeholder="请输入" v-model="queryParam.roleName"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
-            <a-form-item label="状态">
-              <a-select placeholder="请选择" default-value="" v-model="queryParam.status">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
-              </a-select>
+            <a-form-item label="角色标识">
+              <a-input placeholder="请输入" v-model="queryParam.roleSign"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -31,9 +28,6 @@
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" v-if="checkPermission('sys:user:batch')" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
-          <!-- lock | unlock -->
-          <a-menu-item key="2" v-if="checkPermission('sys:user:disable')" @click="handleBatchDisable(selectedRowKeys)"><a-icon type="lock" />锁定</a-menu-item>
-          <a-menu-item key="3" v-if="checkPermission('sys:user:enable')" @click="handleBatchEnable(selectedRowKeys)"><a-icon type="unlock" />解锁</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px">
           批量操作 <a-icon type="down" />
@@ -46,7 +40,7 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="userId"
+      rowKey="roleId"
       :alert="options.alert"
       :rowSelection="options.rowSelection"
     >
@@ -63,12 +57,6 @@
             更多 <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;">详情</a>
-            </a-menu-item>
-            <a-menu-item v-if="checkPermission('sys:user:reset')">
-              <a href="javascript:;" @click="$refs.modalResetPassword.handleResetPassword(record)">重置密码</a>
-            </a-menu-item>
             <a-menu-item v-if="checkPermission('sys:user:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>
@@ -77,9 +65,7 @@
       </span>
     </s-table>
 
-    <user-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></user-modal>
-
-    <user-modal-reset-password ref="modalResetPassword"></user-modal-reset-password>
+    <role-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></role-modal>
 
   </a-card>
 </template>
@@ -87,53 +73,42 @@
 <script>
 import STable from '@/components/table/'
 import checkPermission from '@/utils/permissions'
-import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
-import UserModal from './UserModal'
-import UserModalResetPassword from './UserModalResetPassword'
+import { roleList, roleDelete, batchRoleDelete } from '@/api/system/role'
+import RoleModal from './RoleModal'
 
 export default {
   name: 'UserList',
   components: {
-    UserModalResetPassword,
-    UserModal,
+    RoleModal,
     STable
   },
   data () {
     return {
       description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
-      selectStatus: [
-        { statusCode: 1, statusText: '正常' },
-        { statusCode: 0, statusText: '锁定' }
-      ],
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
       queryParam: {
-        username: '',
-        status: ''
+        roleName: '',
+        roleSign: ''
       },
       // 表头
       columns: [
         {
           title: 'ID',
-          dataIndex: 'userId'
+          dataIndex: 'roleId'
         },
         {
-          title: '用户名',
-          dataIndex: 'username'
+          title: '角色名',
+          dataIndex: 'roleName'
         },
         {
-          title: '邮箱',
-          dataIndex: 'email'
+          title: '角色标识',
+          dataIndex: 'roleSign'
         },
         {
-          title: '手机号',
-          dataIndex: 'mobile'
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          scopedSlots: { customRender: 'status' }
+          title: '备注',
+          dataIndex: 'remark'
         },
         {
           title: '创建时间',
@@ -148,7 +123,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return userList(Object.assign(parameter, this.queryParam))
+        return roleList(Object.assign(parameter, this.queryParam))
           .then(res => {
             return res
           }).catch(e => {
@@ -167,34 +142,14 @@ export default {
       }
     }
   },
-  filters: {
-    statusFilterIcon (status) {
-      const statusMap = {
-        1: 'success',
-        null: 'success',
-        undefined: 'success',
-        0: 'error'
-      }
-      return statusMap[status]
-    },
-    statusFilterText (status) {
-      const statusMap = {
-        1: '正常',
-        null: '正常',
-        undefined: '正常',
-        0: '锁定'
-      }
-      return statusMap[status]
-    }
-  },
   methods: {
     checkPermission,
     handleFilter () {
       this.$refs.table.refresh(true)
     },
     clearFilter () {
-      this.queryParam.username = ''
-      this.queryParam.status = ''
+      this.queryParam.roleName = ''
+      this.queryParam.roleSign = ''
     },
     handleTableRefresh (boolean) {
       this.$refs.table.refresh(boolean)
@@ -204,11 +159,11 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除用户' + record.username + '吗 ?',
+        content: '真的要删除角色' + record.username + '吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return userDelete(record.userId).then(() => {
+          return roleDelete(record.userId).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)
@@ -227,58 +182,12 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除选中用户吗 ?',
+        content: '真的要删除选中角色吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return batchUserDelete(selectedRowKeys).then(() => {
+          return batchRoleDelete(selectedRowKeys).then(() => {
             that.$message.success('删除成功')
-          }).catch(err => {
-            that.$message.error(err.msg)
-          }).finally(() => {
-            that.$refs.table.refresh(false)
-            // 批量删除完毕后清空复选框
-            that.$refs.table.clearSelected()
-          })
-        },
-        onCancel () {
-        }
-      })
-    },
-    handleBatchDisable (selectedRowKeys) {
-      const that = this
-      this.$confirm({
-        type: 'error',
-        title: '提示',
-        content: '真的要锁定选中用户吗 ?',
-        okType: 'danger',
-        okText: '锁定',
-        onOk () {
-          return userDisable(selectedRowKeys).then(() => {
-            that.$message.success('锁定成功')
-          }).catch(err => {
-            that.$message.error(err.msg)
-          }).finally(() => {
-            that.$refs.table.refresh(false)
-            // 批量删除完毕后清空复选框
-            that.$refs.table.clearSelected()
-          })
-        },
-        onCancel () {
-        }
-      })
-    },
-    handleBatchEnable (selectedRowKeys) {
-      const that = this
-      this.$confirm({
-        type: 'error',
-        title: '提示',
-        content: '真的要解锁选中用户吗 ?',
-        okType: 'danger',
-        okText: '解锁',
-        onOk () {
-          return userEnable(selectedRowKeys).then(() => {
-            that.$message.success('解锁成功')
           }).catch(err => {
             that.$message.error(err.msg)
           }).finally(() => {
