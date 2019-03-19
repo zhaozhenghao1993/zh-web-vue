@@ -15,63 +15,34 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'roleId', {rules: []} ]" disabled="disabled" />
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="用户名"
+        label="角色名"
         hasFeedback
       >
-        <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]"/>
+        <a-input placeholder="请输入角色名" v-decorator="['roleName',{rules: [{required: true, message: '请输入角色名!'}]}]"/>
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="密码"
+        label="角色标识"
         hasFeedback
       >
-        <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="passwordInputDisabled" />
+        <a-input placeholder="请输入角色标识, 例：admin" v-decorator="['roleSign',{rules: [{required: true, message: '请输入角色标识!'}]}]"/>
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="请确认密码"
+        label="备注"
         hasFeedback
       >
-        <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="passwordInputDisabled" @blur="handleConfirmBlur"/>
-      </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="E-mail"
-        hasFeedback
-      >
-        <a-input v-decorator="['email',{rules: [{type: 'email', message: '输入的E-mail格式不正确!'}]}]"/>
-      </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="手机号"
-        hasFeedback
-      >
-        <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: '输入的手机号格式不正确!' }], validateTrigger: 'change'}]"/>
-      </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="状态"
-        hasFeedback
-      >
-        <a-select v-decorator="['status', {rules: []}]">
-          <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
-        </a-select>
+        <a-input v-decorator="['remark', {rules: []}]"/>
       </a-form-item>
 
       <a-divider />
@@ -80,7 +51,7 @@
 </template>
 
 <script>
-import { userSave, userEdit } from '@/api/system/user'
+import { roleSave, roleEdit } from '@/api/system/role'
 import pick from 'lodash.pick'
 
 export default {
@@ -99,12 +70,7 @@ export default {
       },
       form: this.$form.createForm(this),
       modal: {},
-      modalStatus: 'create',
-      passwordInputDisabled: false,
-      selectStatus: [
-        { statusCode: 1, statusText: '正常' },
-        { statusCode: 0, statusText: '锁定' }
-      ]
+      modalStatus: 'create'
     }
   },
   props: {
@@ -117,26 +83,21 @@ export default {
     handleCreate () {
       // 每次都重置form表单
       this.form.resetFields()
-      this.passwordInputDisabled = false
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { userId: 0, status: 1 })
+      this.modal = Object.assign({}, { roleId: 0 })
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'roleId', 'roleName', 'roleSign', 'remark'))
       })
     },
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
-      // 如果是修改操作, 则password disabled 制空
-      this.passwordInputDisabled = true
       this.modalStatus = 'edit'
       this.modal = Object.assign({}, record)
-      this.modal.password = '******'
-      this.modal.confirm = '******'
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'roleId', 'roleName', 'roleSign', 'remark'))
       })
     },
     handleOk (e) {
@@ -145,7 +106,7 @@ export default {
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           if (this.modalStatus === 'create') {
-            userSave(values).then(() => {
+            roleSave(values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -158,7 +119,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            userEdit(values.userId, values).then(() => {
+            roleEdit(values.roleId, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -179,25 +140,6 @@ export default {
     handleCancel () {
       this.$emit('close')
       this.visible = false
-    },
-    handleConfirmBlur  (e) {
-      const value = e.target.value
-      this.confirmDirty = this.confirmDirty || !!value
-    },
-    compareToFirstPassword  (rule, value, callback) {
-      const form = this.form
-      if (value && value !== form.getFieldValue('password')) {
-        callback(new Error('Two passwords that you enter is inconsistent!'))
-      } else {
-        callback()
-      }
-    },
-    validateToNextPassword  (rule, value, callback) {
-      const form = this.form
-      if (value && this.confirmDirty) {
-        form.validateFields(['confirm'], { force: true })
-      }
-      callback()
     }
   }
 }
