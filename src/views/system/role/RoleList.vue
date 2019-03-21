@@ -159,11 +159,11 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除角色' + record.username + '吗 ?',
+        content: '真的要删除角色' + record.roleName + '吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return roleDelete(record.userId).then(() => {
+          return roleDelete(record.roleId).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)
