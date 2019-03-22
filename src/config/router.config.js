@@ -63,7 +63,7 @@ export const asyncRouterMap = [
           {
             path: '/sys/menu',
             name: 'TreeList',
-            component: () => import('@/views/list/TreeList'),
+            component: () => import('@/views/system/menu/MenuList'),
             meta: { title: '权限管理', keepAlive: true, permission: [ 'sys:menu' ] }
           }
         ]

@@ -1,38 +1,9 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
-            <a-form-item label="角色名">
-              <a-input placeholder="请输入" v-model="queryParam.roleName"/>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="角色标识">
-              <a-input placeholder="请输入" v-model="queryParam.roleSign"/>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <span class="table-page-search-submitButtons">
-              <a-button type="primary" @click="handleFilter">查询</a-button>
-              <a-button style="margin-left: 8px" @click="clearFilter">重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
 
     <div class="table-operator">
-      <a-button type="primary" v-if="checkPermission('sys:role:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" v-if="checkPermission('sys:role:batch')" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px">
-          批量操作 <a-icon type="down" />
-        </a-button>
-      </a-dropdown>
+      <a-button type="primary" v-if="checkPermission('sys:user:save')" icon="sync" @click="handleFilter()">刷新</a-button>
+      <a-button type="primary" v-if="checkPermission('sys:user:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
     </div>
 
     <s-table
@@ -40,19 +11,26 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="roleId"
-      :alert="options.alert"
-      :rowSelection="options.rowSelection"
+      rowKey="menuId"
+      :showSizeChanger="false"
     >
+      <template
+        slot="type"
+        slot-scope="type">
+        <a-tag v-if="type === 0" color="cyan">目录</a-tag>
+        <a-tag v-else-if="type === 1" color="green">菜单</a-tag>
+        <a-tag v-else-if="type === 2" color="orange">按钮</a-tag>
+        <a-tag v-else-if="type === 3" color="purple">链接</a-tag>
+      </template>
       <span slot="action" slot-scope="text, record">
-        <a v-if="checkPermission('sys:role:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
+        <a v-if="checkPermission('sys:user:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link">
             更多 <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
-            <a-menu-item v-if="checkPermission('sys:role:remove')">
+            <a-menu-item v-if="checkPermission('sys:user:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>
           </a-menu>
@@ -60,7 +38,7 @@
       </span>
     </s-table>
 
-    <role-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></role-modal>
+    <menu-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></menu-modal>
 
   </a-card>
 </template>
@@ -68,13 +46,13 @@
 <script>
 import STable from '@/components/table/'
 import checkPermission from '@/utils/permissions'
-import { roleList, roleDelete, batchRoleDelete } from '@/api/system/role'
-import RoleModal from './RoleModal'
+import { menuList, menuDelete } from '@/api/system/menu'
+import MenuModal from './MenuModal'
 
 export default {
   name: 'UserList',
   components: {
-    RoleModal,
+    MenuModal,
     STable
   },
   data () {
@@ -90,25 +68,27 @@ export default {
       // 表头
       columns: [
         {
-          title: 'ID',
-          dataIndex: 'roleId'
+          title: '名称',
+          dataIndex: 'name'
         },
         {
-          title: '角色名',
-          dataIndex: 'roleName'
+          title: '上级菜单',
+          dataIndex: 'parentName'
         },
         {
-          title: '角色标识',
-          dataIndex: 'roleSign'
+          title: '类型',
+          dataIndex: 'type',
+          scopedSlots: { customRender: 'type' }
         },
         {
-          title: '备注',
-          dataIndex: 'remark'
-        },
-        {
-          title: '创建时间',
-          dataIndex: 'createTime',
-          sorter: true
+          title: 'uri',
+          dataIndex: 'uri'
+        }, {
+          title: 'method',
+          dataIndex: 'method'
+        }, {
+          title: '授权标识',
+          dataIndex: 'perms'
         }, {
           title: '操作',
           width: '150px',
@@ -118,7 +98,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return roleList(Object.assign(parameter, this.queryParam))
+        return menuList(Object.assign(parameter, this.queryParam))
           .then(res => {
             return res
           }).catch(e => {
@@ -158,30 +138,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return roleDelete(record.roleId).then(() => {
-            that.$message.success('删除成功')
-          }).catch(err => {
-            that.$message.error(err.msg)
-          }).finally(() => {
-            that.$refs.table.refresh(false)
-            // 批量删除完毕后清空复选框
-            that.$refs.table.clearSelected()
-          })
-        },
-        onCancel () {
-        }
-      })
-    },
-    handleBatchDelete (selectedRowKeys) {
-      const that = this
-      this.$confirm({
-        type: 'error',
-        title: '提示',
-        content: '真的要删除选中角色吗 ?',
-        okType: 'danger',
-        okText: '删除',
-        onOk () {
-          return batchRoleDelete(selectedRowKeys).then(() => {
+          return menuDelete(record.roleId).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

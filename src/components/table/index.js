@@ -141,6 +141,13 @@ export default {
               this.localPagination.pageSize
           })
 
+          // 防止当前数据为空，没有长度，为undefined  再次搜索导致 “ Invalid prop: custom validator check failed for prop "pagination" ”
+          if (r.data === undefined) {
+            this.localDataSource = r.data // 返回结果中的数组数据
+            this.localLoading = false
+            return
+          }
+
           // 为防止删除数据后导致页面当前页面数据长度为 0 ,自动翻页到上一页
           if (r.data.length === 0 && this.localPagination.current !== 1) {
             this.localPagination.current--
