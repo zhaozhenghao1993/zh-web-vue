@@ -144,8 +144,6 @@ export default {
             that.$message.error(err.msg)
           }).finally(() => {
             that.$refs.table.refresh(false)
-            // 批量删除完毕后清空复选框
-            that.$refs.table.clearSelected()
           })
         },
         onCancel () {
