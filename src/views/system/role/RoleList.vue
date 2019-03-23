@@ -154,7 +154,7 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除角色' + record.roleName + '吗 ?',
+        content: '真的要删除角色<' + record.roleName + '>吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {

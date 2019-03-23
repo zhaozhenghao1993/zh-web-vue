@@ -30,3 +30,11 @@ export function menuDelete (id) {
     method: 'delete'
   })
 }
+
+export function menuTree (parameter) {
+  return axios({
+    url: '/sys/menu/tree',
+    method: 'get',
+    params: parameter
+  })
+}

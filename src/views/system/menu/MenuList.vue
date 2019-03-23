@@ -134,11 +134,11 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除角色' + record.roleName + '吗 ?',
+        content: '真的要删除菜单<' + record.name + '>吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return menuDelete(record.roleId).then(() => {
+          return menuDelete(record.menuId).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

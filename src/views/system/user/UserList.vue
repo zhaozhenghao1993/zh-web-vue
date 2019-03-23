@@ -204,7 +204,7 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除用户' + record.username + '吗 ?',
+        content: '真的要删除用户<' + record.username + '>吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {

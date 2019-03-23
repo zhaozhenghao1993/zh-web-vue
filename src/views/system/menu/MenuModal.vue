@@ -42,9 +42,19 @@
         :wrapperCol="wrapperCol"
         label="上级菜单ID"
         hasFeedback
-        v-show="true"
+        v-show="false"
       >
-        <a-input placeholder="请输入角色标识, 例：admin" v-decorator="['parentId',{rules: [{required: true, message: '请输入菜单!'}]}]"/>
+        <a-input placeholder="请输入角色标识, 例：admin" v-decorator="['parentId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+      </a-form-item>
+
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="上级菜单名称"
+        hasFeedback
+        v-show="false"
+      >
+        <a-input placeholder="请输入角色标识, 例：admin" v-decorator="['parentName',{rules: [{required: true, message: '请输入菜单名称!'}]}]"/>
       </a-form-item>
 
       <a-form-item
@@ -53,7 +63,17 @@
         label="上级菜单"
         hasFeedback
       >
-        <a-input placeholder="上级菜单" v-decorator="['parentName',{rules: [{required: true, message: '请输入菜单!'}]}]"/>
+        <a-tree-select
+          v-model="selectTree"
+          showSearch
+          :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+          :treeData="treeData"
+          placeholder="Please select"
+          :treeDefaultExpandedKeys="treeExpandedKeys"
+          treeNodeFilterProp="title"
+          @change="onChange"
+        >
+        </a-tree-select>
       </a-form-item>
 
       <a-form-item
@@ -109,7 +129,7 @@
 </template>
 
 <script>
-/* import { menuSave, menuEdit } from '@/api/system/menu' */
+import { menuSave, menuEdit, menuTree } from '@/api/system/menu'
 import pick from 'lodash.pick'
 
 export default {
@@ -135,7 +155,10 @@ export default {
         { radioCode: 1, radioText: '菜单' },
         { radioCode: 2, radioText: '按钮' },
         { radioCode: 3, radioText: '链接' }
-      ]
+      ],
+      treeData: [],
+      selectTree: '',
+      treeExpandedKeys: []
     }
   },
   props: {
@@ -148,8 +171,12 @@ export default {
     handleCreate () {
       // 每次都重置form表单
       this.form.resetFields()
+      this.treeExpandedKeys = []
+      this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { menuId: 0, type: 0 })
+      this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: '主目录', parentId: 0 })
+      this.selectTree = '0'
+      this.treeExpandedKeys.push('0')
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'menuId', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
@@ -158,8 +185,12 @@ export default {
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
+      this.treeExpandedKeys = []
+      this.loadData()
       this.modalStatus = 'edit'
-      this.modal = Object.assign({}, record)
+      this.modal = Object.assign({ parentName: '主目录' }, record)
+      this.selectTree = record.parentId + ''
+      this.treeExpandedKeys.push(record.parentId + '')
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'menuId', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
@@ -172,11 +203,10 @@ export default {
         if (!err) {
           if (values.type === 0 || values.type === 1) {
             // 如果为 目录或菜单，就将 uri 和 method 制空
-            values.uri = null
-            values.method = null
+            values.uri = ''
+            values.method = ''
           }
-          console.log('values', values)
-          /* if (this.modalStatus === 'create') {
+          if (this.modalStatus === 'create') {
             menuSave(values).then(() => {
               // Do something
               this.$message.success('保存成功')
@@ -190,7 +220,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            menuEdit(values.roleId, values).then(() => {
+            menuEdit(values.menuId, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -202,7 +232,7 @@ export default {
               this.$message.error('保存失败')
               this.confirmLoading = false
             })
-          } */
+          }
           this.confirmLoading = false
         } else {
           this.confirmLoading = false
@@ -212,6 +242,15 @@ export default {
     handleCancel () {
       this.$emit('close')
       this.visible = false
+    },
+    loadData () {
+      menuTree({ isNotButton: true }).then(res => {
+        this.treeData = res.data
+      }).catch(e => {
+      })
+    },
+    onChange (value, label) {
+      this.form.setFieldsValue({ parentName: label[0], parentId: value })
     }
   }
 }
