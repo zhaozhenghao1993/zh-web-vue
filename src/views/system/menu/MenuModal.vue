@@ -125,7 +125,11 @@
 
       <a-divider orientation="left">注意事项</a-divider>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;权限管理只将需要权限管理的接口和按钮登记到后台，对于左侧菜单栏 排序、icon 显示，
-        则需前端 code 修改，注意 route 权限与权限管理的&lt;授权标识&gt;保持一致。排序与上级菜单的选择,则是为了展示更直观的 Tree 结构。</p>
+        则需前端 code 修改，注意 route 权限与权限管理的&lt;授权标识&gt;保持一致。排序与上级菜单的选择,则是为了展示更直观的 Tree 结构。<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red">uri 支持 restful 格式，但目前只匹配 数字、id 等number类型的字符，
+          格式为 /sys/user/{id} ==> 只匹配 /sys/user/1 ，而不匹配 /sys/user/one
+        </span>
+      </p>
     </a-form>
   </a-modal>
 </template>
