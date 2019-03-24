@@ -2,8 +2,8 @@
   <a-card :bordered="false">
 
     <div class="table-operator">
-      <a-button type="primary" v-if="checkPermission('sys:user:save')" icon="sync" @click="handleFilter()">刷新</a-button>
-      <a-button type="primary" v-if="checkPermission('sys:user:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
+      <a-button type="primary" icon="sync" @click="handleFilter()">刷新</a-button>
+      <a-button type="primary" v-if="checkPermission('sys:menu:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
     </div>
 
     <s-table
@@ -23,14 +23,14 @@
         <a-tag v-else-if="type === 3" color="purple">链接</a-tag>
       </template>
       <span slot="action" slot-scope="text, record">
-        <a v-if="checkPermission('sys:user:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
+        <a v-if="checkPermission('sys:menu:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link">
             更多 <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
-            <a-menu-item v-if="checkPermission('sys:user:remove')">
+            <a-menu-item v-if="checkPermission('sys:menu:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>
           </a-menu>
@@ -62,8 +62,6 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {
-        roleName: '',
-        roleSign: ''
       },
       // 表头
       columns: [
@@ -103,17 +101,6 @@ export default {
             return res
           }).catch(e => {
           })
-      },
-
-      selectedRowKeys: [],
-      selectedRows: [],
-      // custom table alert & rowSelection
-      options: {
-        alert: { show: true, clear: true },
-        rowSelection: {
-          selectedRowKeys: this.selectedRowKeys,
-          onChange: this.onSelectChange
-        }
       }
     }
   },
@@ -149,13 +136,6 @@ export default {
         onCancel () {
         }
       })
-    },
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    toggleAdvanced () {
-      this.advanced = !this.advanced
     }
   }
 }

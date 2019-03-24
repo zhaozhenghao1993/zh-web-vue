@@ -38,3 +38,10 @@ export function batchRoleDelete (parameter) {
     data: parameter
   })
 }
+
+export function roleInfo (id) {
+  return axios({
+    url: '/sys/role/' + id,
+    method: 'get'
+  })
+}

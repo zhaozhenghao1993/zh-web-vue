@@ -53,6 +53,9 @@
           </a>
           <a-menu slot="overlay">
             <a-menu-item v-if="checkPermission('sys:role:remove')">
+              <a href="javascript:;" @click="$refs.treeModal.handleAuthorize(record)">分配权限</a>
+            </a-menu-item>
+            <a-menu-item v-if="checkPermission('sys:role:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>
           </a-menu>
@@ -62,6 +65,8 @@
 
     <role-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></role-modal>
 
+    <menu-tree-modal ref="treeModal" :tableRefresh="this.handleTableRefresh"></menu-tree-modal>
+
   </a-card>
 </template>
 
@@ -70,11 +75,13 @@ import STable from '@/components/table/'
 import checkPermission from '@/utils/permissions'
 import { roleList, roleDelete, batchRoleDelete } from '@/api/system/role'
 import RoleModal from './RoleModal'
+import MenuTreeModal from '../menu/MenuTreeModal'
 
 export default {
   name: 'UserList',
   components: {
     RoleModal,
+    MenuTreeModal,
     STable
   },
   data () {

@@ -44,8 +44,6 @@
       >
         <a-input v-decorator="['remark', {rules: []}]"/>
       </a-form-item>
-
-      <a-divider />
     </a-form>
   </a-modal>
 </template>

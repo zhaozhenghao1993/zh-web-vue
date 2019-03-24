@@ -111,7 +111,7 @@
         label="排序"
         hasFeedback
       >
-        <a-input v-decorator="['orderNum',{rules: [{ pattern: /^[0-9]+$/, message: '请输入数字' }]}]" />
+        <a-input-number v-decorator="['orderNum',{rules: [{ pattern: /^[0-9]+$/, message: '请输入数字' }]}]" />
       </a-form-item>
 
       <a-form-item
@@ -123,7 +123,9 @@
         <a-input v-decorator="['description', {rules: []}]"/>
       </a-form-item>
 
-      <a-divider />
+      <a-divider orientation="left">注意事项</a-divider>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;权限管理只将需要权限管理的接口和按钮登记到后台，对于左侧菜单栏 排序、icon 显示，
+        则需前端 code 修改，注意 route 权限与权限管理的&lt;授权标识&gt;保持一致。排序与上级菜单的选择,则是为了展示更直观的 Tree 结构。</p>
     </a-form>
   </a-modal>
 </template>
