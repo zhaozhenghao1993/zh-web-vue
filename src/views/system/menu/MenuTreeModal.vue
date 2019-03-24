@@ -11,7 +11,9 @@
       <div style="height: 500px; overflow: auto">
         <a-tree
           checkable
+          @expand="onExpand"
           :checkStrictly="true"
+          :expandedKeys="expandedKeys"
           v-model="checkedKeys"
           :treeData="treeData"
         />
@@ -42,6 +44,7 @@ export default {
       modal: {},
       treeData: [],
       checkedKeys: [],
+      expandedKeys: [],
       spinning: false
     }
   },
@@ -54,6 +57,8 @@ export default {
   methods: {
     handleAuthorize (record) {
       this.spinning = true
+      this.checkedKeys = []
+      this.expandedKeys = []
       this.loadData()
       this.loadRoleInfo(record.roleId)
       this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: '主目录', parentId: 0 })
@@ -116,10 +121,20 @@ export default {
     },
     loadRoleInfo (id) {
       roleInfo(id).then(res => {
-        this.checkedKeys = res.data.menuIdList
+        if (res.data.menuIdList !== undefined) {
+          this.checkedKeys = res.data.menuIdList
+          this.expandedKeys = res.data.menuIdList
+        }
         this.spinning = false
       }).catch(e => {
       })
+    },
+    onExpand (expandedKeys) {
+      console.log('onExpand', expandedKeys)
+      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+      // or, you can remove all expanded children keys.
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
     }
   }
 }
