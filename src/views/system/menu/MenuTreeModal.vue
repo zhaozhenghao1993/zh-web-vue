@@ -24,8 +24,7 @@
 
 <script>
 import { menuTree } from '@/api/system/menu'
-import { roleInfo } from '@/api/system/role'
-// import pick from 'lodash.pick'
+import { roleInfo, roleAuthorize } from '@/api/system/role'
 
 export default {
   name: 'UserModal',
@@ -41,7 +40,7 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      modal: {},
+      role: {},
       treeData: [],
       checkedKeys: [],
       expandedKeys: [],
@@ -59,6 +58,7 @@ export default {
       this.spinning = true
       this.checkedKeys = []
       this.expandedKeys = []
+      this.role = record
       this.loadData()
       this.loadRoleInfo(record.roleId)
       this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: '主目录', parentId: 0 })
@@ -67,47 +67,18 @@ export default {
     handleOk (e) {
       e.preventDefault()
       this.confirmLoading = true
-      console.log('checkedKeys', this.checkedKeys)
-      this.confirmLoading = false
-      /* this.form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          if (values.type === 0 || values.type === 1) {
-            // 如果为 目录或菜单，就将 uri 和 method 制空
-            values.uri = ''
-            values.method = ''
-          }
-          if (this.modalStatus === 'create') {
-            menuSave(values).then(() => {
-              // Do something
-              this.$message.success('保存成功')
-              this.$emit('ok')
-              this.tableRefresh(true)
-              this.confirmLoading = false
-              this.visible = false
-            }).catch(() => {
-              // Do something
-              this.$message.error('保存失败')
-              this.confirmLoading = false
-            })
-          } else if (this.modalStatus === 'edit') {
-            menuEdit(values.menuId, values).then(() => {
-              // Do something
-              this.$message.success('保存成功')
-              this.$emit('ok')
-              this.tableRefresh(false)
-              this.confirmLoading = false
-              this.visible = false
-            }).catch(() => {
-              // Do something
-              this.$message.error('保存失败')
-              this.confirmLoading = false
-            })
-          }
-          this.confirmLoading = false
-        } else {
-          this.confirmLoading = false
-        }
-      }) */
+      roleAuthorize(this.role.roleId, this.checkedKeys.checked).then(() => {
+        // Do something
+        this.$message.success('保存成功')
+        this.$emit('ok')
+        this.tableRefresh(false)
+        this.confirmLoading = false
+        this.visible = false
+      }).catch(() => {
+        // Do something
+        this.$message.error('保存失败')
+        this.confirmLoading = false
+      })
     },
     handleCancel () {
       this.$emit('close')
@@ -130,7 +101,6 @@ export default {
       })
     },
     onExpand (expandedKeys) {
-      console.log('onExpand', expandedKeys)
       // if not set autoExpandParent to false, if children expanded, parent can not collapse.
       // or, you can remove all expanded children keys.
       this.expandedKeys = expandedKeys

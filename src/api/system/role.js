@@ -45,3 +45,11 @@ export function roleInfo (id) {
     method: 'get'
   })
 }
+
+export function roleAuthorize (id, parameter) {
+  return axios({
+    url: '/sys/role/' + id + '/authorize',
+    method: 'put',
+    data: parameter
+  })
+}
