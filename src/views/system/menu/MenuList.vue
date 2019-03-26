@@ -74,6 +74,10 @@ export default {
           dataIndex: 'parentName'
         },
         {
+          title: '排序',
+          dataIndex: 'orderNum'
+        },
+        {
           title: '类型',
           dataIndex: 'type',
           scopedSlots: { customRender: 'type' }

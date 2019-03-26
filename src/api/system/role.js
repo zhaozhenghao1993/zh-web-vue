@@ -53,3 +53,10 @@ export function roleAuthorize (id, parameter) {
     data: parameter
   })
 }
+
+export function roleSelect () {
+  return axios({
+    url: '/sys/role/select',
+    method: 'get'
+  })
+}

@@ -32,14 +32,6 @@ export default {
     return {
       visible: false,
       confirmLoading: false,
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
-      },
       role: {},
       treeData: [],
       checkedKeys: [],
