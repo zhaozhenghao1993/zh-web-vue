@@ -62,3 +62,10 @@ export function userDisable (parameter) {
     data: parameter
   })
 }
+
+export function userInfo (id) {
+  return axios({
+    url: '/sys/user/' + id,
+    method: 'get'
+  })
+}

@@ -82,10 +82,10 @@
           :wrapperCol="wrapperCol"
           label="角色"
         >
-          <a-checkbox-group @change="onChange">
+          <a-checkbox-group @change="onChange" :defaultValue="userRoleList">
             <a-row>
               <a-col :span="8" v-for="role in roleList" :key="role.roleId">
-                <a-checkbox :value="role.roleId">{{ role.roleName }}</a-checkbox>
+                <a-checkbox :value="role.roleId" :checked="checkedJudge(userRoleList, role.roleId)">{{ role.roleName }}</a-checkbox>
               </a-col>
             </a-row>
           </a-checkbox-group>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { userSave, userEdit } from '@/api/system/user'
+import { userSave, userEdit, userInfo } from '@/api/system/user'
 import { roleSelect } from '@/api/system/role'
 import pick from 'lodash.pick'
 
@@ -123,7 +123,8 @@ export default {
         { statusCode: 0, statusText: '锁定' }
       ],
       spinning: false,
-      roleList: []
+      roleList: [],
+      userRoleList: []
     }
   },
   props: {
@@ -136,6 +137,7 @@ export default {
     handleCreate () {
       // 每次都重置form表单
       this.form.resetFields()
+      this.userRoleList = []
       this.spinning = true
       // 加载角色列表
       this.loadRoleSelect()
@@ -150,9 +152,10 @@ export default {
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
+      this.userRoleList = []
       this.spinning = true
       // 加载角色列表
-      this.loadRoleSelect()
+      this.loadRoleSelect(record.userId)
       // 如果是修改操作, 则password disabled 制空
       this.passwordInputDisabled = true
       this.modalStatus = 'edit'
@@ -224,18 +227,40 @@ export default {
       }
       callback()
     },
-    loadRoleSelect () {
+    loadRoleSelect (id) {
       roleSelect().then(res => {
         if (res.data !== undefined) {
           console.log(res.data)
           this.roleList = res.data
+          if (id !== undefined) {
+            // 如果当前是编辑则加载该用户角色信息
+            this.loadUserInfo(id)
+          } else {
+            this.spinning = false
+          }
         }
+      }).catch(e => {
+      })
+    },
+    loadUserInfo (id) {
+      userInfo(id).then(res => {
+        console.log(res.data)
+        this.userRoleList = res.data.roleIdList
         this.spinning = false
       }).catch(e => {
       })
     },
     onChange (checkedValues) {
       console.log('checked = ', checkedValues)
+    },
+    checkedJudge (arr, obj) {
+      var i = arr.length
+      while (i--) {
+        if (arr[i] === obj) {
+          return true
+        }
+      }
+      return false
     }
   }
 }
