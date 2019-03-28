@@ -5,6 +5,7 @@
     v-model="visible"
     :confirmLoading="confirmLoading"
     @ok="handleOk"
+    :destroyOnClose="true"
   >
     <a-spin :spinning="spinning">
       <a-form :form="form">
@@ -82,10 +83,10 @@
           :wrapperCol="wrapperCol"
           label="角色"
         >
-          <a-checkbox-group @change="onChange" :defaultValue="userRoleList">
+          <a-checkbox-group v-model="userRoleList">
             <a-row>
               <a-col :span="8" v-for="role in roleList" :key="role.roleId">
-                <a-checkbox :value="role.roleId" :checked="checkedJudge(userRoleList, role.roleId)">{{ role.roleName }}</a-checkbox>
+                <a-checkbox :value="role.roleId">{{ role.roleName }}</a-checkbox>
               </a-col>
             </a-row>
           </a-checkbox-group>
@@ -172,6 +173,7 @@ export default {
       this.confirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          values.roleIdList = this.userRoleList
           if (this.modalStatus === 'create') {
             userSave(values).then(() => {
               // Do something
@@ -244,23 +246,12 @@ export default {
     },
     loadUserInfo (id) {
       userInfo(id).then(res => {
-        console.log(res.data)
-        this.userRoleList = res.data.roleIdList
+        if (res.data.roleIdList !== undefined) {
+          this.userRoleList = res.data.roleIdList
+        }
         this.spinning = false
       }).catch(e => {
       })
-    },
-    onChange (checkedValues) {
-      console.log('checked = ', checkedValues)
-    },
-    checkedJudge (arr, obj) {
-      var i = arr.length
-      while (i--) {
-        if (arr[i] === obj) {
-          return true
-        }
-      }
-      return false
     }
   }
 }
