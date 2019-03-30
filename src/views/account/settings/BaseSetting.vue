@@ -3,50 +3,29 @@
     <a-row :gutter="16">
       <a-col :md="24" :lg="16">
 
-        <a-form layout="vertical">
+        <a-form :form="form" layout="vertical">
           <a-form-item
-            label="昵称"
+            label="姓名"
           >
-            <a-input placeholder="给自己起个名字" />
+            <a-input placeholder="给自己起个名字" v-decorator="['name',{rules: [{required: true, message: '请输入姓名!'}]}]" />
           </a-form-item>
+
           <a-form-item
-            label="Bio"
+            label="手机号"
+            :required="false"
           >
-            <a-textarea rows="4" placeholder="You are not alone."/>
+            <a-input placeholder="搞个手机号" v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: '输入的手机号格式不正确!' }], validateTrigger: 'change'}]"/>
           </a-form-item>
 
           <a-form-item
             label="电子邮件"
             :required="false"
           >
-            <a-input placeholder="exp@admin.com"/>
-          </a-form-item>
-          <a-form-item
-            label="加密方式"
-            :required="false"
-          >
-            <a-select defaultValue="aes-256-cfb">
-              <a-select-option value="aes-256-cfb">aes-256-cfb</a-select-option>
-              <a-select-option value="aes-128-cfb">aes-128-cfb</a-select-option>
-              <a-select-option value="chacha20">chacha20</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item
-            label="连接密码"
-            :required="false"
-          >
-            <a-input placeholder="h3gSbecd"/>
-          </a-form-item>
-          <a-form-item
-            label="登陆密码"
-            :required="false"
-          >
-            <a-input placeholder="密码"/>
+            <a-input placeholder="不整个邮箱？" v-decorator="['email',{rules: [{type: 'email', message: '输入的E-mail格式不正确!'}]}]"/>
           </a-form-item>
 
           <a-form-item>
-            <a-button type="primary">提交</a-button>
-            <a-button style="margin-left: 8px">保存</a-button>
+            <a-button type="primary" @click="handleSubmit" :loading="confirmLoading">保存</a-button>
           </a-form-item>
         </a-form>
 
@@ -71,6 +50,9 @@
 
 <script>
 import AvatarModal from './AvatarModal'
+import { profile } from '@/api/login'
+import store from '@/store'
+import pick from 'lodash.pick'
 
 export default {
   components: {
@@ -94,11 +76,42 @@ export default {
         // 开启宽度和高度比例
         fixed: true,
         fixedNumber: [1, 1]
-      }
+      },
+      form: this.$form.createForm(this),
+      user: {},
+      confirmLoading: false
     }
   },
+  created () {
+    this.loadUserInfo()
+  },
   methods: {
-
+    loadUserInfo () {
+      this.user = store.getters.userInfo
+      this.$nextTick(() => {
+        this.form.setFieldsValue(pick(this.user, 'name', 'email', 'mobile'))
+      })
+    },
+    handleSubmit () {
+      this.confirmLoading = true
+      this.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          profile(values).then(() => {
+            // Do something
+            store.dispatch('GetInfo').then(res => {
+              this.$message.success('保存成功')
+              this.confirmLoading = false
+            })
+          }).catch(() => {
+            // Do something
+            this.$message.error('保存失败')
+            this.confirmLoading = false
+          })
+        } else {
+          this.confirmLoading = false
+        }
+      })
+    }
   }
 }
 </script>

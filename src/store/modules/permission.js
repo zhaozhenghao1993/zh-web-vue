@@ -9,6 +9,7 @@ import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
  */
 function hasPermission (permission, route) {
   if (route.meta && route.meta.permission) {
+    if (permission === undefined) { return false }
     let flag = false
     for (let i = 0, len = permission.length; i < len; i++) {
       flag = route.meta.permission.includes(permission[i])

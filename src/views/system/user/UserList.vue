@@ -102,8 +102,8 @@ export default {
     return {
       description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
       selectStatus: [
-        { statusCode: 1, statusText: '正常' },
-        { statusCode: 0, statusText: '锁定' }
+        { statusCode: 0, statusText: '正常' },
+        { statusCode: 1, statusText: '锁定' }
       ],
       // 高级搜索 展开/关闭
       advanced: false,
@@ -121,6 +121,10 @@ export default {
         {
           title: '用户名',
           dataIndex: 'username'
+        },
+        {
+          title: '姓名',
+          dataIndex: 'name'
         },
         {
           title: '邮箱',
@@ -170,19 +174,19 @@ export default {
   filters: {
     statusFilterIcon (status) {
       const statusMap = {
-        1: 'success',
+        0: 'success',
         null: 'success',
         undefined: 'success',
-        0: 'error'
+        1: 'error'
       }
       return statusMap[status]
     },
     statusFilterText (status) {
       const statusMap = {
-        1: '正常',
+        0: '正常',
         null: '正常',
         undefined: '正常',
-        0: '锁定'
+        1: '锁定'
       }
       return statusMap[status]
     }

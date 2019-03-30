@@ -26,7 +26,16 @@
           label="用户名"
           hasFeedback
         >
-          <a-input placeholder="起一个名字" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]"/>
+          <a-input placeholder="请输入用户名" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]" :disabled="editInputDisabled"/>
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="姓名"
+          hasFeedback
+        >
+          <a-input placeholder="起一个名字" v-decorator="['name',{rules: [{required: true, message: '请输入姓名!'}]}]"/>
         </a-form-item>
 
         <a-form-item
@@ -35,7 +44,7 @@
           label="密码"
           hasFeedback
         >
-          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="passwordInputDisabled" />
+          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="editInputDisabled" />
         </a-form-item>
 
         <a-form-item
@@ -44,7 +53,7 @@
           label="请确认密码"
           hasFeedback
         >
-          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="passwordInputDisabled" @blur="handleConfirmBlur"/>
+          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="editInputDisabled" @blur="handleConfirmBlur"/>
         </a-form-item>
 
         <a-form-item
@@ -84,11 +93,7 @@
           label="角色"
         >
           <a-checkbox-group v-model="userRoleList">
-            <a-row>
-              <a-col :span="8" v-for="role in roleList" :key="role.roleId">
-                <a-checkbox :value="role.roleId">{{ role.roleName }}</a-checkbox>
-              </a-col>
-            </a-row>
+            <a-checkbox v-for="role in roleList" :key="role.roleId" :value="role.roleId">{{ role.roleName }}</a-checkbox>
           </a-checkbox-group>
         </a-form-item>
       </a-form>
@@ -118,10 +123,10 @@ export default {
       form: this.$form.createForm(this),
       modal: {},
       modalStatus: 'create',
-      passwordInputDisabled: false,
+      editInputDisabled: false,
       selectStatus: [
-        { statusCode: 1, statusText: '正常' },
-        { statusCode: 0, statusText: '锁定' }
+        { statusCode: 0, statusText: '正常' },
+        { statusCode: 1, statusText: '锁定' }
       ],
       spinning: false,
       roleList: [],
@@ -142,12 +147,12 @@ export default {
       this.spinning = true
       // 加载角色列表
       this.loadRoleSelect()
-      this.passwordInputDisabled = false
+      this.editInputDisabled = false
       this.modalStatus = 'create'
       this.modal = Object.assign({}, { userId: 0, status: 1 })
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
       })
     },
     handleEdit (record) {
@@ -158,14 +163,14 @@ export default {
       // 加载角色列表
       this.loadRoleSelect(record.userId)
       // 如果是修改操作, 则password disabled 制空
-      this.passwordInputDisabled = true
+      this.editInputDisabled = true
       this.modalStatus = 'edit'
       this.modal = Object.assign({}, record)
       this.modal.password = '******'
       this.modal.confirm = '******'
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
       })
     },
     handleOk (e) {
@@ -232,7 +237,6 @@ export default {
     loadRoleSelect (id) {
       roleSelect().then(res => {
         if (res.data !== undefined) {
-          console.log(res.data)
           this.roleList = res.data
           if (id !== undefined) {
             // 如果当前是编辑则加载该用户角色信息

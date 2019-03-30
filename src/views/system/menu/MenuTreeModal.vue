@@ -59,7 +59,7 @@ export default {
     handleOk (e) {
       e.preventDefault()
       this.confirmLoading = true
-      roleAuthorize(this.role.roleId, this.checkedKeys.checked).then(() => {
+      roleAuthorize(this.role.roleId, this.checkedKeys.checked === undefined ? [] : this.checkedKeys.checked).then(() => {
         // Do something
         this.$message.success('保存成功')
         this.$emit('ok')
