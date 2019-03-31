@@ -5,28 +5,28 @@ let lessNodesAppended
 
 const colorList = [
   {
-    key: '薄暮', color: '#F5222D'
+    key: '薄暮', color: '#F5222D', code: 1
   },
   {
-    key: '火山', color: '#FA541C'
+    key: '火山', color: '#FA541C', code: 2
   },
   {
-    key: '日暮', color: '#FAAD14'
+    key: '日暮', color: '#FAAD14', code: 3
   },
   {
-    key: '明青', color: '#13C2C2'
+    key: '明青', color: '#13C2C2', code: 4
   },
   {
-    key: '极光绿', color: '#52C41A'
+    key: '极光绿', color: '#52C41A', code: 5
   },
   {
-    key: '拂晓蓝（默认）', color: '#1890FF'
+    key: '拂晓蓝（默认）', color: '#1890FF', code: 6
   },
   {
-    key: '极客蓝', color: '#2F54EB'
+    key: '极客蓝', color: '#2F54EB', code: 7
   },
   {
-    key: '酱紫', color: '#722ED1'
+    key: '酱紫', color: '#722ED1', code: 8
   }
 ]
 

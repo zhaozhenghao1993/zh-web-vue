@@ -1,81 +1,103 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
-            <a-form-item label="用户名">
-              <a-input placeholder="请输入" v-model="queryParam.username"/>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="状态">
-              <a-select placeholder="请选择" default-value="" v-model="queryParam.status">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <span class="table-page-search-submitButtons">
-              <a-button type="primary" @click="handleFilter">查询</a-button>
-              <a-button style="margin-left: 8px" @click="clearFilter">重置</a-button>
+    <a-row :gutter="8">
+      <a-col :span="4">
+        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
+        <a-tree
+          @expand="onExpand"
+          :expandedKeys="expandedKeys"
+          :autoExpandParent="autoExpandParent"
+          :treeData="gData"
+        >
+          <template slot="title" slot-scope="{title}">
+            <span v-if="title.indexOf(searchValue) > -1">
+              {{ title.substr(0, title.indexOf(searchValue)) }}
+              <span style="color: #f50">{{ searchValue }}</span>
+              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
             </span>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
+            <span v-else>{{ title }}</span>
+          </template>
+        </a-tree>
+      </a-col>
+      <a-col :span="20">
+        <div class="table-page-search-wrapper">
+          <a-form layout="inline">
+            <a-row :gutter="48">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="用户名">
+                  <a-input placeholder="请输入" v-model="queryParam.username"/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <a-form-item label="状态">
+                  <a-select placeholder="请选择" default-value="" v-model="queryParam.status">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <span class="table-page-search-submitButtons">
+                  <a-button type="primary" @click="handleFilter">查询</a-button>
+                  <a-button style="margin-left: 8px" @click="clearFilter">重置</a-button>
+                </span>
+              </a-col>
+            </a-row>
+          </a-form>
+        </div>
 
-    <div class="table-operator">
-      <a-button type="primary" v-if="checkPermission('sys:user:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" v-if="checkPermission('sys:user:batch')" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
-          <!-- lock | unlock -->
-          <a-menu-item key="2" v-if="checkPermission('sys:user:disable')" @click="handleBatchDisable(selectedRowKeys)"><a-icon type="lock" />锁定</a-menu-item>
-          <a-menu-item key="3" v-if="checkPermission('sys:user:enable')" @click="handleBatchEnable(selectedRowKeys)"><a-icon type="unlock" />解锁</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px">
-          批量操作 <a-icon type="down" />
-        </a-button>
-      </a-dropdown>
-    </div>
+        <div class="table-operator">
+          <a-button type="primary" v-if="checkPermission('sys:user:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
+          <a-dropdown v-if="selectedRowKeys.length > 0">
+            <a-menu slot="overlay">
+              <a-menu-item key="1" v-if="checkPermission('sys:user:batch')" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
+              <!-- lock | unlock -->
+              <a-menu-item key="2" v-if="checkPermission('sys:user:disable')" @click="handleBatchDisable(selectedRowKeys)"><a-icon type="lock" />锁定</a-menu-item>
+              <a-menu-item key="3" v-if="checkPermission('sys:user:enable')" @click="handleBatchEnable(selectedRowKeys)"><a-icon type="unlock" />解锁</a-menu-item>
+            </a-menu>
+            <a-button style="margin-left: 8px">
+              批量操作 <a-icon type="down" />
+            </a-button>
+          </a-dropdown>
+        </div>
 
-    <s-table
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-      rowKey="userId"
-      :alert="options.alert"
-      :rowSelection="options.rowSelection"
-    >
-      <template
-        slot="status"
-        slot-scope="status">
-        <a-badge :status="status | statusFilterIcon" :text="status | statusFilterText"/>
-      </template>
-      <span slot="action" slot-scope="text, record">
-        <a v-if="checkPermission('sys:user:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
-        <a-divider type="vertical" />
-        <a-dropdown>
-          <a class="ant-dropdown-link">
-            更多 <a-icon type="down" />
-          </a>
-          <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;">详情</a>
-            </a-menu-item>
-            <a-menu-item v-if="checkPermission('sys:user:reset')">
-              <a href="javascript:;" @click="$refs.modalResetPassword.handleResetPassword(record)">重置密码</a>
-            </a-menu-item>
-            <a-menu-item v-if="checkPermission('sys:user:remove')">
-              <a href="javascript:;" @click="handleDelete(record)">删除</a>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
-      </span>
-    </s-table>
+        <s-table
+          ref="table"
+          size="default"
+          :columns="columns"
+          :data="loadData"
+          rowKey="userId"
+          :alert="options.alert"
+          :rowSelection="options.rowSelection"
+        >
+          <template
+            slot="status"
+            slot-scope="status">
+            <a-badge :status="status | statusFilterIcon" :text="status | statusFilterText"/>
+          </template>
+          <span slot="action" slot-scope="text, record">
+            <a v-if="checkPermission('sys:user:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
+            <a-divider type="vertical" />
+            <a-dropdown>
+              <a class="ant-dropdown-link">
+                更多 <a-icon type="down" />
+              </a>
+              <a-menu slot="overlay">
+                <a-menu-item>
+                  <a href="javascript:;">详情</a>
+                </a-menu-item>
+                <a-menu-item v-if="checkPermission('sys:user:reset')">
+                  <a href="javascript:;" @click="$refs.modalResetPassword.handleResetPassword(record)">重置密码</a>
+                </a-menu-item>
+                <a-menu-item v-if="checkPermission('sys:user:remove')">
+                  <a href="javascript:;" @click="handleDelete(record)">删除</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </span>
+        </s-table>
+      </a-col>
+    </a-row>
 
     <user-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></user-modal>
 
@@ -90,6 +112,62 @@ import checkPermission from '@/utils/permissions'
 import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
 import UserModal from './UserModal'
 import UserModalResetPassword from './UserModalResetPassword'
+
+const x = 3
+const y = 2
+const z = 1
+const gData = []
+
+const generateData = (_level, _preKey, _tns) => {
+  const preKey = _preKey || '0'
+  const tns = _tns || gData
+
+  const children = []
+  for (let i = 0; i < x; i++) {
+    const key = `${preKey}-${i}`
+    tns.push({ title: key, key, scopedSlots: { title: 'title' } })
+    if (i < y) {
+      children.push(key)
+    }
+  }
+  if (_level < 0) {
+    return tns
+  }
+  const level = _level - 1
+  children.forEach((key, index) => {
+    tns[index].children = []
+    return generateData(level, key, tns[index].children)
+  })
+}
+generateData(z)
+
+const dataList = []
+const generateList = (data) => {
+  for (let i = 0; i < data.length; i++) {
+    const node = data[i]
+    const key = node.key
+    dataList.push({ key, title: key })
+    if (node.children) {
+      generateList(node.children, node.key)
+    }
+  }
+}
+generateList(gData)
+
+const getParentKey = (key, tree) => {
+  let parentKey
+  for (let i = 0; i < tree.length; i++) {
+    const node = tree[i]
+    if (node.children) {
+      if (node.children.some(item => item.key === key)) {
+        parentKey = node.key
+      } else if (getParentKey(key, node.children)) {
+        parentKey = getParentKey(key, node.children)
+      }
+    }
+  }
+  return parentKey
+}
 
 export default {
   name: 'UserList',
@@ -168,7 +246,11 @@ export default {
           selectedRowKeys: this.selectedRowKeys,
           onChange: this.onSelectChange
         }
-      }
+      },
+      expandedKeys: [],
+      searchValue: '',
+      autoExpandParent: true,
+      gData
     }
   },
   filters: {
@@ -301,7 +383,63 @@ export default {
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    onExpand  (expandedKeys) {
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+    onChange (e) {
+      const value = e.target.value
+      const expandedKeys = dataList.map((item) => {
+        if (item.key.indexOf(value) > -1) {
+          return getParentKey(item.key, gData)
+        }
+        return null
+      }).filter((item, i, self) => item && self.indexOf(item) === i)
+      Object.assign(this, {
+        expandedKeys,
+        searchValue: value,
+        autoExpandParent: true
+      })
     }
   }
 }
 </script>
+
+<style lang="less">
+  .custom-tree {
+
+    /deep/ .ant-menu-item-group-title {
+      position: relative;
+      &:hover {
+        .btn {
+          display: block;
+        }
+      }
+    }
+
+    /deep/ .ant-menu-item {
+      &:hover {
+        .btn {
+          display: block;
+        }
+      }
+    }
+
+    /deep/ .btn {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 10px;
+      width: 20px;
+      height: 40px;
+      line-height: 40px;
+      z-index: 1050;
+
+      &:hover {
+        transform: scale(1.2);
+        transition: 0.5s all;
+      }
+    }
+  }
+</style>

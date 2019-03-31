@@ -2,6 +2,9 @@ import Vue from 'vue'
 import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
+import store from '@/store'
+import { updateTheme, colorList } from '@/components/tools/setting'
+import defaultConfig from '@/config/defaultSettings'
 
 const user = {
   state: {
@@ -62,6 +65,7 @@ const user = {
           const routes = []
           const perms = []
           const data = response.data
+          // 处理权限
           if (data.roles !== undefined && data.perms !== undefined && data.roles.length > 0 && data.perms.length > 0) {
             data.perms.map(perm => {
               if (perm.type === 0 || perm.type === 1) {
@@ -76,6 +80,30 @@ const user = {
             commit('SET_PERMS', perms)
             commit('SET_ROLES', data.roles)
           }
+          // 处理主题样式
+          if (data.theme !== undefined) {
+            if (data.theme === 'dark') {
+              store.dispatch('ToggleTheme', 'dark')
+            } else if (data.theme === 'light') {
+              store.dispatch('ToggleTheme', 'light')
+            } else {
+              store.dispatch('ToggleTheme', 'dark')
+            }
+          }
+
+          // 处理主题颜色
+          if (data.color !== undefined) {
+            let color = '#1890FF'
+            colorList.forEach(items => {
+              if (data.color === items.code) {
+                color = items.color
+              }
+            })
+            defaultConfig.primaryColor = color
+            store.dispatch('ToggleColor', color)
+            updateTheme(color)
+          }
+
           commit('SET_INFO', data)
           commit('SET_NAME', { name: data.name, welcome: welcome() })
           commit('SET_AVATAR', data.avatar)

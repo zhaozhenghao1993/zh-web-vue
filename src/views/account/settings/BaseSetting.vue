@@ -50,7 +50,7 @@
 
 <script>
 import AvatarModal from './AvatarModal'
-import { profile } from '@/api/login'
+import { profile } from '@/api/account/profile'
 import store from '@/store'
 import pick from 'lodash.pick'
 

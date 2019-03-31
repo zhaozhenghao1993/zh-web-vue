@@ -47,19 +47,3 @@ export function logout () {
     }
   })
 }
-
-export function profile (parameter) {
-  return axios({
-    url: '/sys/user/profile',
-    method: 'put',
-    data: parameter
-  })
-}
-
-export function profilePassword (parameter) {
-  return axios({
-    url: '/sys/user/profile/password',
-    method: 'put',
-    data: parameter
-  })
-}

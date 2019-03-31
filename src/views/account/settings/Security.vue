@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { profilePassword } from '@/api/login'
+import { profilePassword } from '@/api/account/profile'
 
 export default {
   data () {

@@ -144,10 +144,10 @@ export default {
     ...mapGetters(['nickname', 'avatar']),
 
     getTeams () {
-      this.$http.get('/workplace/teams').then(res => {
+      /* this.$http.get('/workplace/teams').then(res => {
         this.teams = res.result
         this.teamSpinning = false
-      })
+      }) */
     },
 
     handleTabChange (key, type) {
