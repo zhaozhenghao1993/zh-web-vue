@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { updateTheme, updateColorWeak, colorList } from '@/components/tools/setting'
+import { updateTheme, updateColorWeak, colorList } from '@/components/SettingDrawer/settingConfig'
 import ASwitch from 'ant-design-vue/es/switch'
 import AList from 'ant-design-vue/es/list'
 import AListItem from 'ant-design-vue/es/list/Item'

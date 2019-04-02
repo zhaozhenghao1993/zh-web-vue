@@ -149,7 +149,7 @@ export default {
       this.loadRoleSelect()
       this.editInputDisabled = false
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { userId: 0, status: 1 })
+      this.modal = Object.assign({}, { userId: 0, status: 0 })
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))

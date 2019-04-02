@@ -5,6 +5,7 @@ import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import notification from 'ant-design-vue/es/notification'
+import { setDocumentTitle, domTitle } from '@/utils/domUtil'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -13,11 +14,11 @@ const whiteList = ['login', 'register', 'registerResult'] // no redirect whiteli
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
-
+  to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`))
   if (Vue.ls.get(ACCESS_TOKEN)) {
     /* has token */
     if (to.path === '/user/login') {
-      next({ path: '/' })
+      next({ path: '/dashboard/workplace' })
       NProgress.done()
     } else {
       if (!store.getters.userInfo.username) {
@@ -44,7 +45,7 @@ router.beforeEach((to, from, next) => {
               message: '错误',
               description: '请求用户信息失败，请重试'
             })
-            store.dispatch('FedLogOut').then(() => {
+            store.dispatch('Logout').then(() => {
               next({ path: '/user/login', query: { redirect: to.fullPath } })
             })
           })
@@ -84,23 +85,16 @@ const action = Vue.directive('action', {
   bind: function (el, binding, vnode) {
     const actionName = binding.arg
     const roles = store.getters.roles
-    const permissionId = vnode.context.$route.meta.permission
-    let actions = []
+    const elVal = vnode.context.$route.meta.permission
+    const permissionId = elVal instanceof String && [elVal] || elVal
     roles.permissions.forEach(p => {
-      if (p.permissionId !== permissionId) {
+      if (!permissionId.includes(p.permissionId)) {
         return
       }
-      actions = p.actionList
+      if (p.actionList && !p.actionList.includes(actionName)) {
+        el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+      }
     })
-    if (actions.indexOf(actionName) < 0) {
-      setTimeout(() => {
-        if (el.parentNode == null) {
-          el.style.display = 'none'
-        } else {
-          el.parentNode.removeChild(el)
-        }
-      }, 10)
-    }
   }
 })
 

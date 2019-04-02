@@ -15,6 +15,7 @@
             'no',
             {rules: [{ required: true, message: '请输入规则编号' }]}
           ]"
+          :disabled="true"
         ></a-input>
       </a-form-item>
 
@@ -35,10 +36,10 @@
         hasFeedback
         validateStatus="warning"
       >
-        <a-select defaultValue="1" v-decorator="['status', {rules: [{ required: true, message: '请选择状态' }]}]">
-          <a-select-option value="1">Option 1</a-select-option>
-          <a-select-option value="2">Option 2</a-select-option>
-          <a-select-option value="3">Option 3</a-select-option>
+        <a-select v-decorator="['status', {rules: [{ required: true, message: '请选择状态' }], initialValue: '1'}]">
+          <a-select-option :value="1">Option 1</a-select-option>
+          <a-select-option :value="2">Option 2</a-select-option>
+          <a-select-option :value="3">Option 3</a-select-option>
         </a-select>
       </a-form-item>
 
@@ -64,16 +65,39 @@
           showTime
           format="YYYY-MM-DD HH:mm:ss"
           placeholder="Select Time"
+          v-decorator="['updatedAt']"
         />
       </a-form-item>
 
+      <a-form-item
+        v-bind="buttonCol"
+      >
+        <a-row>
+          <a-col span="6">
+            <a-button type="primary" html-type="submit">提交</a-button>
+          </a-col>
+          <a-col span="10">
+            <a-button @click="handleGoBack">返回</a-button>
+          </a-col>
+          <a-col span="8"></a-col>
+        </a-row>
+      </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
+import pick from 'lodash.pick'
+
 export default {
   name: 'TableEdit',
+  props: {
+    record: {
+      type: [Object, String],
+      default: ''
+    }
+  },
   data () {
     return {
       labelCol: {
@@ -84,19 +108,28 @@ export default {
         xs: { span: 24 },
         sm: { span: 12 }
       },
-      form: null,
+      buttonCol: {
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 12, offset: 5 }
+        }
+      },
+      form: this.$form.createForm(this),
       id: 0
     }
   },
-  beforeCreate () {
-    this.form = this.$form.createForm(this)
-  },
-  created () {
-    if (this.$route.params.id) {
-      this.id = this.$route.params.id
-    }
+  // beforeCreate () {
+  //   this.form = this.$form.createForm(this)
+  // },
+  mounted () {
+    this.$nextTick(() => {
+      this.loadEditInfo(this.record)
+    })
   },
   methods: {
+    handleGoBack () {
+      this.$emit('onGoBack')
+    },
     handleSubmit () {
       const { form: { validateFields } } = this
       validateFields((err, values) => {
@@ -106,21 +139,21 @@ export default {
         }
       })
     },
-    loadEditInfo () {
-      const { from } = this
+    handleGetInfo () {
+
+    },
+    loadEditInfo (data) {
+      const { form } = this
       // ajax
       console.log(`将加载 ${this.id} 信息到表单`)
       new Promise((resolve) => {
         setTimeout(resolve, 1500)
       }).then(() => {
-        from.setFieldsValue({ no: '1', callNo: '999' })
+        const formData = pick(data, ['no', 'callNo', 'status', 'description', 'updatedAt'])
+        formData.updatedAt = moment(data.updatedAt)
+        console.log('formData', formData)
+        form.setFieldsValue(formData)
       })
-    }
-  },
-  watch: {
-    id (val, oldVal) {
-      console.log('val', val, 'oldVal', oldVal)
-      this.loadEditInfo()
     }
   }
 }

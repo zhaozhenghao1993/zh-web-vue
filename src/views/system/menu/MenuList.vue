@@ -12,7 +12,7 @@
       :columns="columns"
       :data="loadData"
       rowKey="menuId"
-      :showSizeChanger="false"
+      :showPagination="false"
     >
       <template
         slot="type"
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import STable from '@/components/table/'
+import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
 import { menuList, menuDelete } from '@/api/system/menu'
 import MenuModal from './MenuModal'

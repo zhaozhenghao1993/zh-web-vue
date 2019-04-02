@@ -1,5 +1,6 @@
+
 <template>
-  <page-layout title="单号：234231029431" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
+  <page-view title="单号：234231029431" logo="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png">
 
     <detail-list slot="headerContent" size="small" :col="2" class="detail-layout">
       <detail-list-item term="创建人">曲丽丽</detail-list-item>
@@ -53,10 +54,10 @@
       <detail-list title="信息组">
         <detail-list-item term="某某数据">725</detail-list-item>
         <detail-list-item term="该数据更新时间">2018-08-08</detail-list-item>
-        <detail-list-item >&nbsp;</detail-list-item>
+        <detail-list-item ></detail-list-item>
         <detail-list-item term="某某数据">725</detail-list-item>
         <detail-list-item term="该数据更新时间">2018-08-08</detail-list-item>
-        <detail-list-item >&nbsp;</detail-list-item>
+        <detail-list-item ></detail-list-item>
       </detail-list>
       <a-card type="inner" title="多层信息组">
         <detail-list title="组名称" size="small">
@@ -129,12 +130,12 @@
       </a-table>
     </a-card>
 
-  </page-layout>
+  </page-view>
 </template>
 
 <script>
-import { mixinDevice } from '@/utils/mixin.js'
-import PageLayout from '@/components/page/PageLayout'
+import { mixinDevice } from '@/utils/mixin'
+import { PageView } from '@/layouts'
 import DetailList from '@/components/tools/DetailList'
 
 const DetailListItem = DetailList.Item
@@ -142,7 +143,7 @@ const DetailListItem = DetailList.Item
 export default {
   name: 'Advanced',
   components: {
-    PageLayout,
+    PageView,
     DetailList,
     DetailListItem
   },

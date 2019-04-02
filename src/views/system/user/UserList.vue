@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import STable from '@/components/table/'
+import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
 import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
 import UserModal from './UserModal'

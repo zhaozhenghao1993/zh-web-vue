@@ -62,7 +62,8 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="$router.push({ name: 'QueryListEdit' })">新建</a-button>
+      <a-button type="primary" icon="plus" @click="handleEdit()">新建</a-button>
+      <a-button type="dashed" @click="tableOption">{{ optionAlertShow && '关闭' || '开启' }} alert</a-button>
       <a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -75,12 +76,10 @@
       </a-dropdown>
     </div>
 
-    <div>
-      <a-button @click="tableOption(false)" v-if="optionAlertShow">关闭 alert</a-button>
-    </div>
     <s-table
       ref="table"
       size="default"
+      rowKey="key"
       :columns="columns"
       :data="loadData"
       :alert="options.alert"
@@ -117,7 +116,7 @@
 
 <script>
 import moment from 'moment'
-import STable from '@/components/table/'
+import { STable } from '@/components'
 import { getRoleList, getServiceList } from '@/api/manage'
 
 export default {
@@ -164,7 +163,7 @@ export default {
           sorter: true
         },
         {
-          table: '操作',
+          title: '操作',
           dataIndex: 'action',
           width: '150px',
           scopedSlots: { customRender: 'action' }
@@ -172,6 +171,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
+        console.log('loadData.parameter', parameter)
         return getServiceList(Object.assign(parameter, this.queryParam))
           .then(res => {
             return res.result
@@ -188,16 +188,16 @@ export default {
           onChange: this.onSelectChange
         }
       },
-      optionAlertShow: true
+      optionAlertShow: false
     }
   },
   created () {
-    this.tableOption(true)
+    this.tableOption()
     getRoleList({ t: new Date() })
   },
   methods: {
-    tableOption (bool) {
-      if (bool) {
+    tableOption () {
+      if (!this.optionAlertShow) {
         this.options = {
           alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
@@ -205,6 +205,7 @@ export default {
             onChange: this.onSelectChange
           }
         }
+        this.optionAlertShow = true
       } else {
         this.options = {
           alert: false,
@@ -215,8 +216,7 @@ export default {
     },
 
     handleEdit (record) {
-      // Object.assign({}, record)
-      this.$router.push({ name: 'QueryListEdit', params: { id: record.key } })
+      this.$emit('onEdit', record)
     },
     handleOk () {
 

@@ -51,7 +51,7 @@ export default {
     },
     rowSelection: {
       type: Object,
-      default: () => ({})
+      default: null
     },
     /** @Deprecated */
     showAlertInfo: {
@@ -59,7 +59,7 @@ export default {
       default: false
     },
     showPagination: {
-      type: String,
+      type: String | Boolean,
       default: 'auto'
     }
   }),
@@ -104,7 +104,10 @@ export default {
      * @param Boolean bool
      */
     refresh (bool = false) {
-      this.loadData(bool ? { current: 1 } : {})
+      bool && (this.localPagination = Object.assign({}, {
+        current: 1, pageSize: this.pageSize
+      }))
+      this.loadData()
     },
     /**
      * 加载数据方法
@@ -114,11 +117,11 @@ export default {
      */
     loadData (pagination, filters, sorter) {
       this.localLoading = true
-      var result = this.data(Object.assign({
+      const parameter = Object.assign({
         pageNum: (pagination && pagination.current) ||
-          this.localPagination.current,
+            this.localPagination.current || this.pageNum,
         pageSize: (pagination && pagination.pageSize) ||
-          this.localPagination.pageSize
+            this.localPagination.pageSize || this.pageSize
       },
       (sorter && sorter.field && {
         sortField: sorter.field
@@ -128,19 +131,19 @@ export default {
       }) || {}, {
         ...filters
       }
-      ))
-      // 对接自己的通用数据接口需要修改下方代码中的 r.pageNum, r.total, r.data
+      )
+      const result = this.data(parameter)
+      // 对接自己的通用数据接口需要修改下方代码中的 r.pageNum, r.totalCount, r.data
       // eslint-disable-next-line
-      if (result instanceof Promise || '[object Promise]' === result.toString()) {
+      if ((typeof result === 'object' || typeof result === 'function') && typeof result.then === 'function') {
         result.then(r => {
           this.localPagination = Object.assign({}, this.localPagination, {
             current: r.pageNum, // 返回结果中的当前分页数
-            total: r.total, // 返回结果中的总记录数
+            total: r.totalCount, // 返回结果中的总记录数
             showSizeChanger: this.showSizeChanger,
             pageSize: (pagination && pagination.pageSize) ||
               this.localPagination.pageSize
           })
-
           // 防止当前数据为空，没有长度，为undefined  再次搜索导致 “ Invalid prop: custom validator check failed for prop "pagination" ”
           if (r.data === undefined) {
             this.localDataSource = r.data // 返回结果中的数组数据
@@ -155,16 +158,10 @@ export default {
             return
           }
 
-          // 防止当前数据为空，长度为0  再次搜索导致 “ Invalid prop: custom validator check failed for prop "pagination" ”
-          if (r.data.length === 0 && this.localPagination.current === 1) {
-            this.localDataSource = r.data // 返回结果中的数组数据
-            this.localLoading = false
-            return
-          }
-
-          // 这里用于判断接口是否有返回 r.total 或 this.showPagination = false
+          // 这里用于判断接口是否有返回 r.totalCount 或 this.showPagination = false
           // 当情况满足时，表示数据不满足分页大小，关闭 table 分页功能
-          !r.total && ['auto', false].includes(this.showPagination) && (this.localPagination = false)
+
+          (!this.showPagination || !r.totalCount && this.showPagination === 'auto') && (this.localPagination = false)
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
@@ -265,7 +262,7 @@ export default {
       }
       if (k === 'rowSelection') {
         if (showAlert && this.rowSelection) {
-          // 重新绑定 rowSelection 事件
+          // 如果需要使用alert，则重新绑定 rowSelection 事件
           props[k] = {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
@@ -275,10 +272,11 @@ export default {
             }
           }
           return props[k]
+        } else if (!this.rowSelection) {
+          // 如果没打算开启 rowSelection 则清空默认的选择项
+          props[k] = null
+          return props[k]
         }
-        // 如果没打算开启 rowSelection 则清空默认的选择项
-        props[k] = null
-        return props[k]
       }
       props[k] = this[k]
       return props[k]

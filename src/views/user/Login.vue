@@ -12,7 +12,7 @@
         :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
         @change="handleTabClick"
       >
-        <a-tab-pane key="tab1" tab="账号密码登陆">
+        <a-tab-pane key="tab1" tab="账号密码登录">
           <a-form-item>
             <a-input
               size="large"
@@ -42,7 +42,7 @@
             </a-input>
           </a-form-item>
         </a-tab-pane>
-        <a-tab-pane key="tab2" tab="手机号登陆">
+        <a-tab-pane key="tab2" tab="手机号登录">
           <a-form-item>
             <a-input size="large" type="text" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
               <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
@@ -71,7 +71,7 @@
       </a-tabs>
 
       <a-form-item>
-        <a-checkbox v-decorator="['rememberMe']">自动登陆</a-checkbox>
+        <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
         <router-link
           :to="{ name: 'recover', params: { user: 'aaa'} }"
           class="forge-password"
@@ -91,7 +91,7 @@
       </a-form-item>
 
       <div class="user-login-other">
-        <span>其他登陆方式</span>
+        <span>其他登录方式</span>
         <a>
           <a-icon class="item-icon" type="alipay-circle"></a-icon>
         </a>
@@ -115,9 +115,11 @@
 </template>
 
 <script>
+// import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
+import { getSmsCaptcha, get2step } from '@/api/login'
 
 export default {
   components: {
@@ -142,6 +144,14 @@ export default {
     }
   },
   created () {
+    get2step({ })
+      .then(res => {
+        this.requiredTwoStepCaptcha = res.result.stepCode
+      })
+      .catch(() => {
+        this.requiredTwoStepCaptcha = false
+      })
+    // this.requiredTwoStepCaptcha = true
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
@@ -194,6 +204,40 @@ export default {
         }
       })
     },
+    getCaptcha (e) {
+      e.preventDefault()
+      const { form: { validateFields }, state } = this
+
+      validateFields(['mobile'], { force: true }, (err, values) => {
+        if (!err) {
+          state.smsSendBtn = true
+
+          const interval = window.setInterval(() => {
+            if (state.time-- <= 0) {
+              state.time = 60
+              state.smsSendBtn = false
+              window.clearInterval(interval)
+            }
+          }, 1000)
+
+          const hide = this.$message.loading('验证码发送中..', 0)
+          getSmsCaptcha({ mobile: values.mobile }).then(res => {
+            setTimeout(hide, 2500)
+            this.$notification['success']({
+              message: '提示',
+              description: '验证码获取成功，您的验证码为：' + res.result.captcha,
+              duration: 8
+            })
+          }).catch(err => {
+            setTimeout(hide, 1)
+            clearInterval(interval)
+            state.time = 60
+            state.smsSendBtn = false
+            this.requestFailed(err)
+          })
+        }
+      })
+    },
     stepCaptchaSuccess () {
       this.loginSuccess()
     },
@@ -204,6 +248,7 @@ export default {
       })
     },
     loginSuccess (res) {
+      console.log(res)
       this.$router.push({ name: 'dashboard' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
@@ -214,7 +259,6 @@ export default {
       }, 1000)
     },
     requestFailed (err) {
-      console.log('err', err)
       this.$notification['error']({
         message: '错误',
         description: (err || {}).msg || '请求出现错误，请稍后再试',

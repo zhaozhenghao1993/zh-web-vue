@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import STable from '@/components/table/'
+import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
 import { roleList, roleDelete, batchRoleDelete } from '@/api/system/role'
 import RoleModal from './RoleModal'

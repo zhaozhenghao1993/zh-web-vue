@@ -1,5 +1,6 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
+import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
+import { bxAnaalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
 
@@ -16,7 +17,7 @@ export const asyncRouterMap = [
         name: 'dashboard',
         redirect: '/dashboard/workplace',
         component: RouteView,
-        meta: { title: '仪表盘', keepAlive: true, icon: 'dashboard' },
+        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/dashboard/analysis',
@@ -24,12 +25,11 @@ export const asyncRouterMap = [
             component: () => import('@/views/dashboard/Analysis'),
             meta: { title: '分析页', keepAlive: false }
           },
+          // 外部链接
           {
-            path: '/dashboard/monitor',
+            path: 'https://www.baidu.com/',
             name: 'Monitor',
-            hidden: true,
-            component: () => import('@/views/dashboard/Monitor'),
-            meta: { title: '监控页', keepAlive: true }
+            meta: { title: '监控页（外部）', target: '_blank' }
           },
           {
             path: '/dashboard/workplace',
@@ -69,10 +69,41 @@ export const asyncRouterMap = [
         ]
       },
 
+      // Exception
+      {
+        path: '/exception',
+        name: 'exception',
+        component: RouteView,
+        redirect: '/exception/403',
+        meta: { title: '异常页', icon: 'warning' },
+        hidden: true,
+        children: [
+          {
+            path: '/exception/403',
+            name: 'Exception403',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
+            meta: { title: '403' }
+          },
+          {
+            path: '/exception/404',
+            name: 'Exception404',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404'),
+            meta: { title: '404' }
+          },
+          {
+            path: '/exception/500',
+            name: 'Exception500',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
+            meta: { title: '500' }
+          }
+        ]
+      },
+
       // account
       {
         path: '/account',
         component: RouteView,
+        redirect: '/account/center',
         name: 'account',
         meta: { title: '个人页', icon: 'user', keepAlive: true },
         children: [
@@ -86,7 +117,7 @@ export const asyncRouterMap = [
             path: '/account/settings',
             name: 'settings',
             component: () => import('@/views/account/settings/Index'),
-            meta: { title: '个人设置', hideHeader: true, keepAlive: true },
+            meta: { title: '个人设置', hideHeader: true },
             redirect: '/account/settings/base',
             hideChildrenInMenu: true,
             children: [
@@ -124,28 +155,64 @@ export const asyncRouterMap = [
           }
         ]
       },
+
+      // other
       {
-        path: '/exception',
-        component: RouteView,
-        name: 'exception',
-        hidden: true,
-        meta: { title: '异常页', icon: 'exception', keepAlive: true },
+        path: '/other',
+        name: 'otherPage',
+        component: PageView,
+        meta: { title: '其他组件', icon: 'slack' },
+        redirect: '/other/icon-selector',
         children: [
           {
-            path: '/exception/404',
-            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+            path: '/other/icon-selector',
+            name: 'TestIconSelect',
+            component: () => import('@/views/other/IconSelectorView'),
+            meta: { title: 'IconSelector', icon: 'tool', keepAlive: true }
           },
           {
-            path: '/exception/403',
-            name: 'Exception403',
-            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
-            meta: { title: '403' }
-          },
-          {
-            path: '/exception/500',
-            name: 'Exception500',
-            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
-            meta: { title: '500' }
+            path: '/other/list',
+            component: RouteView,
+            meta: { title: '业务布局', icon: 'layout' },
+            redirect: '/other/list/tree-list',
+            children: [
+              {
+                path: '/other/list/tree-list',
+                name: 'TreeList',
+                component: () => import('@/views/other/TreeList'),
+                meta: { title: '树目录表格', keepAlive: true }
+              },
+              {
+                path: '/other/list/edit-table',
+                name: 'EditList',
+                component: () => import('@/views/other/TableInnerEditList'),
+                meta: { title: '内联编辑表格', keepAlive: true }
+              },
+              {
+                path: '/other/list/user-list',
+                name: 'UserList',
+                component: () => import('@/views/other/UserList'),
+                meta: { title: '用户列表', keepAlive: true }
+              },
+              {
+                path: '/other/list/role-list',
+                name: 'RoleList',
+                component: () => import('@/views/other/RoleList'),
+                meta: { title: '角色列表', keepAlive: true }
+              },
+              {
+                path: '/other/list/system-role',
+                name: 'SystemRole',
+                component: () => import('@/views/role/RoleList'),
+                meta: { title: '角色列表2', keepAlive: true }
+              },
+              {
+                path: '/other/list/permission-list',
+                name: 'PermissionList',
+                component: () => import('@/views/other/PermissionList'),
+                meta: { title: '权限列表', keepAlive: true }
+              }
+            ]
           }
         ]
       }
@@ -202,4 +269,5 @@ export const constantRouterMap = [
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
+
 ]

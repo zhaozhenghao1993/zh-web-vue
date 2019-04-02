@@ -96,8 +96,7 @@
 </template>
 
 <script>
-import PageLayout from '@/components/page/PageLayout'
-import RouteView from '@/components/layouts/RouteView'
+import { PageView, RouteView } from '@/layouts'
 import { AppPage, ArticlePage, ProjectPage } from './page'
 
 import { mapGetters } from 'vuex'
@@ -105,7 +104,7 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     RouteView,
-    PageLayout,
+    PageView,
     AppPage,
     ArticlePage,
     ProjectPage
@@ -144,10 +143,10 @@ export default {
     ...mapGetters(['nickname', 'avatar']),
 
     getTeams () {
-      /* this.$http.get('/workplace/teams').then(res => {
+      this.$http.get('/workplace/teams').then(res => {
         this.teams = res.result
         this.teamSpinning = false
-      }) */
+      })
     },
 
     handleTabChange (key, type) {

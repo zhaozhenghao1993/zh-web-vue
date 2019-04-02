@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import STable from '@/components/table/'
+import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
 import { orgList, orgDelete } from '@/api/system/org'
 import OrgModal from './OrgModal'
