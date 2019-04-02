@@ -78,7 +78,7 @@ import RoleModal from './RoleModal'
 import MenuTreeModal from '../menu/MenuTreeModal'
 
 export default {
-  name: 'UserList',
+  name: 'RoleList',
   components: {
     RoleModal,
     MenuTreeModal,

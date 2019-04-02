@@ -15,45 +15,67 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-input placeholder="ID" v-decorator="[ 'roleId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'orgId', {rules: []} ]" disabled="disabled" />
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="角色名"
+        label="组织名称"
         hasFeedback
       >
-        <a-input placeholder="请输入角色名" v-decorator="['roleName',{rules: [{required: true, message: '请输入角色名!'}]}]"/>
+        <a-input placeholder="请输入组织名称" v-decorator="['orgName',{rules: [{required: true, message: '请输入组织名称!'}]}]"/>
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="角色标识"
+        label="上级组织ID"
         hasFeedback
+        v-show="false"
       >
-        <a-input placeholder="请输入角色标识, 例：admin" v-decorator="['roleSign',{rules: [{required: true, message: '请输入角色标识!'}]}]"/>
+        <a-input placeholder="请输入上级组织ID" v-decorator="['parentId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
       </a-form-item>
 
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="备注"
+        label="上级菜单"
         hasFeedback
       >
-        <a-input v-decorator="['remark', {rules: []}]"/>
+        <a-tree-select
+          v-model="selectTree"
+          showSearch
+          :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+          :treeData="treeData"
+          placeholder="Please select"
+          :treeDefaultExpandedKeys="treeExpandedKeys"
+          treeNodeFilterProp="title"
+          @change="onChange"
+        >
+        </a-tree-select>
       </a-form-item>
+
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="排序"
+        hasFeedback
+      >
+        <a-input-number v-decorator="['orderNum',{rules: [{ pattern: /^[0-9]+$/, message: '请输入数字' }]}]" />
+      </a-form-item>
+
+      <a-divider />
     </a-form>
   </a-modal>
 </template>
 
 <script>
-import { roleSave, roleEdit } from '@/api/system/role'
+import { orgSave, orgEdit, orgTree } from '@/api/system/org'
 import pick from 'lodash.pick'
 
 export default {
-  name: 'RoleModal',
+  name: 'OrgModal',
   data () {
     return {
       visible: false,
@@ -68,7 +90,10 @@ export default {
       },
       form: this.$form.createForm(this),
       modal: {},
-      modalStatus: 'create'
+      modalStatus: 'create',
+      treeData: [],
+      selectTree: '',
+      treeExpandedKeys: []
     }
   },
   props: {
@@ -81,21 +106,29 @@ export default {
     handleCreate () {
       // 每次都重置form表单
       this.form.resetFields()
+      this.treeExpandedKeys = []
+      this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { roleId: 0 })
+      this.modal = Object.assign({}, { orgId: 0, type: 0, parentId: 0 })
+      this.selectTree = '0'
+      this.treeExpandedKeys.push('0')
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'roleId', 'roleName', 'roleSign', 'remark'))
+        this.form.setFieldsValue(pick(this.modal, 'orgId', 'parentId', 'orgName', 'orderNum'))
       })
     },
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
+      this.treeExpandedKeys = []
+      this.loadData()
       this.modalStatus = 'edit'
       this.modal = Object.assign({}, record)
+      this.selectTree = record.parentId + ''
+      this.treeExpandedKeys.push(record.parentId + '')
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'roleId', 'roleName', 'roleSign', 'remark'))
+        this.form.setFieldsValue(pick(this.modal, 'orgId', 'parentId', 'orgName', 'orderNum'))
       })
     },
     handleOk (e) {
@@ -103,8 +136,13 @@ export default {
       this.confirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          if (values.type === 0 || values.type === 1) {
+            // 如果为 目录或菜单，就将 uri 和 method 制空
+            values.uri = ''
+            values.method = ''
+          }
           if (this.modalStatus === 'create') {
-            roleSave(values).then(() => {
+            orgSave(values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -117,7 +155,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            roleEdit(values.roleId, values).then(() => {
+            orgEdit(values.orgId, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -130,6 +168,7 @@ export default {
               this.confirmLoading = false
             })
           }
+          this.confirmLoading = false
         } else {
           this.confirmLoading = false
         }
@@ -138,6 +177,15 @@ export default {
     handleCancel () {
       this.$emit('close')
       this.visible = false
+    },
+    loadData () {
+      orgTree({ isNotButton: true }).then(res => {
+        this.treeData = res.data
+      }).catch(e => {
+      })
+    },
+    onChange (value, label) {
+      this.form.setFieldsValue({ parentId: value })
     }
   }
 }

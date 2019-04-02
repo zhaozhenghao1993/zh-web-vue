@@ -73,7 +73,7 @@ export default {
       const subItem = [h('span', { slot: 'title' }, [this.renderIcon(h, menu.meta.icon), h('span', [menu.meta.title])])]
       const itemArr = []
       const pIndex_ = pIndex + '_' + index
-      if (!menu.alwaysShow) {
+      if (!menu.hideChildrenInMenu) {
         menu.children.forEach(function (item, i) {
           itemArr.push(this2_.renderItem(h, item, pIndex_, i))
         })
@@ -82,7 +82,7 @@ export default {
     },
     renderItem: function (h, menu, pIndex, index) {
       if (!menu.hidden) {
-        return menu.children && !menu.alwaysShow
+        return menu.children && !menu.hideChildrenInMenu
           ? this.renderSubMenu(h, menu, pIndex, index)
           : this.renderMenuItem(h, menu, pIndex, index)
       }

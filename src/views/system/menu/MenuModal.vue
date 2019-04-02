@@ -44,7 +44,7 @@
         hasFeedback
         v-show="false"
       >
-        <a-input placeholder="请输入角色标识, 例：admin" v-decorator="['parentId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+        <a-input placeholder="请输入上级菜单ID" v-decorator="['parentId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
       </a-form-item>
 
       <a-form-item
@@ -139,7 +139,7 @@ import { menuSave, menuEdit, menuTree } from '@/api/system/menu'
 import pick from 'lodash.pick'
 
 export default {
-  name: 'UserModal',
+  name: 'MenuModal',
   data () {
     return {
       visible: false,

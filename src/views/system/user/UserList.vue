@@ -3,6 +3,7 @@
     <a-row :gutter="8">
       <a-col :span="4">
         <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
+        <a-button type="primary" icon="sync" @click="handleFilter()"></a-button>
         <a-tree
           @expand="onExpand"
           :expandedKeys="expandedKeys"
@@ -112,6 +113,7 @@ import checkPermission from '@/utils/permissions'
 import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
 import UserModal from './UserModal'
 import UserModalResetPassword from './UserModalResetPassword'
+import ACol from 'ant-design-vue/es/grid/Col'
 
 const x = 3
 const y = 2
@@ -172,6 +174,7 @@ const getParentKey = (key, tree) => {
 export default {
   name: 'UserList',
   components: {
+    ACol,
     UserModalResetPassword,
     UserModal,
     STable
@@ -407,39 +410,5 @@ export default {
 </script>
 
 <style lang="less">
-  .custom-tree {
 
-    /deep/ .ant-menu-item-group-title {
-      position: relative;
-      &:hover {
-        .btn {
-          display: block;
-        }
-      }
-    }
-
-    /deep/ .ant-menu-item {
-      &:hover {
-        .btn {
-          display: block;
-        }
-      }
-    }
-
-    /deep/ .btn {
-      display: none;
-      position: absolute;
-      top: 0;
-      right: 10px;
-      width: 20px;
-      height: 40px;
-      line-height: 40px;
-      z-index: 1050;
-
-      &:hover {
-        transform: scale(1.2);
-        transition: 0.5s all;
-      }
-    }
-  }
 </style>

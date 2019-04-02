@@ -88,7 +88,7 @@ export const asyncRouterMap = [
             component: () => import('@/views/account/settings/Index'),
             meta: { title: '个人设置', hideHeader: true, keepAlive: true },
             redirect: '/account/settings/base',
-            alwaysShow: true,
+            hideChildrenInMenu: true,
             children: [
               {
                 path: '/account/settings/base',

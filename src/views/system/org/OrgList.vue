@@ -11,17 +11,9 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="menuId"
+      rowKey="orgId"
       :showSizeChanger="false"
     >
-      <template
-        slot="type"
-        slot-scope="type">
-        <a-tag v-if="type === 0" color="cyan">目录</a-tag>
-        <a-tag v-else-if="type === 1" color="green">菜单</a-tag>
-        <a-tag v-else-if="type === 2" color="orange">按钮</a-tag>
-        <a-tag v-else-if="type === 3" color="purple">链接</a-tag>
-      </template>
       <span slot="action" slot-scope="text, record">
         <a v-if="checkPermission('sys:menu:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
@@ -38,7 +30,7 @@
       </span>
     </s-table>
 
-    <menu-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></menu-modal>
+    <org-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></org-modal>
 
   </a-card>
 </template>
@@ -46,13 +38,13 @@
 <script>
 import STable from '@/components/table/'
 import checkPermission from '@/utils/permissions'
-import { menuList, menuDelete } from '@/api/system/menu'
-import MenuModal from './MenuModal'
+import { orgList, orgDelete } from '@/api/system/org'
+import OrgModal from './OrgModal'
 
 export default {
-  name: 'MenuList',
+  name: 'OrgList',
   components: {
-    MenuModal,
+    OrgModal,
     STable
   },
   data () {
@@ -66,31 +58,20 @@ export default {
       // 表头
       columns: [
         {
-          title: '名称',
-          dataIndex: 'name'
+          title: '组织名称',
+          dataIndex: 'orgName'
         },
         {
-          title: '上级菜单',
-          dataIndex: 'parentName'
+          title: '组级列表',
+          dataIndex: 'ancestors'
         },
         {
           title: '排序',
           dataIndex: 'orderNum'
         },
         {
-          title: '类型',
-          dataIndex: 'type',
-          scopedSlots: { customRender: 'type' }
-        },
-        {
-          title: 'uri',
-          dataIndex: 'uri'
-        }, {
-          title: 'method',
-          dataIndex: 'method'
-        }, {
-          title: '授权标识',
-          dataIndex: 'perms'
+          title: '创建时间',
+          dataIndex: 'createTime'
         }, {
           title: '操作',
           width: '150px',
@@ -100,7 +81,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return menuList(Object.assign(parameter, this.queryParam))
+        return orgList(Object.assign(parameter, this.queryParam))
           .then(res => {
             return res
           }).catch(e => {
@@ -121,11 +102,11 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除菜单<' + record.name + '>吗 ?',
+        content: '真的要删除组织<' + record.name + '>吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return menuDelete(record.menuId).then(() => {
+          return orgDelete(record.orgId).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)
