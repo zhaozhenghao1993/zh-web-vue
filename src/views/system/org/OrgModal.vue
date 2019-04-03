@@ -179,7 +179,7 @@ export default {
       this.visible = false
     },
     loadData () {
-      orgTree({ isNotButton: true }).then(res => {
+      orgTree({ isRoot: true }).then(res => {
         this.treeData = res.data
       }).catch(e => {
       })

@@ -8,7 +8,7 @@
           @expand="onExpand"
           :expandedKeys="expandedKeys"
           :autoExpandParent="autoExpandParent"
-          :treeData="gData"
+          :treeData="treeData"
         >
           <template slot="title" slot-scope="{title}">
             <span v-if="title.indexOf(searchValue) > -1">
@@ -111,6 +111,7 @@
 import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
 import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
+import { orgTree } from '@/api/system/org'
 import UserModal from './UserModal'
 import UserModalResetPassword from './UserModalResetPassword'
 import ACol from 'ant-design-vue/es/grid/Col'
@@ -253,7 +254,7 @@ export default {
       expandedKeys: [],
       searchValue: '',
       autoExpandParent: true,
-      gData
+      treeData: []
     }
   },
   filters: {
@@ -275,6 +276,9 @@ export default {
       }
       return statusMap[status]
     }
+  },
+  created () {
+    this.loadOrgData()
   },
   methods: {
     checkPermission,
@@ -386,6 +390,12 @@ export default {
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
+    },
+    loadOrgData () {
+      orgTree({}).then(res => {
+        this.treeData = res.data
+      }).catch(e => {
+      })
     },
     onExpand  (expandedKeys) {
       this.expandedKeys = expandedKeys

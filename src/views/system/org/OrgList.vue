@@ -62,7 +62,7 @@ export default {
           dataIndex: 'orgName'
         },
         {
-          title: '组级列表',
+          title: '祖级列表',
           dataIndex: 'ancestors'
         },
         {
@@ -102,7 +102,7 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除组织<' + record.name + '>吗 ?',
+        content: '真的要删除组织<' + record.orgName + '>吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {

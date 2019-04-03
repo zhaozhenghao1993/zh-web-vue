@@ -68,9 +68,11 @@ const user = {
           // 处理权限
           if (data.roles !== undefined && data.perms !== undefined && data.roles.length > 0 && data.perms.length > 0) {
             data.perms.map(perm => {
-              if (perm.type === 0 || perm.type === 1) {
+              /* if (perm.type === 0 || perm.type === 1) {
                 routes.push(perm.perms)
-              }
+              } */
+              // 万一有修改页面需要加载到路由中，则 router 的 permission = ['sys:user:edit']，routes将所有的权限标签纳入其中做匹配
+              routes.push(perm.perms)
               if (perm.type === 2) {
                 perms.push(perm.perms)
               }
