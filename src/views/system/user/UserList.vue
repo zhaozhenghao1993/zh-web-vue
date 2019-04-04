@@ -2,23 +2,18 @@
   <a-card :bordered="false">
     <a-row :gutter="8">
       <a-col :span="4">
-        <a-input-search style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
-        <a-button type="primary" icon="sync" @click="handleFilter()"></a-button>
-        <a-tree
-          @expand="onExpand"
-          :expandedKeys="expandedKeys"
-          :autoExpandParent="autoExpandParent"
-          :treeData="treeData"
-        >
-          <template slot="title" slot-scope="{title}">
-            <span v-if="title.indexOf(searchValue) > -1">
-              {{ title.substr(0, title.indexOf(searchValue)) }}
-              <span style="color: #f50">{{ searchValue }}</span>
-              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
-            </span>
-            <span v-else>{{ title }}</span>
-          </template>
-        </a-tree>
+        <a-card title="组织机构">
+          <a href="#" slot="extra" @click="loadOrgData">刷新</a>
+          <a-spin :spinning="treeSpinning">
+            <a-tree
+              showLine
+              :expandedKeys="this.expandedKeys"
+              :treeData="treeData"
+              @select="this.onSelect"
+              @expand="onExpand"
+            />
+          </a-spin>
+        </a-card>
       </a-col>
       <a-col :span="20">
         <div class="table-page-search-wrapper">
@@ -116,62 +111,6 @@ import UserModal from './UserModal'
 import UserModalResetPassword from './UserModalResetPassword'
 import ACol from 'ant-design-vue/es/grid/Col'
 
-const x = 3
-const y = 2
-const z = 1
-const gData = []
-
-const generateData = (_level, _preKey, _tns) => {
-  const preKey = _preKey || '0'
-  const tns = _tns || gData
-
-  const children = []
-  for (let i = 0; i < x; i++) {
-    const key = `${preKey}-${i}`
-    tns.push({ title: key, key, scopedSlots: { title: 'title' } })
-    if (i < y) {
-      children.push(key)
-    }
-  }
-  if (_level < 0) {
-    return tns
-  }
-  const level = _level - 1
-  children.forEach((key, index) => {
-    tns[index].children = []
-    return generateData(level, key, tns[index].children)
-  })
-}
-generateData(z)
-
-const dataList = []
-const generateList = (data) => {
-  for (let i = 0; i < data.length; i++) {
-    const node = data[i]
-    const key = node.key
-    dataList.push({ key, title: key })
-    if (node.children) {
-      generateList(node.children, node.key)
-    }
-  }
-}
-generateList(gData)
-
-const getParentKey = (key, tree) => {
-  let parentKey
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i]
-    if (node.children) {
-      if (node.children.some(item => item.key === key)) {
-        parentKey = node.key
-      } else if (getParentKey(key, node.children)) {
-        parentKey = getParentKey(key, node.children)
-      }
-    }
-  }
-  return parentKey
-}
-
 export default {
   name: 'UserList',
   components: {
@@ -192,7 +131,8 @@ export default {
       // 查询参数
       queryParam: {
         username: '',
-        status: ''
+        status: '',
+        orgId: 0
       },
       // 表头
       columns: [
@@ -252,9 +192,15 @@ export default {
         }
       },
       expandedKeys: [],
-      searchValue: '',
-      autoExpandParent: true,
-      treeData: []
+      defaultExpandedKeys: [],
+      treeData: [
+        {
+          title: '全部',
+          key: 0,
+          children: []
+        }
+      ],
+      treeSpinning: false
     }
   },
   filters: {
@@ -392,28 +338,30 @@ export default {
       this.advanced = !this.advanced
     },
     loadOrgData () {
+      this.treeSpinning = true
       orgTree({}).then(res => {
-        this.treeData = res.data
+        this.treeData[0].children = res.data
+        // 为什么这里要递归？ 就是想让进来就展示所有嗷！ 好看！
+        this.loadDefaultExpandedKeys(this.treeData)
       }).catch(e => {
+      }).finally(() => {
+        this.treeSpinning = false
       })
     },
-    onExpand  (expandedKeys) {
-      this.expandedKeys = expandedKeys
-      this.autoExpandParent = false
-    },
-    onChange (e) {
-      const value = e.target.value
-      const expandedKeys = dataList.map((item) => {
-        if (item.key.indexOf(value) > -1) {
-          return getParentKey(item.key, gData)
+    loadDefaultExpandedKeys (list) {
+      list.forEach(item => {
+        this.expandedKeys.push(item.key)
+        if (item.children !== undefined && item.children.length > 0) {
+          this.loadDefaultExpandedKeys(item.children)
         }
-        return null
-      }).filter((item, i, self) => item && self.indexOf(item) === i)
-      Object.assign(this, {
-        expandedKeys,
-        searchValue: value,
-        autoExpandParent: true
       })
+    },
+    onExpand (expandedKeys) {
+      this.expandedKeys = expandedKeys
+    },
+    onSelect (selectedKeys) {
+      this.queryParam.orgId = selectedKeys[0]
+      this.$refs.table.refresh(true)
     }
   }
 }

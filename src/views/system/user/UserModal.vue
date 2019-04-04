@@ -59,6 +59,35 @@
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
+          label="组织ID"
+          hasFeedback
+          v-show="false"
+        >
+          <a-input placeholder="请输入组织ID" v-decorator="['orgId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="组织机构"
+          hasFeedback
+        >
+          <a-tree-select
+            v-model="selectTree"
+            showSearch
+            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+            :treeData="treeData"
+            placeholder="Please select"
+            :treeDefaultExpandedKeys="treeExpandedKeys"
+            treeNodeFilterProp="title"
+            @change="onChange"
+          >
+          </a-tree-select>
+        </a-form-item>
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
           label="E-mail"
           hasFeedback
         >
@@ -103,6 +132,7 @@
 
 <script>
 import { userSave, userEdit, userInfo } from '@/api/system/user'
+import { orgTree } from '@/api/system/org'
 import { roleSelect } from '@/api/system/role'
 import pick from 'lodash.pick'
 
@@ -130,7 +160,10 @@ export default {
       ],
       spinning: false,
       roleList: [],
-      userRoleList: []
+      userRoleList: [],
+      treeData: [],
+      selectTree: '',
+      treeExpandedKeys: []
     }
   },
   props: {
@@ -144,21 +177,29 @@ export default {
       // 每次都重置form表单
       this.form.resetFields()
       this.userRoleList = []
+      // 加载组织列表
+      this.loadData()
+      this.treeExpandedKeys = []
       this.spinning = true
       // 加载角色列表
       this.loadRoleSelect()
       this.editInputDisabled = false
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { userId: 0, status: 0 })
+      this.modal = Object.assign({}, { userId: 0, orgId: 0, status: 0 })
+      this.selectTree = '0'
+      this.treeExpandedKeys.push('0')
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'userId', 'orgId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
       })
     },
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
       this.userRoleList = []
+      // 加载组织列表
+      this.loadData()
+      this.treeExpandedKeys = []
       this.spinning = true
       // 加载角色列表
       this.loadRoleSelect(record.userId)
@@ -166,11 +207,18 @@ export default {
       this.editInputDisabled = true
       this.modalStatus = 'edit'
       this.modal = Object.assign({}, record)
+      if (record.orgId === undefined) {
+        this.selectTree = '0'
+        this.treeExpandedKeys.push('0')
+      } else {
+        this.selectTree = record.orgId + ''
+        this.treeExpandedKeys.push(record.orgId + '')
+      }
       this.modal.password = '******'
       this.modal.confirm = '******'
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'userId', 'orgId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
       })
     },
     handleOk (e) {
@@ -256,6 +304,15 @@ export default {
         this.spinning = false
       }).catch(e => {
       })
+    },
+    loadData () {
+      orgTree({ isRoot: true }).then(res => {
+        this.treeData = res.data
+      }).catch(e => {
+      })
+    },
+    onChange (value, label) {
+      this.form.setFieldsValue({ orgId: value })
     }
   }
 }

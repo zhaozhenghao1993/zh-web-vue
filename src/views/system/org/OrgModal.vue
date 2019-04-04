@@ -40,7 +40,7 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="上级菜单"
+        label="上级组织"
         hasFeedback
       >
         <a-tree-select
