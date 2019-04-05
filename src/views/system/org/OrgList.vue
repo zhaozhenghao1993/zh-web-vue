@@ -3,7 +3,7 @@
 
     <div class="table-operator">
       <a-button type="primary" icon="sync" @click="handleFilter()">刷新</a-button>
-      <a-button type="primary" v-if="checkPermission('sys:menu:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
+      <a-button type="primary" v-if="checkPermission('sys:org:save')" icon="plus" @click="$refs.modal.handleCreate({orgId: 0})">新建</a-button>
     </div>
 
     <s-table
@@ -12,17 +12,20 @@
       :columns="columns"
       :data="loadData"
       rowKey="orgId"
-      :showSizeChanger="false"
+      :showPagination="false"
     >
       <span slot="action" slot-scope="text, record">
-        <a v-if="checkPermission('sys:menu:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
+        <a v-if="checkPermission('sys:org:edit')" @click="$refs.modal.handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link">
             更多 <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
-            <a-menu-item v-if="checkPermission('sys:menu:remove')">
+            <a-menu-item v-if="checkPermission('sys:org:save')">
+              <a href="javascript:;" @click="$refs.modal.handleCreate(record)">新建下级组织</a>
+            </a-menu-item>
+            <a-menu-item v-if="checkPermission('sys:org:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>
           </a-menu>

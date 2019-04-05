@@ -105,7 +105,7 @@ export default {
      */
     refresh (bool = false) {
       bool && (this.localPagination = Object.assign({}, {
-        current: 1, pageSize: this.localPagination.pageSize
+        current: 1, pageSize: this.localPagination ? this.localPagination.pageSize : this.pageSize
       }))
       this.loadData()
     },

@@ -3,7 +3,7 @@
 
     <div class="table-operator">
       <a-button type="primary" icon="sync" @click="handleFilter()">刷新</a-button>
-      <a-button type="primary" v-if="checkPermission('sys:menu:save')" icon="plus" @click="$refs.modal.handleCreate()">新建</a-button>
+      <a-button type="primary" v-if="checkPermission('sys:menu:save')" icon="plus" @click="$refs.modal.handleCreate({name: '主目录', menuId: 0})">新建</a-button>
     </div>
 
     <s-table
@@ -30,6 +30,9 @@
             更多 <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
+            <a-menu-item v-if="checkPermission('sys:menu:save') && (record.type === 0 || record.type === 1)">
+              <a href="javascript:;" @click="$refs.modal.handleCreate(record)">新建下级菜单</a>
+            </a-menu-item>
             <a-menu-item v-if="checkPermission('sys:menu:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
             </a-menu-item>

@@ -103,15 +103,15 @@ export default {
     }
   },
   methods: {
-    handleCreate () {
+    handleCreate (record) {
       // 每次都重置form表单
       this.form.resetFields()
       this.treeExpandedKeys = []
       this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { orgId: 0, type: 0, parentId: 0 })
-      this.selectTree = '0'
-      this.treeExpandedKeys.push('0')
+      this.modal = Object.assign({}, { orgId: 0, parentId: record.orgId })
+      this.selectTree = record.orgId + ''
+      this.treeExpandedKeys.push(record.orgId + '')
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'orgId', 'parentId', 'orgName', 'orderNum'))

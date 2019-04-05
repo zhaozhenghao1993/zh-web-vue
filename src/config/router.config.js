@@ -40,7 +40,7 @@ export const asyncRouterMap = [
         ]
       },
 
-      // list
+      // sys
       {
         path: '/sys',
         name: 'sys',
@@ -71,6 +71,29 @@ export const asyncRouterMap = [
             name: 'OrgList',
             component: () => import('@/views/system/org/OrgList'),
             meta: { title: '组织管理', keepAlive: true, permission: [ 'sys:org' ] }
+          }
+        ]
+      },
+
+      // monitor
+      {
+        path: '/monitor',
+        name: 'monitor',
+        component: PageView,
+        redirect: '/monitor/log',
+        meta: { title: '系统监控', icon: 'dashboard', hiddenHeaderContent: true, permission: [ 'monitor' ] },
+        children: [
+          {
+            path: '/sys/user',
+            name: 'UserList',
+            component: () => import('@/views/system/user/UserList'),
+            meta: { title: '日志管理', keepAlive: true, permission: [ 'monitor:log' ] }
+          },
+          {
+            path: '/monitor/server',
+            name: 'ServerMonitor',
+            component: () => import('@/views/monitor/server/ServerMonitor'),
+            meta: { title: '服务器监控', keepAlive: true, permission: [ 'monitor:server' ] }
           }
         ]
       },
