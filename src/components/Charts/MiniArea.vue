@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+/* import moment from 'moment'
 const data = []
 const beginDay = new Date().getTime()
 
@@ -19,7 +19,7 @@ for (let i = 0; i < 10; i++) {
     x: moment(new Date(beginDay + 1000 * 60 * 60 * 24 * i)).format('YYYY-MM-DD'),
     y: Math.round(Math.random() * 10)
   })
-}
+} */
 
 const tooltip = [
   'x*y',
@@ -42,10 +42,15 @@ export default {
   name: 'MiniArea',
   data () {
     return {
-      data,
       tooltip,
       scale,
       height: 100
+    }
+  },
+  props: {
+    data: {
+      type: Array,
+      required: true
     }
   }
 }

@@ -13,7 +13,8 @@
       </div>
       <div class="total">
         <slot name="total">
-          <span>{{ typeof total === 'function' && total() || total }}</span>
+          <span v-if="percent" :style="'color:'+(total >= 80?'red':'green')+';'">{{ total }}%</span>
+          <span v-else>{{ typeof total === 'function' && total() || total }}</span>
         </slot>
       </div>
     </div>
@@ -44,6 +45,10 @@ export default {
       default: null
     },
     loading: {
+      type: Boolean,
+      default: false
+    },
+    percent: {
       type: Boolean,
       default: false
     }
