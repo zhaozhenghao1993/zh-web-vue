@@ -2,7 +2,7 @@
   <div>
     <a-row :gutter="24">
       <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="CPU" :percent="true" :total="cpuInfo.usedPerc">
+        <chart-card :loading="loading" title="CPU" :percent="true" :total="cpuInfo.usedPercent">
           <a-tooltip title="CPU使用率" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
@@ -10,14 +10,12 @@
             <mini-area :data="cpuData" />
           </div>
           <template slot="footer">
-            核心数<span> {{ cpuInfo.cpuNum }}</span><a-divider type="vertical" />
-            最大功率<span> {{ cpuInfo.maxGhz }}</span><a-divider type="vertical" />
-            实时频率<span> {{ cpuInfo.currGhz }}</span>
+            核心数<span> {{ cpuInfo.cpuNum }}</span>个
           </template>
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="内存" :percent="true" :total="memInfo.usedPerc">
+        <chart-card :loading="loading" title="内存" :percent="true" :total="memInfo.usedPercent">
           <a-tooltip title="内存使用率" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
@@ -29,7 +27,7 @@
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="JVM" :percent="true" :total="jvmInfo.usedPerc">
+        <chart-card :loading="loading" title="JVM" :percent="true" :total="jvmInfo.usedPercent">
           <a-tooltip title="JVM使用率" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
@@ -44,27 +42,26 @@
 
     <a-card title="服务器信息" :bordered="false">
       <detail-list :col="2">
-        <detail-list-item term="服务器名称">WIN-3E3H6JHL0VD</detail-list-item>
-        <detail-list-item term="操作系统">Windows Server 2008 R2, 版本 6.1</detail-list-item>
-        <detail-list-item term="服务器IP">192.168.0.104</detail-list-item>
-        <detail-list-item term="系统架构">amd64</detail-list-item>
+        <detail-list-item term="服务器名称">{{ serverInfo.serverName }}</detail-list-item>
+        <detail-list-item term="操作系统">{{ serverInfo.osName }}</detail-list-item>
+        <detail-list-item term="服务器IP">{{ serverInfo.serverIp }}</detail-list-item>
+        <detail-list-item term="系统架构">{{ serverInfo.osArch }}</detail-list-item>
       </detail-list>
     </a-card>
 
     <a-card title="Java虚拟机信息" style="margin-top: 24px" :bordered="false">
       <detail-list :col="2">
-        <detail-list-item term="Java名称">Java HotSpot(TM) 64-Bit Server VM</detail-list-item>
-        <detail-list-item term="Java版本">1.8.0_121-b13 / 25.121-b13, 供应商 Oracle Corporation</detail-list-item>
-        <detail-list-item term="启动时间">2019-03-21 22:50:58</detail-list-item>
-        <detail-list-item term="运行时长">15天17时2分25秒</detail-list-item>
-        <detail-list-item term="安装路径">*** 演示模式，不展示数据 ***</detail-list-item>
-        <detail-list-item term="启动参数">*** 演示模式，不展示数据 ***</detail-list-item>
+        <detail-list-item term="Java名称">{{ javaInfo.name }}</detail-list-item>
+        <detail-list-item term="Java版本">{{ javaInfo.version }}</detail-list-item>
+        <detail-list-item term="启动时间">{{ javaInfo.startTime }}</detail-list-item>
+        <detail-list-item term="运行时长">{{ javaInfo.runTime }}</detail-list-item>
+        <detail-list-item term="安装路径">{{ javaInfo.home }}</detail-list-item>
       </detail-list>
     </a-card>
 
     <a-card title="平台参数" style="margin-top: 24px" :bordered="false">
       <detail-list :col="1">
-        <detail-list-item term="当前工作路径">*** 演示模式，不展示数据 ***</detail-list-item>
+        <detail-list-item term="当前工作路径">{{ appInfo.appDir }}</detail-list-item>
         <detail-list-item term="日志存放路径">*** 演示模式，不展示数据 ***</detail-list-item>
         <detail-list-item term="上传文件路径">*** 演示模式，不展示数据 ***</detail-list-item>
       </detail-list>
@@ -77,7 +74,7 @@
       :bordered="false"
     >
       <a-table
-        rowKey="id"
+        rowKey="dirName"
         :columns="diskColumns"
         :dataSource="diskData"
         :pagination="false"
@@ -93,6 +90,7 @@ import { PageView } from '@/layouts'
 import DetailList from '@/components/tools/DetailList'
 import { ChartCard, MiniArea } from '@/components'
 import moment from 'moment'
+import { baseInfo, instantInfo } from '@/api/monitor/server'
 
 const DetailListItem = DetailList.Item
 
@@ -111,41 +109,24 @@ export default {
       loading: true,
       timer: null,
       cpuData: [],
-      cpuInfo: {
-        cpuNum: '2个',
-        maxGhz: '2.34Ghz',
-        currGhz: '1.79Ghz',
-        usedPerc: 12
-      },
-      memInfo: {
-        total: '6.000GB',
-        free: '1.503GB',
-        used: '4.497GB',
-        usedPerc: 75
-      },
-      jvmInfo: {
-        total: '1006MB',
-        free: '286.747MB',
-        used: '719.253MB',
-        usedPerc: 91
-      },
+      cpuInfo: {},
+      memInfo: {},
+      jvmInfo: {},
+      serverInfo: {},
+      javaInfo: {},
+      appInfo: {},
       diskColumns: [
         {
-          title: '#',
-          dataIndex: 'id',
-          key: 'id'
-        },
-        {
           title: '盘符路径',
-          dataIndex: 'path'
+          dataIndex: 'dirName'
         },
         {
           title: '文件系统',
-          dataIndex: 'system'
+          dataIndex: 'fileSystem'
         },
         {
           title: '盘符类型',
-          dataIndex: 'type'
+          dataIndex: 'diskType'
         },
         {
           title: '总大小',
@@ -161,33 +142,20 @@ export default {
         },
         {
           title: '已用百分比',
-          dataIndex: 'usedPerc'
+          dataIndex: 'usedPercent'
         }
       ],
-      diskData: [
-        {
-          id: 1,
-          path: 'C:\\',
-          system: 'NTFS',
-          type: 'local',
-          total: '29.998GB',
-          free: '3.580GB',
-          used: '26.418GB',
-          usedPerc: '89%'
-        }
-      ]
+      diskData: []
     }
   },
   filters: {
   },
   created () {
-    setTimeout(() => {
-      this.loading = !this.loading
-    }, 1000)
     // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
     clearInterval(this.timer)
     this.timer = null
     this.setTimer()
+    this.loadBaseInfo()
   },
   destroyed: function () {
     // 每次离开当前界面时，清除定时器
@@ -198,19 +166,35 @@ export default {
     setTimer () {
       if (this.timer == null) {
         this.timer = setInterval(() => {
-          this.loadCpuInfo()
-        }, 1000)
+          this.loadInstantInfo()
+        }, 5000)
       }
     },
-    loadCpuInfo () {
-      this.cpuData.push({
-        x: moment(new Date().getTime()).format('YYYY-MM-DD hh:mm:ss'),
-        y: Math.round(Math.random() * 100)
+    loadInstantInfo () {
+      instantInfo().then(response => {
+        const data = response.data
+        this.cpuInfo = data.cpu
+        this.memInfo = data.mem
+        this.jvmInfo = data.jvm
+        this.cpuData.push({
+          x: moment(new Date().getTime()).format('YYYY-MM-DD hh:mm:ss'),
+          y: data.cpu.usedPercent
+        })
+        if (this.cpuData.length > 10) {
+          this.cpuData = this.cpuData.slice(1)
+        }
+      }).finally(() => {
+        this.loading = false
       })
-      if (this.cpuData.length > 10) {
-        this.cpuData = this.cpuData.slice(1)
-      }
-      console.log('this.cpuData', this.cpuData)
+    },
+    loadBaseInfo () {
+      baseInfo().then(response => {
+        const data = response.data
+        this.serverInfo = data.sys
+        this.javaInfo = data.jvm
+        this.appInfo = data.app
+        this.diskData = data.sysDisks
+      })
     }
   }
 }

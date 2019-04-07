@@ -181,7 +181,6 @@ export default {
       this.loadData()
       this.modalStatus = 'create'
       this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: record.name, parentId: record.menuId })
-      console.log('this.modal', this.modal)
       this.selectTree = this.modal.parentId + ''
       this.treeExpandedKeys.push(this.modal.parentId + '')
       this.visible = true
