@@ -156,6 +156,7 @@ export default {
     this.timer = null
     this.setTimer()
     this.loadBaseInfo()
+    this.loadInstantInfo()
   },
   destroyed: function () {
     // 每次离开当前界面时，清除定时器

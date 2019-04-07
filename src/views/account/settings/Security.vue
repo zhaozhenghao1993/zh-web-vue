@@ -58,7 +58,6 @@ export default {
     handlePasswordSubmit () {
       this.confirmPasswordLoading = true
       this.passwordForm.validateFieldsAndScroll((err, values) => {
-        console.log('values', values)
         if (!err) {
           profilePassword(values).then(() => {
             // Do something
