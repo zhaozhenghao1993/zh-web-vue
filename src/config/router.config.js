@@ -84,10 +84,10 @@ export const asyncRouterMap = [
         meta: { title: '系统监控', icon: 'dashboard', hiddenHeaderContent: true, permission: [ 'monitor' ] },
         children: [
           {
-            path: '/sys/user',
-            name: 'UserList',
-            component: () => import('@/views/system/user/UserList'),
-            meta: { title: '日志管理', keepAlive: true, permission: [ 'monitor:log' ] }
+            path: '/monitor/log',
+            name: 'LogList',
+            component: () => import('@/views/monitor/log/LogList'),
+            meta: { title: '日志管理', keepAlive: true, permission: [ 'monitor:server' ] }
           },
           {
             path: '/monitor/server',
