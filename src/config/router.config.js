@@ -87,7 +87,7 @@ export const asyncRouterMap = [
             path: '/monitor/log',
             name: 'LogList',
             component: () => import('@/views/monitor/log/LogList'),
-            meta: { title: '日志管理', keepAlive: true, permission: [ 'monitor:server' ] }
+            meta: { title: '日志管理', keepAlive: true, permission: [ 'monitor:log' ] }
           },
           {
             path: '/monitor/server',

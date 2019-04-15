@@ -44,10 +44,10 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" v-if="checkPermission('sys:role:save')" icon="delete" @click="handleClear">清空日志</a-button>
+      <a-button type="primary" v-if="checkPermission('monitor:log:clear')" icon="delete" @click="handleClear">清空日志</a-button>
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
-          <a-menu-item key="1" v-if="checkPermission('sys:role:batch')" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
+          <a-menu-item key="1" v-if="checkPermission('monitor:log:batch')" @click="handleBatchDelete(selectedRowKeys)"><a-icon type="delete"/>删除</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px">
           批量操作 <a-icon type="down" />
@@ -230,13 +230,13 @@ export default {
       })
     },
     handleClear () {
+      const that = this
       let title = '登录日志'
       this.selectType.forEach(type => {
         if (type.typeCode === that.queryParam.type) {
           title = type.typeText
         }
       })
-      const that = this
       this.$confirm({
         type: 'error',
         title: '提示',
