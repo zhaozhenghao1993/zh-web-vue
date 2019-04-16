@@ -31,6 +31,7 @@ const err = (error) => {
     }
     if (error.response.status === 500) {
       notification.error({ message: 'Server exception', description: '服务器异常,请稍后再试' })
+      router.push({ path: '/exception/500' })
     }
   }
   return Promise.reject(error)

@@ -5,6 +5,7 @@
     v-model="visible"
     :confirmLoading="confirmLoading"
     @ok="handleOk"
+    :destroyOnClose="true"
   >
     <a-form :form="form">
 
@@ -69,7 +70,6 @@
           :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
           :treeData="treeData"
           placeholder="Please select"
-          :treeDefaultExpandedKeys="treeExpandedKeys"
           treeNodeFilterProp="title"
           @change="onChange"
         >
@@ -163,8 +163,7 @@ export default {
         { radioCode: 3, radioText: '链接' }
       ],
       treeData: [],
-      selectTree: '',
-      treeExpandedKeys: []
+      selectTree: ''
     }
   },
   props: {
@@ -177,12 +176,10 @@ export default {
     handleCreate (record) {
       // 每次都重置form表单
       this.form.resetFields()
-      this.treeExpandedKeys = []
       this.loadData()
       this.modalStatus = 'create'
       this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: record.name, parentId: record.menuId })
       this.selectTree = this.modal.parentId + ''
-      this.treeExpandedKeys.push(this.modal.parentId + '')
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'menuId', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
@@ -191,12 +188,10 @@ export default {
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
-      this.treeExpandedKeys = []
       this.loadData()
       this.modalStatus = 'edit'
       this.modal = Object.assign({ parentName: '主目录' }, record)
       this.selectTree = record.parentId + ''
-      this.treeExpandedKeys.push(record.parentId + '')
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.modal, 'menuId', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
