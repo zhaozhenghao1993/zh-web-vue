@@ -98,6 +98,29 @@ export const asyncRouterMap = [
         ]
       },
 
+      // tool
+      {
+        path: '/tool',
+        name: 'tool',
+        component: PageView,
+        redirect: '/monitor/log',
+        meta: { title: '开发工具', icon: 'tool', hiddenHeaderContent: true, permission: [ 'monitor' ] },
+        children: [
+          {
+            path: '/tool/icon-selector',
+            name: 'IconSelect',
+            component: () => import('@/views/tool/icon/IconSelectorView'),
+            meta: { title: 'IconSelector', keepAlive: true, permission: [ 'monitor:log' ] }
+          },
+          {
+            path: '/tool/generator',
+            name: 'GeneratorList',
+            component: () => import('@/views/tool/generator/GeneratorList'),
+            meta: { title: '代码生成器', keepAlive: true, permission: [ 'monitor:log' ] }
+          }
+        ]
+      },
+
       // Exception
       {
         path: '/exception',
@@ -193,12 +216,6 @@ export const asyncRouterMap = [
         meta: { title: '其他组件', icon: 'slack' },
         redirect: '/other/icon-selector',
         children: [
-          {
-            path: '/other/icon-selector',
-            name: 'TestIconSelect',
-            component: () => import('@/views/other/IconSelectorView'),
-            meta: { title: 'IconSelector', icon: 'tool', keepAlive: true }
-          },
           {
             path: '/other/list',
             component: RouteView,

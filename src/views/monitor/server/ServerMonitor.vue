@@ -95,7 +95,7 @@ import { baseInfo, instantInfo } from '@/api/monitor/server'
 const DetailListItem = DetailList.Item
 
 export default {
-  name: 'Advanced',
+  name: 'ServerMonitor',
   components: {
     ChartCard,
     MiniArea,

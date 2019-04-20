@@ -86,7 +86,7 @@ import checkPermission from '@/utils/permissions'
 import { logList, batchLogDelete, clearLogDelete } from '@/api/monitor/log'
 
 export default {
-  name: 'RoleList',
+  name: 'LogList',
   components: {
     STable
   },

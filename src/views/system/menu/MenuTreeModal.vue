@@ -27,7 +27,7 @@ import { menuTree } from '@/api/system/menu'
 import { roleInfo, roleAuthorize } from '@/api/system/role'
 
 export default {
-  name: 'UserModal',
+  name: 'MenuTreeModal',
   data () {
     return {
       visible: false,
