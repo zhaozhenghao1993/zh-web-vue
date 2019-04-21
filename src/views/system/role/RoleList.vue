@@ -73,7 +73,7 @@
 <script>
 import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
-import { roleList, roleDelete, batchRoleDelete } from '@/api/system/role'
+import { roleList, roleDelete, roleBatchDelete } from '@/api/system/role'
 import RoleModal from './RoleModal'
 import MenuTreeModal from '../menu/MenuTreeModal'
 
@@ -188,7 +188,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return batchRoleDelete(selectedRowKeys).then(() => {
+          return roleBatchDelete(selectedRowKeys).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

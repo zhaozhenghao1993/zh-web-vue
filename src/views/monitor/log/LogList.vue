@@ -83,7 +83,7 @@
 <script>
 import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
-import { logList, batchLogDelete, clearLogDelete } from '@/api/monitor/log'
+import { logList, logBatchDelete, logClearDelete } from '@/api/monitor/log'
 
 export default {
   name: 'LogList',
@@ -215,7 +215,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return batchLogDelete(selectedRowKeys).then(() => {
+          return logBatchDelete(selectedRowKeys).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)
@@ -244,7 +244,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return clearLogDelete(that.queryParam.type).then(() => {
+          return logClearDelete(that.queryParam.type).then(() => {
             that.$message.success('清空成功')
           }).catch(err => {
             that.$message.error(err.msg)

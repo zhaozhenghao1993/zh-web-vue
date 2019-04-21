@@ -31,7 +31,7 @@ export function userDelete (id) {
   })
 }
 
-export function batchUserDelete (parameter) {
+export function userBatchDelete (parameter) {
   return axios({
     url: '/sys/user',
     method: 'delete',

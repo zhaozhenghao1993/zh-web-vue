@@ -31,7 +31,7 @@ export function roleDelete (id) {
   })
 }
 
-export function batchRoleDelete (parameter) {
+export function roleBatchDelete (parameter) {
   return axios({
     url: '/sys/role',
     method: 'delete',

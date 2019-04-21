@@ -8,7 +8,7 @@ export function logList (parameter) {
   })
 }
 
-export function batchLogDelete (parameter) {
+export function logBatchDelete (parameter) {
   return axios({
     url: '/monitor/log',
     method: 'delete',
@@ -16,7 +16,7 @@ export function batchLogDelete (parameter) {
   })
 }
 
-export function clearLogDelete (type) {
+export function logClearDelete (type) {
   return axios({
     url: '/monitor/log/' + type + '/clear',
     method: 'delete'

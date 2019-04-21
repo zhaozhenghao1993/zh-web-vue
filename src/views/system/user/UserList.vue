@@ -105,7 +105,7 @@
 <script>
 import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
-import { userList, userDelete, batchUserDelete, userEnable, userDisable } from '@/api/system/user'
+import { userList, userDelete, userBatchDelete, userEnable, userDisable } from '@/api/system/user'
 import { orgTree } from '@/api/system/org'
 import UserModal from './UserModal'
 import UserModalResetPassword from './UserModalResetPassword'
@@ -270,7 +270,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return batchUserDelete(selectedRowKeys).then(() => {
+          return userBatchDelete(selectedRowKeys).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)
