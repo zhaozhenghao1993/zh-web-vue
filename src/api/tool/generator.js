@@ -12,6 +12,7 @@ export function generatorCode (parameter) {
   return axios({
     url: '/tool/generator/code',
     method: 'get',
-    params: parameter
+    params: parameter,
+    responseType: 'blob'
   })
 }

@@ -93,7 +93,9 @@
         hasFeedback
         v-show="this.form.getFieldValue('type') === 2 || this.form.getFieldValue('type') === 3"
       >
-        <a-input placeholder="请输入请求method, 例：GET 或 POST" v-decorator="['method',{rules: [{ pattern: /^[A-Z]+$/, message: '输入的method格式不正确! 例：GET 或 POST ！' }]}]"/>
+        <a-select v-decorator="['method', {rules: []}]">
+          <a-select-option v-for="method in selectMethod" :key="method.methodCode" :value="method.methodCode">{{ method.methodText }}</a-select-option>
+        </a-select>
       </a-form-item>
 
       <a-form-item
@@ -161,6 +163,12 @@ export default {
         { radioCode: 1, radioText: '菜单' },
         { radioCode: 2, radioText: '按钮' },
         { radioCode: 3, radioText: '链接' }
+      ],
+      selectMethod: [
+        { methodCode: 'GET', methodText: 'GET' },
+        { methodCode: 'POST', methodText: 'POST' },
+        { methodCode: 'PUT', methodText: 'PUT' },
+        { methodCode: 'DELETE', methodText: 'DELETE' }
       ],
       treeData: [],
       selectTree: ''

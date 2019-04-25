@@ -140,6 +140,18 @@ export default {
     handleCancel () {
       this.$emit('close')
       this.visible = false
+    },
+    // 下载文件
+    download (data) {
+      if (!data) {
+        return
+      }
+      const url = window.URL.createObjectURL(new Blob([data]))
+      const link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      document.body.appendChild(link)
+      link.click()
     }
   }
 }

@@ -48,6 +48,7 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  console.log('response', response)
   const data = response.data
   if (data.code !== 0) {
     const token = Vue.ls.get(ACCESS_TOKEN)
