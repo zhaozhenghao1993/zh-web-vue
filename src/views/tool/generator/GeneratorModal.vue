@@ -120,8 +120,9 @@ export default {
       this.confirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          generatorCode(values).then(() => {
+          generatorCode(values).then(res => {
             // Do something
+            this.download(res, values.tableName)
             this.$message.success('生成代码成功')
             this.$emit('ok')
             this.tableRefresh(true)
@@ -142,16 +143,26 @@ export default {
       this.visible = false
     },
     // 下载文件
-    download (data) {
+    download (data, fileName) {
       if (!data) {
         return
       }
-      const url = window.URL.createObjectURL(new Blob([data]))
-      const link = document.createElement('a')
-      link.style.display = 'none'
-      link.href = url
-      document.body.appendChild(link)
-      link.click()
+      const content = data
+      const blob = new Blob([content])
+      fileName = fileName + '.zip'
+      console.log('fileName', fileName)
+      if ('download' in document.createElement('a')) { // 非IE下载
+        const elink = document.createElement('a')
+        elink.download = fileName
+        elink.style.display = 'none'
+        elink.href = URL.createObjectURL(blob)
+        document.body.appendChild(elink)
+        elink.click()
+        URL.revokeObjectURL(elink.href) // 释放URL 对象
+        document.body.removeChild(elink)
+      } else { // IE10+下载
+        navigator.msSaveBlob(blob, fileName)
+      }
     }
   }
 }
