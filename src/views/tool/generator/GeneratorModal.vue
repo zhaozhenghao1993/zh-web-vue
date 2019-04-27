@@ -150,7 +150,6 @@ export default {
       const content = data
       const blob = new Blob([content])
       fileName = fileName + '.zip'
-      console.log('fileName', fileName)
       if ('download' in document.createElement('a')) { // 非IE下载
         const elink = document.createElement('a')
         elink.download = fileName

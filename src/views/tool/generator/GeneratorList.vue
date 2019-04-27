@@ -26,7 +26,7 @@
       :data="loadData"
     >
       <span slot="action" slot-scope="text, record">
-        <a v-if="checkPermission('sys:role:edit')" @click="$refs.modal.handleGenerator(record)">生成代码</a>
+        <a v-if="checkPermission('tool:generator:code')" @click="$refs.modal.handleGenerator(record)">生成代码</a>
       </span>
     </s-table>
 

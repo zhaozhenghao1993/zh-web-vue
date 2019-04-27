@@ -71,6 +71,12 @@ export const asyncRouterMap = [
             name: 'OrgList',
             component: () => import('@/views/system/org/OrgList'),
             meta: { title: '组织管理', keepAlive: true, permission: [ 'sys:org' ] }
+          },
+          {
+            path: '/sys/post',
+            name: 'PostList',
+            component: () => import('@/views/system/post/PostList'),
+            meta: { title: '岗位管理', keepAlive: true, permission: [ 'sys:post' ] }
           }
         ]
       },
@@ -103,20 +109,20 @@ export const asyncRouterMap = [
         path: '/tool',
         name: 'tool',
         component: PageView,
-        redirect: '/monitor/log',
-        meta: { title: '开发工具', icon: 'tool', hiddenHeaderContent: true, permission: [ 'monitor' ] },
+        redirect: '/tool/icon-selector',
+        meta: { title: '开发工具', icon: 'tool', hiddenHeaderContent: true, permission: [ 'tool' ] },
         children: [
           {
             path: '/tool/icon-selector',
             name: 'IconSelect',
             component: () => import('@/views/tool/icon/IconSelectorView'),
-            meta: { title: 'IconSelector', keepAlive: true, permission: [ 'monitor:log' ] }
+            meta: { title: 'IconSelector', keepAlive: true, permission: [ 'tool:icon' ] }
           },
           {
             path: '/tool/generator',
             name: 'GeneratorList',
             component: () => import('@/views/tool/generator/GeneratorList'),
-            meta: { title: '代码生成器', keepAlive: true, permission: [ 'monitor:log' ] }
+            meta: { title: '代码生成器', keepAlive: true, permission: [ 'tool:generator' ] }
           }
         ]
       },

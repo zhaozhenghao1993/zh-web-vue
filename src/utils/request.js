@@ -48,34 +48,31 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  console.log('Blob.prototype.constructor', Blob.prototype.constructor)
-  console.log('response.data.constructor', response.data.constructor)
-  console.log('===', Blob.prototype.constructor === response.data.constructor)
-  // 下载流输出
+  // 处理不同模式响应
   if (Blob.prototype.constructor === response.data.constructor) {
-    // 导出
+    // 下载流输出
     const headers = response.headers
     if (headers['content-type'] === 'application/octet-stream;charset=UTF-8') {
       return response.data
     } else if (headers['content-type'] === 'application/json;charset=UTF-8') {
       // 为json说明存在后台异常，则将 response.data 的 blob 转为json串
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = e => {
-        console.log(111111)
         response.data = JSON.parse(e.target.result)
+        return responseHandle(response.data)
       }
       reader.readAsText(response.data)
     }
+  } else {
+    // 正常处理后台响应json
+    return responseHandle(response.data)
   }
-  console.log('response', response)
-  console.log('response.data.code', response.data.code)
-  const data = response.data
-  console.log('data', data)
-  console.log('data.size', data.size)
+}, err)
+
+const responseHandle = (data) => {
   if (data.code !== 0) {
     const token = Vue.ls.get(ACCESS_TOKEN)
     if (data.code === 500) {
-      console.log(111)
       notification.error({ message: 'Error', description: data.msg })
     }
     if (data.code === 40101 || data.code === 40401) {
@@ -94,9 +91,9 @@ service.interceptors.response.use((response) => {
     }
     return Promise.reject(data)
   } else {
-    return response.data
+    return data
   }
-}, err)
+}
 
 const installer = {
   vm: {},
