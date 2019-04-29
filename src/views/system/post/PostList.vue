@@ -4,8 +4,13 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="搜索内容">
-              <a-input placeholder="请输入" v-model="queryParam.content"/>
+            <a-form-item label="岗位名称">
+              <a-input placeholder="请输入" v-model="queryParam.postName"/>
+            </a-form-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-item label="岗位编码">
+              <a-input placeholder="请输入" v-model="queryParam.postCode"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -79,41 +84,31 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {
-        content: ''
+        postName: '',
+        postCode: ''
       },
       // 表头
       columns: [
         {
-          title: '',
+          title: 'ID',
           dataIndex: 'postId'
-        },
-        {
-          title: '岗位编码',
-          dataIndex: 'postCode'
         },
         {
           title: '岗位名称',
           dataIndex: 'postName'
         },
         {
+          title: '岗位编码',
+          dataIndex: 'postCode'
+        },
+        {
           title: '排序',
           dataIndex: 'orderNum'
         },
         {
-          title: '创建用户id',
-          dataIndex: 'creatorId'
-        },
-        {
           title: '创建时间',
-          dataIndex: 'createTime'
-        },
-        {
-          title: '最后修改人id',
-          dataIndex: 'modifierId'
-        },
-        {
-          title: '修改时间',
-          dataIndex: 'modifiedTime'
+          dataIndex: 'createTime',
+          sorter: true
         },
         {
           title: '操作',
@@ -149,7 +144,8 @@ export default {
       this.$refs.table.refresh(true)
     },
     clearFilter () {
-      this.queryParam.content = ''
+      this.queryParam.postName = ''
+      this.queryParam.postCode = ''
     },
     handleTableRefresh (boolean) {
       this.$refs.table.refresh(boolean)
@@ -159,7 +155,7 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除吗 ?',
+        content: '真的要删除岗位<' + record.postName + '>吗吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
@@ -182,7 +178,7 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除选中内容吗 ?',
+        content: '真的要删除选中岗位吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {

@@ -17,22 +17,21 @@
       >
         <a-input placeholder="ID" v-decorator="[ 'postId', {rules: []} ]" disabled="disabled" />
       </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="岗位编码"
-        hasFeedback
-      >
-        <a-input placeholder="请输入岗位编码" v-decorator="['postCode',{rules: []}]"/>
-      </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
         label="岗位名称"
         hasFeedback
       >
-        <a-input placeholder="请输入岗位名称" v-decorator="['postName',{rules: []}]"/>
+        <a-input placeholder="请输入岗位名称" v-decorator="['postName',{rules: [{required: true, message: '请输入岗位名称!'}]}]"/>
+      </a-form-item>
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="岗位编码"
+        hasFeedback
+      >
+        <a-input placeholder="请输入岗位编码" v-decorator="['postCode',{rules: [{required: true, message: '请输入岗位编码!'}]}]"/>
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
@@ -40,39 +39,7 @@
         label="排序"
         hasFeedback
       >
-        <a-input placeholder="请输入排序" v-decorator="['orderNum',{rules: []}]"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="创建用户id"
-        hasFeedback
-      >
-        <a-input placeholder="请输入创建用户id" v-decorator="['creatorId',{rules: []}]"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="创建时间"
-        hasFeedback
-      >
-        <a-input placeholder="请输入创建时间" v-decorator="['createTime',{rules: []}]"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="最后修改人id"
-        hasFeedback
-      >
-        <a-input placeholder="请输入最后修改人id" v-decorator="['modifierId',{rules: []}]"/>
-      </a-form-item>
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="修改时间"
-        hasFeedback
-      >
-        <a-input placeholder="请输入修改时间" v-decorator="['modifiedTime',{rules: []}]"/>
+        <a-input-number v-decorator="['orderNum',{rules: []}]"/>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -115,7 +82,7 @@ export default {
       this.modal = Object.assign({}, { postId: 0 })
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'postId', 'postCode', 'postName', 'orderNum', 'creatorId', 'createTime', 'modifierId', 'modifiedTime'))
+        this.form.setFieldsValue(pick(this.modal, 'postId', 'postCode', 'postName', 'orderNum'))
       })
     },
     handleEdit (record) {
@@ -125,7 +92,7 @@ export default {
       this.modal = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'postId', 'postCode', 'postName', 'orderNum', 'creatorId', 'createTime', 'modifierId', 'modifiedTime'))
+        this.form.setFieldsValue(pick(this.modal, 'postId', 'postCode', 'postName', 'orderNum'))
       })
     },
     handleOk (e) {
