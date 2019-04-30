@@ -8,124 +8,143 @@
     :destroyOnClose="true"
   >
     <a-spin :spinning="spinning">
-      <a-form :form="form">
+      <div style="height: 600px; overflow: auto">
+        <a-form :form="form">
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="ID"
-          hasFeedback
-          validateStatus="success"
-        >
-          <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="用户名"
-          hasFeedback
-        >
-          <a-input placeholder="请输入用户名" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]" :disabled="editInputDisabled"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="姓名"
-          hasFeedback
-        >
-          <a-input placeholder="起一个名字" v-decorator="['name',{rules: [{required: true, message: '请输入姓名!'}]}]"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="密码"
-          hasFeedback
-        >
-          <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="editInputDisabled" />
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="请确认密码"
-          hasFeedback
-        >
-          <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="editInputDisabled" @blur="handleConfirmBlur"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="组织ID"
-          hasFeedback
-          v-show="false"
-        >
-          <a-input placeholder="请输入组织ID" v-decorator="['orgId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
-        </a-form-item>
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="组织机构"
-          hasFeedback
-        >
-          <a-tree-select
-            v-model="selectTree"
-            showSearch
-            :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-            :treeData="treeData"
-            placeholder="Please select"
-            :treeDefaultExpandedKeys="treeExpandedKeys"
-            treeNodeFilterProp="title"
-            @change="onChange"
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="ID"
+            hasFeedback
+            validateStatus="success"
           >
-          </a-tree-select>
-        </a-form-item>
+            <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
+          </a-form-item>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="E-mail"
-          hasFeedback
-        >
-          <a-input v-decorator="['email',{rules: [{type: 'email', message: '输入的E-mail格式不正确!'}]}]"/>
-        </a-form-item>
+          <a-divider orientation="left">基本信息</a-divider>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="手机号"
-          hasFeedback
-        >
-          <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: '输入的手机号格式不正确!' }], validateTrigger: 'change'}]"/>
-        </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="用户名"
+            hasFeedback
+          >
+            <a-input placeholder="请输入用户名" v-decorator="['username',{rules: [{required: true, message: '请输入用户名!'}]}]" :disabled="editInputDisabled"/>
+          </a-form-item>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="状态"
-          hasFeedback
-        >
-          <a-select v-decorator="['status', {rules: []}]">
-            <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
-          </a-select>
-        </a-form-item>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="姓名"
+            hasFeedback
+          >
+            <a-input placeholder="起一个名字" v-decorator="['name',{rules: [{required: true, message: '请输入姓名!'}]}]"/>
+          </a-form-item>
 
-        <a-divider />
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="组织ID"
+            hasFeedback
+            v-show="false"
+          >
+            <a-input placeholder="请输入组织ID" v-decorator="['orgId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+          </a-form-item>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="角色"
-        >
-          <a-checkbox-group v-model="userRoleList">
-            <a-checkbox v-for="role in roleList" :key="role.roleId" :value="role.roleId">{{ role.roleName }}</a-checkbox>
-          </a-checkbox-group>
-        </a-form-item>
-      </a-form>
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="E-mail"
+            hasFeedback
+          >
+            <a-input v-decorator="['email',{rules: [{type: 'email', message: '输入的E-mail格式不正确!'}]}]"/>
+          </a-form-item>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="手机号"
+            hasFeedback
+          >
+            <a-input v-decorator="['mobile', {rules: [{ pattern: /^1[34578]\d{9}$/, message: '输入的手机号格式不正确!' }], validateTrigger: 'change'}]"/>
+          </a-form-item>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="状态"
+            hasFeedback
+          >
+            <a-select v-decorator="['status', {rules: []}]">
+              <a-select-option v-for="status in selectStatus" :key="status.statusCode" :value="status.statusCode">{{ status.statusText }}</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-divider orientation="left">用户安全</a-divider>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="密码"
+            hasFeedback
+          >
+            <a-input v-decorator="['password',{rules: [{required: true, message: 'Please input your password!',}, {validator: validateToNextPassword,}],}]" type="password" :disabled="editInputDisabled" />
+          </a-form-item>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="请确认密码"
+            hasFeedback
+          >
+            <a-input v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your password!',}, {validator: compareToFirstPassword,}],}]" type="password" :disabled="editInputDisabled" @blur="handleConfirmBlur"/>
+          </a-form-item>
+
+          <a-divider orientation="left">组织岗位</a-divider>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="组织机构"
+            hasFeedback
+          >
+            <a-tree-select
+              v-model="selectTree"
+              showSearch
+              :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+              :treeData="treeData"
+              placeholder="Please select"
+              :treeDefaultExpandedKeys="treeExpandedKeys"
+              treeNodeFilterProp="title"
+              @change="onChange"
+            >
+            </a-tree-select>
+          </a-form-item>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="岗位"
+            hasFeedback
+          >
+            <a-select mode="multiple" :defaultValue="['a1', 'b2']" style="width: 100%" @change="handleChange" placeholder="Please select">
+              <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">{{ (i + 9).toString(36) + i }}</a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-divider orientation="left">用户角色</a-divider>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            label="角色"
+          >
+            <a-checkbox-group v-model="userRoleList">
+              <a-checkbox v-for="role in roleList" :key="role.roleId" :value="role.roleId">{{ role.roleName }}</a-checkbox>
+            </a-checkbox-group>
+          </a-form-item>
+        </a-form>
+      </div>
     </a-spin>
   </a-modal>
 </template>
@@ -313,6 +332,9 @@ export default {
     },
     onChange (value, label) {
       this.form.setFieldsValue({ orgId: value })
+    },
+    handleChange (value) {
+      console.log(`selected ${value}`)
     }
   }
 }

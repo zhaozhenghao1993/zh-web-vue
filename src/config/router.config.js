@@ -99,7 +99,7 @@ export const asyncRouterMap = [
             path: '/monitor/server',
             name: 'ServerMonitor',
             component: () => import('@/views/monitor/server/ServerMonitor'),
-            meta: { title: '服务器监控', keepAlive: true, permission: [ 'monitor:server' ] }
+            meta: { title: '服务器监控', permission: [ 'monitor:server' ] }
           }
         ]
       },
