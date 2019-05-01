@@ -44,16 +44,6 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
-            label="组织ID"
-            hasFeedback
-            v-show="false"
-          >
-            <a-input placeholder="请输入组织ID" v-decorator="['orgId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
-          </a-form-item>
-
-          <a-form-item
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
             label="E-mail"
             hasFeedback
           >
@@ -105,6 +95,16 @@
           <a-form-item
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
+            label="组织ID"
+            hasFeedback
+            v-show="false"
+          >
+            <a-input placeholder="请输入组织ID" v-decorator="['orgId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+          </a-form-item>
+
+          <a-form-item
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
             label="组织机构"
             hasFeedback
           >
@@ -127,8 +127,8 @@
             label="岗位"
             hasFeedback
           >
-            <a-select mode="multiple" :defaultValue="['a1', 'b2']" style="width: 100%" @change="handleChange" placeholder="Please select">
-              <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">{{ (i + 9).toString(36) + i }}</a-select-option>
+            <a-select mode="multiple" v-model="userPostList" optionFilterProp="children" placeholder="Please select">
+              <a-select-option v-for="post in postList" :key="post.postId">{{ post.postName }}</a-select-option>
             </a-select>
           </a-form-item>
 
@@ -153,6 +153,7 @@
 import { userSave, userEdit, userInfo } from '@/api/system/user'
 import { orgTree } from '@/api/system/org'
 import { roleSelect } from '@/api/system/role'
+import { postSelect } from '@/api/system/post'
 import pick from 'lodash.pick'
 
 export default {
@@ -180,6 +181,8 @@ export default {
       spinning: false,
       roleList: [],
       userRoleList: [],
+      postList: [],
+      userPostList: [],
       treeData: [],
       selectTree: '',
       treeExpandedKeys: []
@@ -196,6 +199,7 @@ export default {
       // 每次都重置form表单
       this.form.resetFields()
       this.userRoleList = []
+      this.userPostList = []
       // 加载组织列表
       this.loadData()
       this.treeExpandedKeys = []
@@ -216,6 +220,7 @@ export default {
       // 每次都重置form表单
       this.form.resetFields()
       this.userRoleList = []
+      this.userPostList = []
       // 加载组织列表
       this.loadData()
       this.treeExpandedKeys = []
@@ -225,14 +230,10 @@ export default {
       // 如果是修改操作, 则password disabled 制空
       this.editInputDisabled = true
       this.modalStatus = 'edit'
+      if (record.orgId === undefined || record.orgId === null) { record.orgId = 0 }
       this.modal = Object.assign({}, record)
-      if (record.orgId === undefined) {
-        this.selectTree = '0'
-        this.treeExpandedKeys.push('0')
-      } else {
-        this.selectTree = record.orgId + ''
-        this.treeExpandedKeys.push(record.orgId + '')
-      }
+      this.selectTree = record.orgId + ''
+      this.treeExpandedKeys.push(record.orgId + '')
       this.modal.password = '******'
       this.modal.confirm = '******'
       this.visible = true
@@ -246,6 +247,7 @@ export default {
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           values.roleIdList = this.userRoleList
+          values.postIdList = this.userPostList
           if (this.modalStatus === 'create') {
             userSave(values).then(() => {
               // Do something
@@ -319,6 +321,7 @@ export default {
       userInfo(id).then(res => {
         if (res.data.roleIdList !== undefined) {
           this.userRoleList = res.data.roleIdList
+          this.userPostList = res.data.postIdList
         }
         this.spinning = false
       }).catch(e => {
@@ -329,12 +332,13 @@ export default {
         this.treeData = res.data
       }).catch(e => {
       })
+      postSelect().then(res => {
+        this.postList = res.data
+      }).catch(e => {
+      })
     },
     onChange (value, label) {
       this.form.setFieldsValue({ orgId: value })
-    },
-    handleChange (value) {
-      console.log(`selected ${value}`)
     }
   }
 }

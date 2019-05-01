@@ -6,7 +6,7 @@
           <a-menu
             :mode="device == 'mobile' ? 'horizontal' : 'inline'"
             :style="{ border: '0', width: device == 'mobile' ? '560px' : 'auto'}"
-            :defaultSelectedKeys="defaultSelectedKeys"
+            v-model="defaultSelectedKeys"
             type="inner"
             @openChange="onOpenChange"
           >
@@ -89,6 +89,11 @@ export default {
   },
   created () {
     this.updateMenu()
+  },
+  watch: {
+    $route () {
+      this.updateMenu()
+    }
   },
   methods: {
     onOpenChange (openKeys) {

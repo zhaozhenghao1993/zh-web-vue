@@ -45,3 +45,10 @@ export function postBatchDelete (parameter) {
     data: parameter
   })
 }
+
+export function postSelect () {
+  return axios({
+    url: '/sys/post/select',
+    method: 'get'
+  })
+}
