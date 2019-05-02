@@ -22,8 +22,7 @@
 </template>
 
 <script>
-import { getPermissions } from '@/api/manage'
-import { actionToObject } from '@/utils/permissions'
+// import { actionToObject } from '@/utils/permissions'
 import pick from 'lodash.pick'
 
 export default {
@@ -119,8 +118,8 @@ export default {
       })
     },
     loadPermissions () {
-      const that = this
-      getPermissions().then(res => {
+      // const that = this
+      /* getPermissions().then(res => {
         const result = res.result
         that.permissions = result.map(permission => {
           const options = actionToObject(permission.actionData)
@@ -135,7 +134,7 @@ export default {
           })
           return permission
         })
-      })
+      }) */
     }
 
   }

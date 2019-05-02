@@ -3,7 +3,7 @@
   <page-view :avatar="avatar" :title="false">
     <div slot="headerContent">
       <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome() }}</span></div>
-      <div>前端工程师 | 蚂蚁金服 - 某某某事业群 - VUE平台</div>
+      <div>{{ posts }} | {{ orgs }}</div>
     </div>
     <div slot="extra">
       <a-row class="more-info">
@@ -118,8 +118,6 @@ import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
 import { Radar } from '@/components'
 
-import { getRoleList, getServiceList } from '@/api/manage'
-
 export default {
   name: 'Workplace',
   components: {
@@ -132,6 +130,8 @@ export default {
       timeFix: timeFix(),
       avatar: '',
       user: {},
+      posts: '',
+      orgs: '',
 
       projects: [],
       loading: true,
@@ -184,16 +184,7 @@ export default {
     }
   },
   created () {
-    this.user = this.userInfo
-    this.avatar = this.userInfo.avatar
-
-    getRoleList().then(res => {
-      console.log('workplace -> call getRoleList()', res)
-    })
-
-    getServiceList().then(res => {
-      console.log('workplace -> call getServiceList()', res)
-    })
+    this.loadUserInfo()
   },
   mounted () {
     this.getProjects()
@@ -203,6 +194,20 @@ export default {
   },
   methods: {
     ...mapGetters(['nickname', 'welcome']),
+    loadUserInfo () {
+      this.user = this.userInfo
+      this.avatar = this.userInfo.avatar
+      const posts = []
+      const orgs = []
+      this.userInfo.posts.forEach(post => {
+        posts.push(post.postName)
+      })
+      this.userInfo.orgs.forEach(org => {
+        orgs.push(org.orgName)
+      })
+      this.posts = posts.join(' ')
+      this.orgs = orgs.join(' - ')
+    },
     getProjects () {
     },
     getActivity () {

@@ -15,6 +15,8 @@ const user = {
     roles: [],
     routes: [],
     perms: [],
+    posts: [],
+    orgs: [],
     info: {}
   },
 
@@ -37,6 +39,12 @@ const user = {
     },
     SET_PERMS: (state, perms) => {
       state.perms = perms
+    },
+    SET_POSTS: (state, perms) => {
+      state.posts = perms
+    },
+    SET_ORGS: (state, perms) => {
+      state.orgs = perms
     },
     SET_INFO: (state, info) => {
       state.info = info
@@ -81,6 +89,15 @@ const user = {
             commit('SET_ROUTES', routes)
             commit('SET_PERMS', perms)
             commit('SET_ROLES', data.roles)
+          } else {
+            data.roles = []
+            data.perms = []
+          }
+          if (data.posts === undefined) {
+            data.posts = []
+          }
+          if (data.orgs === undefined) {
+            data.orgs = []
           }
           // 处理主题样式
           if (data.theme !== undefined) {
@@ -106,6 +123,8 @@ const user = {
             updateTheme(color)
           }
 
+          commit('SET_POSTS', data.posts)
+          commit('SET_ORGS', data.orgs)
           commit('SET_INFO', data)
           commit('SET_NAME', { name: data.name, welcome: welcome() })
           commit('SET_AVATAR', data.avatar)

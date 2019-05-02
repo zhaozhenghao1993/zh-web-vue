@@ -150,7 +150,6 @@
 
 <script>
 import { STable } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
 
 export default {
   name: 'TableList',
@@ -204,10 +203,6 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return getRoleList(parameter)
-          .then(res => {
-            return res.result
-          })
       },
 
       selectedRowKeys: [],
@@ -215,13 +210,6 @@ export default {
     }
   },
   created () {
-    getServiceList().then(res => {
-      console.log('getServiceList.call()', res)
-    })
-
-    getRoleList().then(res => {
-      console.log('getRoleList.call()', res)
-    })
   },
   methods: {
     handleEdit (record) {

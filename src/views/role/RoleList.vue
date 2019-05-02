@@ -63,9 +63,8 @@
 </template>
 
 <script>
-import { getRoleList, getPermissions } from '@/api/manage'
 import { mixinDevice } from '@/utils/mixin'
-import { actionToObject } from '@/utils/permissions'
+// import { actionToObject } from '@/utils/permissions'
 import pick from 'lodash.pick'
 
 export default {
@@ -82,7 +81,7 @@ export default {
     }
   },
   created () {
-    getRoleList().then((res) => {
+    /* getRoleList().then((res) => {
       this.roles = res.result.data
       this.roles.push({
         id: '-1',
@@ -90,7 +89,7 @@ export default {
         describe: '新增一个角色'
       })
       console.log('this.roles', this.roles)
-    })
+    }) */
     this.loadPermissions()
   },
   methods: {
@@ -143,7 +142,7 @@ export default {
       })
     },
     loadPermissions () {
-      getPermissions().then(res => {
+      /* getPermissions().then(res => {
         const result = res.result
         this.permissions = result.map(permission => {
           const options = actionToObject(permission.actionData)
@@ -158,7 +157,7 @@ export default {
           })
           return permission
         })
-      })
+      }) */
     }
   }
 }
