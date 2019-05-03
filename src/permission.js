@@ -45,9 +45,9 @@ router.beforeEach((to, from, next) => {
               message: '错误',
               description: '请求用户信息失败，请重试'
             })
-            store.dispatch('FedLogOut').then(() => {
+            /* store.dispatch('FedLogOut').then(() => {
               next({ path: '/user/login', query: { redirect: to.fullPath } })
-            })
+            }) */
           })
       } else {
         next()
