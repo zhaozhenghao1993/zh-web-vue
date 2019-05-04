@@ -59,7 +59,7 @@
           :activeTabKey="noTitleKey"
           @tabChange="key => handleTabChange(key, 'noTitleKey')"
         >
-          <permission-page v-if="noTitleKey === 'permission'"></permission-page>
+          <permission-page v-if="noTitleKey === 'permission'" :permissions="this.permissions"></permission-page>
           <article-page v-else-if="noTitleKey === 'article'"></article-page>
           <app-page v-else-if="noTitleKey === 'app'"></app-page>
           <project-page v-else-if="noTitleKey === 'project'"></project-page>
@@ -89,6 +89,7 @@ export default {
       posts: '',
       orgs: '',
       roles: [],
+      permissions: [],
       tags: ['很有想法的', '专注设计', '辣~', '大长腿', '川妹子', '海纳百川'],
 
       tagInputVisible: false,
@@ -145,6 +146,29 @@ export default {
       })
       this.posts = posts.join(' ')
       this.orgs = orgs.join(' - ')
+      this.handlePermission(this.userInfo.perms)
+    },
+    handlePermission (perms) {
+      const actions = [] // 所有类型为 2，3 的 action
+      if (perms !== undefined && perms.length > 0) {
+        perms.map(perm => {
+          // 只匹配类型 type 为 1，2，3 的菜单和 action 处理
+          if (perm.type === 1) {
+            this.permissions.push(perm)
+          }
+          if (perm.type === 2 || perm.type === 3) {
+            actions.push(perm)
+          }
+        })
+        this.permissions.map(perm => {
+          perm.action = []
+          actions.map((action, index) => {
+            if (perm.menuId === action.parentId) {
+              perm.action.push(action)
+            }
+          })
+        })
+      }
     },
     getTeams () {
     },
