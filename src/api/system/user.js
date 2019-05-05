@@ -69,3 +69,10 @@ export function userInfo (id) {
     method: 'get'
   })
 }
+
+export function userDetail (id) {
+  return axios({
+    url: '/sys/user/' + id + '/detail',
+    method: 'get'
+  })
+}

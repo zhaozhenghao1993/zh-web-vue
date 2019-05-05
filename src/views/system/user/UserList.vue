@@ -80,7 +80,7 @@
               </a>
               <a-menu slot="overlay">
                 <a-menu-item>
-                  <a href="javascript:;">详情</a>
+                  <router-link :to="{ path: '/sys/user/' + record.userId }">详情</router-link>
                 </a-menu-item>
                 <a-menu-item v-if="checkPermission('sys:user:reset')">
                   <a href="javascript:;" @click="$refs.modalResetPassword.handleResetPassword(record)">重置密码</a>

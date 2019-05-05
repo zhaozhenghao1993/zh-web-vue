@@ -3,34 +3,38 @@
     <a-row :gutter="24">
       <a-col :md="24" :lg="7">
         <a-card :bordered="false">
-          <div class="account-center-avatarHolder">
-            <div class="avatar">
-              <img :src="avatar()">
+          <a-spin :spinning="spinning">
+            <div class="account-center-avatarHolder">
+              <div class="avatar">
+                <img :src="avatar">
+              </div>
+              <div class="username">{{ nickname }}</div>
+              <div class="bio"></div>
             </div>
-            <div class="username">{{ nickname() }}</div>
-            <div class="bio"></div>
-          </div>
-          <div class="account-center-detail">
-            <p>
-              <a-icon type="idcard"/>{{ posts }}
-            </p>
-            <p>
-              <a-icon type="cluster"/>{{ orgs }}
-            </p>
-          </div>
+            <div class="account-center-detail">
+              <p>
+                <a-icon type="idcard"/>{{ posts }}
+              </p>
+              <p>
+                <a-icon type="cluster"/>{{ orgs }}
+              </p>
+            </div>
+          </a-spin>
           <a-divider/>
 
           <div class="account-center-tags">
             <div class="tagsTitle">角色</div>
-            <div>
-              <template v-for="(role, index) in roles">
-                <a-tag
-                  :key="role"
-                  :closable="index !== 0"
-                  color="blue"
-                >{{ role }}</a-tag>
-              </template>
-            </div>
+            <a-spin :spinning="spinning">
+              <div>
+                <template v-for="(role, index) in roles">
+                  <a-tag
+                    :key="role"
+                    :closable="index !== 0"
+                    color="blue"
+                  >{{ role }}</a-tag>
+                </template>
+              </div>
+            </a-spin>
           </div>
           <a-divider :dashed="true"/>
 
@@ -59,10 +63,9 @@
           :activeTabKey="noTitleKey"
           @tabChange="key => handleTabChange(key, 'noTitleKey')"
         >
-          <permission-page v-if="noTitleKey === 'permission'" :permissions="this.permissions"></permission-page>
-          <article-page v-else-if="noTitleKey === 'article'"></article-page>
-          <app-page v-else-if="noTitleKey === 'app'"></app-page>
-          <project-page v-else-if="noTitleKey === 'project'"></project-page>
+          <a-spin :spinning="spinning">
+            <permission-page v-if="noTitleKey === 'permission'" :permissions="this.permissions"></permission-page>
+          </a-spin>
         </a-card>
       </a-col>
     </a-row>
@@ -72,26 +75,25 @@
 <script>
 import { PageView, RouteView } from '@/layouts'
 import PermissionPage from '@/components/PermissionPage'
-import { AppPage, ArticlePage, ProjectPage } from './page'
-
-import { mapGetters } from 'vuex'
+import { userDetail } from '@/api/system/user'
 
 export default {
   components: {
     RouteView,
     PageView,
-    PermissionPage,
-    AppPage,
-    ArticlePage,
-    ProjectPage
+    PermissionPage
   },
   data () {
     return {
+      spinning: true,
+      userInfo: {},
+      userId: 0,
+      avatar: '',
+      nickname: '',
       posts: '',
       orgs: '',
       roles: [],
       permissions: [],
-      tags: ['很有想法的', '专注设计', '辣~', '大长腿', '川妹子', '海纳百川'],
 
       tagInputVisible: false,
       tagInputValue: '',
@@ -103,37 +105,40 @@ export default {
         {
           key: 'permission',
           tab: '权限'
-        },
-        {
-          key: 'article',
-          tab: '文章(8)'
-        },
-        {
-          key: 'app',
-          tab: '应用(8)'
-        },
-        {
-          key: 'project',
-          tab: '项目(8)'
         }
       ],
       noTitleKey: 'permission'
     }
   },
   mounted () {
-    this.getTeams()
-  },
-  computed: {
-    userInfo () {
-      return this.$store.getters.userInfo
-    }
   },
   created () {
     this.loadUserInfo()
   },
   methods: {
-    ...mapGetters(['nickname', 'avatar']),
     loadUserInfo () {
+      userDetail(this.$route.params.uid).then(res => {
+        if (res.data.roles === undefined) {
+          res.data.roles = []
+        }
+        if (res.data.perms === undefined) {
+          res.data.perms = []
+        }
+        if (res.data.posts === undefined) {
+          res.data.posts = []
+        }
+        if (res.data.orgs === undefined) {
+          res.data.orgs = []
+        }
+        this.userInfo = res.data
+        this.handleUserInfo()
+        this.spinning = false
+      }).catch(e => {
+      })
+    },
+    handleUserInfo () {
+      this.avatar = this.userInfo.avatar
+      this.nickname = this.userInfo.name
       const posts = []
       const orgs = []
       this.userInfo.posts.forEach(post => {
