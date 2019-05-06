@@ -9,7 +9,7 @@
                 <img :src="avatar">
               </div>
               <div class="username">{{ nickname }}</div>
-              <div class="bio"></div>
+              <div class="bio">{{ username }}</div>
             </div>
             <div class="account-center-detail">
               <p>
@@ -26,10 +26,9 @@
             <div class="tagsTitle">角色</div>
             <a-spin :spinning="spinning">
               <div>
-                <template v-for="(role, index) in roles">
+                <template v-for="role in roles">
                   <a-tag
                     :key="role"
-                    :closable="index !== 0"
                     color="blue"
                   >{{ role }}</a-tag>
                 </template>
@@ -38,21 +37,19 @@
           </div>
           <a-divider :dashed="true"/>
 
-          <div class="account-center-team">
-            <div class="teamTitle">团队</div>
-            <a-spin :spinning="teamSpinning">
-              <div class="members">
-                <a-row>
-                  <a-col :span="12" v-for="(item, index) in teams" :key="index">
-                    <a>
-                      <a-avatar size="small" :src="item.avatar"/>
-                      <span class="member">{{ item.name }}</span>
-                    </a>
-                  </a-col>
-                </a-row>
+          <div class="account-center-tags">
+            <div class="tagsTitle">账号状态</div>
+            <a-spin :spinning="spinning">
+              <div>
+                <a-tag :key="0" v-if="this.status === 0" color="green">{{ this.status | statusFilterText }}</a-tag>
+                <a-tag :key="1" v-else color="pink">{{ this.status | statusFilterText }}</a-tag>
               </div>
             </a-spin>
           </div>
+          <a-divider/>
+          <a-button type="primary">
+            <router-link :to="{ name: 'UserList'}"><a-icon type="left" />Go back</router-link>
+          </a-button>
         </a-card>
       </a-col>
       <a-col :md="24" :lg="17">
@@ -90,16 +87,12 @@ export default {
       userId: 0,
       avatar: '',
       nickname: '',
+      username: '',
       posts: '',
       orgs: '',
       roles: [],
       permissions: [],
-
-      tagInputVisible: false,
-      tagInputValue: '',
-
-      teams: [],
-      teamSpinning: true,
+      status: 0,
 
       tabListNoTitle: [
         {
@@ -110,7 +103,16 @@ export default {
       noTitleKey: 'permission'
     }
   },
-  mounted () {
+  filters: {
+    statusFilterText (status) {
+      const statusMap = {
+        0: '正常',
+        null: '正常',
+        undefined: '正常',
+        1: '锁定'
+      }
+      return statusMap[status]
+    }
   },
   created () {
     this.loadUserInfo()
@@ -139,6 +141,8 @@ export default {
     handleUserInfo () {
       this.avatar = this.userInfo.avatar
       this.nickname = this.userInfo.name
+      this.username = this.userInfo.username
+      this.status = this.userInfo.status
       const posts = []
       const orgs = []
       this.userInfo.posts.forEach(post => {
@@ -176,36 +180,8 @@ export default {
         })
       }
     },
-    getTeams () {
-    },
-
     handleTabChange (key, type) {
       this[type] = key
-    },
-
-    showTagInput () {
-      this.tagInputVisible = true
-      this.$nextTick(() => {
-        this.$refs.tagInput.focus()
-      })
-    },
-
-    handleInputChange (e) {
-      this.tagInputValue = e.target.value
-    },
-
-    handleTagInputConfirm () {
-      const inputValue = this.tagInputValue
-      let tags = this.tags
-      if (inputValue && !tags.includes(inputValue)) {
-        tags = [...tags, inputValue]
-      }
-
-      Object.assign(this, {
-        tags,
-        tagInputVisible: false,
-        tagInputValue: ''
-      })
     }
   }
 }
@@ -246,6 +222,7 @@ export default {
 
   .account-center-detail {
     p {
+      height: 20px;
       margin-bottom: 8px;
       padding-left: 26px;
       position: relative;
@@ -276,34 +253,7 @@ export default {
     }
   }
 
-  .account-center-team {
-    .members {
-      a {
-        display: block;
-        margin: 12px 0;
-        line-height: 24px;
-        height: 24px;
-        .member {
-          font-size: 14px;
-          color: rgba(0, 0, 0, 0.65);
-          line-height: 24px;
-          max-width: 100px;
-          vertical-align: top;
-          margin-left: 12px;
-          transition: all 0.3s;
-          display: inline-block;
-        }
-        &:hover {
-          span {
-            color: #1890ff;
-          }
-        }
-      }
-    }
-  }
-
-  .tagsTitle,
-  .teamTitle {
+  .tagsTitle {
     font-weight: 500;
     color: rgba(0, 0, 0, 0.85);
     margin-bottom: 12px;
