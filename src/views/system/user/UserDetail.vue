@@ -119,7 +119,7 @@ export default {
   },
   methods: {
     loadUserInfo () {
-      userDetail(this.$route.params.uid).then(res => {
+      userDetail(this.$route.params.id).then(res => {
         if (res.data.roles === undefined) {
           res.data.roles = []
         }

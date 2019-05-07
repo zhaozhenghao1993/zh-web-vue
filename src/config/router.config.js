@@ -55,7 +55,7 @@ export const asyncRouterMap = [
             meta: { title: '用户管理', keepAlive: true, permission: [ 'sys:user' ] }
           },
           {
-            path: '/sys/user/:uid',
+            path: '/sys/user/:id(\\d+)',
             name: 'UserDetail',
             component: () => import('@/views/system/user/UserDetail'),
             hidden: true,
