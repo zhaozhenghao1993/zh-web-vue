@@ -42,10 +42,22 @@ export default {
     this.selectedLastPath()
   },
   methods: {
+    isActive (route) {
+      return route.path === this.$route.path
+    },
     onEdit (targetKey, action) {
       this[action](targetKey)
     },
     remove (targetKey) {
+      console.log('targetKey', targetKey)
+      console.log('fullPathList', this.fullPathList)
+      console.log('pages', this.pages)
+      console.log('activeKey', this.activeKey)
+      /* this.$store.dispatch('delCachedView', view).then(({ visitedViews }) => {
+        if (this.isActive(view)) {
+          this.toLastView(visitedViews)
+        }
+      }) */
       this.pages = this.pages.filter(page => page.fullPath !== targetKey)
       this.fullPathList = this.fullPathList.filter(path => path !== targetKey)
       // 判断当前标签是否关闭，若关闭则跳转到最后一个还存在的标签页
@@ -134,6 +146,10 @@ export default {
   },
   watch: {
     '$route': function (newVal) {
+      const { name } = this.$route
+      if (name) {
+        this.$store.dispatch('addCachedView', this.$route)
+      }
       this.activeKey = newVal.fullPath
       if (this.fullPathList.indexOf(newVal.fullPath) < 0) {
         this.fullPathList.push(newVal.fullPath)
