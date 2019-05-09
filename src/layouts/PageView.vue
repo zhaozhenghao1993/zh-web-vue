@@ -41,10 +41,10 @@
       <div class="page-header-index-wide">
         <slot>
           <!-- keep-alive  -->
-          <keep-alive v-if="$route.meta.keepAlive">
+          <keep-alive :include="cachedViews">
             <router-view ref="content" />
           </keep-alive>
-          <router-view v-else ref="content" />
+          <!-- <router-view v-else ref="content" /> -->
         </slot>
       </div>
     </div>
@@ -87,7 +87,10 @@ export default {
   computed: {
     ...mapState({
       multiTab: state => state.app.multiTab
-    })
+    }),
+    cachedViews () {
+      return this.$store.state.tagsView.cachedViews
+    }
   },
   mounted () {
     this.getPageMeta()
@@ -97,6 +100,7 @@ export default {
   },
   methods: {
     getPageMeta () {
+      console.log('cachedViews', this.cachedViews)
       // eslint-disable-next-line
       this.pageTitle = (typeof(this.title) === 'string' || !this.title) ? this.title : this.$route.meta.title
 
