@@ -100,7 +100,6 @@ export default {
   },
   methods: {
     getPageMeta () {
-      console.log('cachedViews', this.cachedViews)
       // eslint-disable-next-line
       this.pageTitle = (typeof(this.title) === 'string' || !this.title) ? this.title : this.$route.meta.title
 

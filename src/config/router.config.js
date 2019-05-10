@@ -6,7 +6,7 @@ export const asyncRouterMap = [
 
   {
     path: '/',
-    name: 'index',
+    name: 'Index',
     component: BasicLayout,
     meta: { title: '首页' },
     redirect: '/dashboard/workplace',
@@ -14,7 +14,7 @@ export const asyncRouterMap = [
       // dashboard
       {
         path: '/dashboard',
-        name: 'dashboard',
+        name: 'Dashboard',
         redirect: '/dashboard/workplace',
         component: RouteView,
         meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse },
@@ -43,7 +43,7 @@ export const asyncRouterMap = [
       // sys
       {
         path: '/sys',
-        name: 'sys',
+        name: 'System',
         component: PageView,
         redirect: '/sys/user',
         meta: { title: '系统管理', icon: 'desktop', hiddenHeaderContent: true, permission: [ 'sys' ] },
@@ -91,7 +91,7 @@ export const asyncRouterMap = [
       // monitor
       {
         path: '/monitor',
-        name: 'monitor',
+        name: 'Monitor',
         component: PageView,
         redirect: '/monitor/log',
         meta: { title: '系统监控', icon: 'dashboard', hiddenHeaderContent: true, permission: [ 'monitor' ] },
@@ -114,7 +114,7 @@ export const asyncRouterMap = [
       // tool
       {
         path: '/tool',
-        name: 'tool',
+        name: 'Tool',
         component: PageView,
         redirect: '/tool/icon-selector',
         meta: { title: '开发工具', icon: 'tool', hiddenHeaderContent: true, permission: [ 'tool' ] },
@@ -169,18 +169,18 @@ export const asyncRouterMap = [
         path: '/account',
         component: RouteView,
         redirect: '/account/center',
-        name: 'account',
+        name: 'Account',
         meta: { title: '个人页', icon: 'user', keepAlive: true },
         children: [
           {
             path: '/account/center',
-            name: 'center',
+            name: 'Center',
             component: () => import('@/views/account/center/Index'),
             meta: { title: '个人中心', keepAlive: true }
           },
           {
             path: '/account/settings',
-            name: 'settings',
+            name: 'Settings',
             component: () => import('@/views/account/settings/Index'),
             meta: { title: '个人设置', hideHeader: true },
             redirect: '/account/settings/base',
@@ -326,6 +326,7 @@ export const constantRouterMap = [
 
   {
     path: '/404',
+    name: '404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
 

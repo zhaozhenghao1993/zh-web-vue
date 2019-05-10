@@ -119,7 +119,7 @@ export default {
     renderTabPaneMenu (e) {
       return (
         <a-menu {...{ on: { click: this.closeMenuClick } }}>
-          <a-menu-item key="close-that" data-vkey={e}>关闭当前标签</a-menu-item>
+          {this.pages.length > 1 ? <a-menu-item key="close-that" data-vkey={e}>关闭当前</a-menu-item> : ''}
           <a-menu-item key="close-right" data-vkey={e}>关闭右侧</a-menu-item>
           <a-menu-item key="close-left" data-vkey={e}>关闭左侧</a-menu-item>
           <a-menu-item key="close-all" data-vkey={e}>关闭全部</a-menu-item>
@@ -139,7 +139,6 @@ export default {
   },
   watch: {
     '$route': function (newVal) {
-      console.log(1)
       this.activeKey = newVal.fullPath
       if (this.fullPathList.indexOf(newVal.fullPath) < 0) {
         this.fullPathList.push(newVal.fullPath)
@@ -148,9 +147,11 @@ export default {
     },
     activeKey: function (newPathKey) {
       const pages = this.pages.filter(page => page.fullPath === newPathKey)
-      const { name } = pages[0]
-      if (name) {
-        this.$store.dispatch('addCachedView', pages[0])
+      if (pages.length > 0) {
+        const { name } = pages[0]
+        if (name) {
+          this.$store.dispatch('addCachedView', pages[0])
+        }
       }
       this.$router.push({ path: newPathKey })
     }
