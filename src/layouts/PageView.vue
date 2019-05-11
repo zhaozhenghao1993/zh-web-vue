@@ -42,7 +42,7 @@
         <slot>
           <!-- keep-alive  -->
           <keep-alive :include="cachedViews">
-            <router-view ref="content" />
+            <router-view :key="key"/>
           </keep-alive>
           <!-- <router-view v-else ref="content" /> -->
         </slot>
@@ -90,6 +90,9 @@ export default {
     }),
     cachedViews () {
       return this.$store.state.tagsView.cachedViews
+    },
+    key () {
+      return this.$route.fullPath
     }
   },
   mounted () {

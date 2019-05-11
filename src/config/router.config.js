@@ -167,7 +167,7 @@ export const asyncRouterMap = [
       // account
       {
         path: '/account',
-        component: RouteView,
+        component: PageView,
         redirect: '/account/center',
         name: 'Account',
         meta: { title: '个人页', icon: 'user', keepAlive: true },

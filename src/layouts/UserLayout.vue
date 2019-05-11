@@ -5,11 +5,11 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Ant Design</span>
+            <span class="title">Zh Admin Pro</span>
           </a>
         </div>
         <div class="desc">
-          Ant Design 是西湖区最具影响力的 Web 设计规范
+          Zh Admin Pro 是由springboot编写的admin权限框架
         </div>
       </div>
 
@@ -22,7 +22,7 @@
           <a href="_self">条款</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2018 白鹭学园技术组出品
+          Copyright &copy; 2019 zhaozhenghao1993
         </div>
       </div>
     </div>

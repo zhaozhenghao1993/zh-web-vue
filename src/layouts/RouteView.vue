@@ -19,7 +19,7 @@ export default {
     // const { $route: { meta }, $store: { getters } } = this
     const inKeep = (
       <keep-alive {...{ include: this.cachedViews }}>
-        <router-view />
+        <router-view/>
       </keep-alive>
     )
     // const notKeep = (
