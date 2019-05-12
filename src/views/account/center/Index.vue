@@ -13,7 +13,10 @@
             </div>
             <div class="account-center-detail">
               <p>
-                <a-icon type="idcard"/>{{ posts }}
+                <a-icon type="idcard"/>ID: {{ userId }}
+              </p>
+              <p>
+                <a-icon type="team"/>{{ posts }}
               </p>
               <p>
                 <a-icon type="cluster"/>{{ orgs }}
@@ -142,6 +145,7 @@ export default {
       this.spinning = false
     },
     handleUserInfo () {
+      this.userId = this.userInfo.userId
       this.avatar = this.userInfo.avatar
       this.nickname = this.userInfo.name
       this.username = this.userInfo.username

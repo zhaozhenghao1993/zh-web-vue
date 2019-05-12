@@ -63,7 +63,7 @@ export default {
       // cropper
       preview: {},
       option: {
-        img: '/avatar2.jpg',
+        img: '/avatar.png',
         info: true,
         size: 1,
         outputType: 'jpeg',
@@ -88,6 +88,7 @@ export default {
   methods: {
     loadUserInfo () {
       this.user = store.getters.userInfo
+      this.option.img = this.user.avatar
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.user, 'name', 'email', 'mobile'))
       })

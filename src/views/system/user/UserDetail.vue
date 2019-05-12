@@ -13,7 +13,10 @@
             </div>
             <div class="account-center-detail">
               <p>
-                <a-icon type="idcard"/>{{ posts }}
+                <a-icon type="idcard"/>ID: {{ userId }}
+              </p>
+              <p>
+                <a-icon type="team"/>{{ posts }}
               </p>
               <p>
                 <a-icon type="cluster"/>{{ orgs }}
@@ -119,6 +122,9 @@ export default {
   },
   methods: {
     loadUserInfo () {
+      if (this.$route.params.id === undefined) {
+        return
+      }
       userDetail(this.$route.params.id).then(res => {
         if (res.data.roles === undefined) {
           res.data.roles = []
@@ -139,6 +145,7 @@ export default {
       })
     },
     handleUserInfo () {
+      this.userId = this.userInfo.userId
       this.avatar = this.userInfo.avatar
       this.nickname = this.userInfo.name
       this.username = this.userInfo.username
