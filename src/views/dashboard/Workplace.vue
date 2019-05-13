@@ -1,4 +1,3 @@
-
 <template>
   <page-view :avatar="avatar" :title="false">
     <div slot="headerContent">
