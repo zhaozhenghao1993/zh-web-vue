@@ -1,14 +1,15 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+// import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 import store from '@/store'
 import { updateTheme, colorList } from '@/components/SettingDrawer/settingConfig'
 import defaultConfig from '@/config/defaultSettings'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    token: '',
+    token: getToken(),
     name: '',
     welcome: '',
     avatar: '',
@@ -56,8 +57,8 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const data = response
-          Vue.ls.set(ACCESS_TOKEN, data.token, 7 * 24 * 60 * 60 * 1000)
+          const data = response.data
+          setToken(data.token)
           commit('SET_TOKEN', data.token)
           resolve()
         }).catch(error => {
@@ -141,7 +142,8 @@ const user = {
       return new Promise((resolve) => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
-        Vue.ls.remove(ACCESS_TOKEN)
+        // Vue.ls.remove(ACCESS_TOKEN)
+        removeToken()
 
         logout(state.token).then(() => {
           resolve()
@@ -157,7 +159,8 @@ const user = {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         commit('SET_NAME', {})
-        Vue.ls.remove(ACCESS_TOKEN)
+        // Vue.ls.remove(ACCESS_TOKEN)
+        removeToken()
         resolve()
       })
     }

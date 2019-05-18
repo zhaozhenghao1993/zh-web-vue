@@ -1,10 +1,9 @@
-import Vue from 'vue'
 import axios from 'axios'
 import store from '@/store'
 import router from '../router'
 import { VueAxios } from './axios'
 import notification from 'ant-design-vue/es/notification'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { getToken } from '@/utils/auth'
 
 // 创建 axios 实例
 const service = axios.create({
@@ -15,7 +14,7 @@ const service = axios.create({
 const err = (error) => {
   if (error.response) {
     const data = error.response.data
-    const token = Vue.ls.get(ACCESS_TOKEN)
+    const token = getToken()
     if (error.response.status === 403) {
       notification.error({ message: 'Forbidden', description: data.message })
     }
@@ -39,9 +38,10 @@ const err = (error) => {
 
 // request interceptor
 service.interceptors.request.use(config => {
-  const token = Vue.ls.get(ACCESS_TOKEN)
-  if (token) {
-    config.headers['ZH-TOKEN'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+  // Do something before request is sent
+  if (store.getters.token) {
+    // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+    config.headers['ZH-TOKEN'] = getToken()
   }
   return config
 }, err)
@@ -70,8 +70,8 @@ service.interceptors.response.use((response) => {
 }, err)
 
 const responseHandle = (data) => {
-  if (data.code !== 0) {
-    const token = Vue.ls.get(ACCESS_TOKEN)
+  if (!data.success) {
+    const token = getToken()
     if (data.code === 500) {
       notification.error({ message: 'Error', description: data.msg })
     }

@@ -107,6 +107,12 @@ export const asyncRouterMap = [
             name: 'ServerMonitor',
             component: () => import('@/views/monitor/server/ServerMonitor'),
             meta: { title: '服务器监控', permission: [ 'monitor:server' ] }
+          },
+          {
+            path: '/monitor/druid',
+            name: 'DruidMonitor',
+            component: () => import('@/views/monitor/druid/DruidMonitor'),
+            meta: { title: '数据库监控', permission: [ 'monitor:druid' ] }
           }
         ]
       },
