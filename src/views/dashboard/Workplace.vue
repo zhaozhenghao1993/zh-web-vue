@@ -1,7 +1,7 @@
 <template>
-  <page-view :avatar="avatar" :title="false">
+  <page-view :avatar="avatar()" :title="false">
     <div slot="headerContent">
-      <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome() }}</span></div>
+      <div class="title">{{ timeFix }}，{{ nickname() }}<span class="welcome-text">，{{ welcome() }}</span></div>
       <div>{{ posts }} | {{ orgs }}</div>
     </div>
     <div slot="extra">
@@ -127,7 +127,6 @@ export default {
   data () {
     return {
       timeFix: timeFix(),
-      avatar: '',
       user: {},
       posts: '',
       orgs: '',
@@ -192,10 +191,9 @@ export default {
     this.initRadar()
   },
   methods: {
-    ...mapGetters(['nickname', 'welcome']),
+    ...mapGetters(['nickname', 'welcome', 'avatar']),
     loadUserInfo () {
       this.user = this.userInfo
-      this.avatar = this.userInfo.avatar
       const posts = []
       const orgs = []
       this.userInfo.posts.forEach(post => {

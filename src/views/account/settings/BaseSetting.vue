@@ -31,20 +31,18 @@
 
       </a-col>
       <a-col :md="24" :lg="8" :style="{ minHeight: '180px' }">
-        <div class="ant-upload-preview" @click="$refs.modal.edit(1)" >
+        <div class="ant-upload-preview" @click="$refs.modal.edit(avatar())" >
           <a-icon type="cloud-upload-o" class="upload-icon"/>
           <div class="mask">
             <a-icon type="plus" />
           </div>
-          <img :src="option.img"/>
+          <img :src="avatar() + '?t=' + new Date()"/>
         </div>
       </a-col>
 
     </a-row>
 
-    <avatar-modal ref="modal">
-
-    </avatar-modal>
+    <avatar-modal ref="modal"></avatar-modal>
   </div>
 </template>
 
@@ -53,6 +51,7 @@ import AvatarModal from './AvatarModal'
 import { profile } from '@/api/account/profile'
 import store from '@/store'
 import pick from 'lodash.pick'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -62,21 +61,6 @@ export default {
     return {
       // cropper
       preview: {},
-      option: {
-        img: '/avatar.png',
-        info: true,
-        size: 1,
-        outputType: 'jpeg',
-        canScale: false,
-        autoCrop: true,
-        // 只有自动截图开启 宽度高度才生效
-        autoCropWidth: 180,
-        autoCropHeight: 180,
-        fixedBox: true,
-        // 开启宽度和高度比例
-        fixed: true,
-        fixedNumber: [1, 1]
-      },
       form: this.$form.createForm(this),
       user: {},
       confirmLoading: false
@@ -86,9 +70,9 @@ export default {
     this.loadUserInfo()
   },
   methods: {
+    ...mapGetters(['avatar']),
     loadUserInfo () {
       this.user = store.getters.userInfo
-      this.option.img = this.user.avatar
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.user, 'name', 'email', 'mobile'))
       })

@@ -8,6 +8,17 @@ export function profile (parameter) {
   })
 }
 
+export function profileAvatar (formData) {
+  return axios({
+    url: '/sys/user/profile/avatar',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
 export function profilePassword (parameter) {
   return axios({
     url: '/sys/user/profile/password',

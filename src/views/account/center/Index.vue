@@ -6,7 +6,7 @@
           <a-spin :spinning="spinning">
             <div class="account-center-avatarHolder">
               <div class="avatar">
-                <img :src="avatar">
+                <img :src="avatar()">
               </div>
               <div class="username">{{ nickname }}</div>
               <div class="bio">{{ username }}</div>
@@ -76,6 +76,7 @@
 import { PageView, RouteView } from '@/layouts'
 import PermissionPage from '@/components/PermissionPage'
 import { AppPage, ArticlePage, ProjectPage } from './page'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -90,7 +91,6 @@ export default {
     return {
       spinning: true,
       userId: 0,
-      avatar: '',
       nickname: '',
       username: '',
       posts: '',
@@ -140,13 +140,13 @@ export default {
     this.loadUserInfo()
   },
   methods: {
+    ...mapGetters(['avatar']),
     loadUserInfo () {
       this.handleUserInfo()
       this.spinning = false
     },
     handleUserInfo () {
       this.userId = this.userInfo.userId
-      this.avatar = this.userInfo.avatar
       this.nickname = this.userInfo.name
       this.username = this.userInfo.username
       this.status = this.userInfo.status
