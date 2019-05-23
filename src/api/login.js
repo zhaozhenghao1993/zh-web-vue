@@ -1,4 +1,3 @@
-import api from './index'
 import { axios } from '@/utils/request'
 
 /**
@@ -17,11 +16,7 @@ import { axios } from '@/utils/request'
  * @param parameter {*}
  */
 export function get2step (parameter) {
-  return axios({
-    url: api.twoStepCode,
-    method: 'post',
-    data: parameter
-  })
+  // 获取google 身份验证器，后期增加
 }
 
 export function login (parameter) {
@@ -33,11 +28,7 @@ export function login (parameter) {
 }
 
 export function getSmsCaptcha (parameter) {
-  return axios({
-    url: api.SendSms,
-    method: 'post',
-    data: parameter
-  })
+  // 获取短信验证码，依照需求决定
 }
 
 export function getInfo () {

@@ -37,11 +37,10 @@
     </a-row>
 
     <template slot="footer">
-      <label class="btn" for="uploads">
-        <a-button>
-          <a-icon type="upload" /> Select File
-        </a-button></label>
-      <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)">
+      <a-button style="margin-right: 68%" @click="selectOnClick">
+        <a-icon type="upload" /> 选择文件
+      </a-button>
+      <input type="file" ref="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)">
       <a-button key="back" @click="cancelHandel">取消</a-button>
       <a-button key="submit" type="primary" :loading="confirmLoading" @click="okHandel()">保存</a-button>
     </template>
@@ -88,6 +87,9 @@ export default {
     },
     cancelHandel () {
       this.close()
+    },
+    selectOnClick () {
+      this.$refs.uploads.dispatchEvent(new MouseEvent('click'))
     },
     okHandel () {
       const formData = new FormData()
