@@ -28,7 +28,7 @@
             :bordered="false"
             title="进行中的项目"
             :body-style="{ padding: 0 }">
-            <a slot="extra">全部项目</a>
+            <a slot="extra" href="https://github.com/zhaozhenghao1993?tab=repositories" target="_blank">全部项目</a>
             <div>
               <a-card-grid class="project-card-grid" :key="i" v-for="(item, i) in projects">
                 <a-card :bordered="false" :body-style="{ padding: 0 }">
@@ -42,8 +42,7 @@
                     </div>
                   </a-card-meta>
                   <div class="project-item">
-                    <a href="/#/">科学搬砖组</a>
-                    <span class="datetime">9小时前</span>
+                    <a :href="item.repository" target="_blank">仓库地址</a>
                   </div>
                 </a-card>
               </a-card-grid>
@@ -76,19 +75,16 @@
           :xs="24">
           <a-card title="快速开始 / 便捷导航" style="margin-bottom: 24px" :bordered="false" :body-style="{padding: 0}">
             <div class="item-group">
-              <a>操作一</a>
-              <a>操作二</a>
-              <a>操作三</a>
-              <a>操作四</a>
-              <a>操作五</a>
-              <a>操作六</a>
-              <a-button size="small" type="primary" ghost icon="plus">添加</a-button>
+              <router-link :to="{ name: 'UserList' }">用户管理</router-link>
+              <router-link :to="{ name: 'RoleList' }">角色管理</router-link>
+              <router-link :to="{ name: 'MenuList' }">权限管理</router-link>
+              <router-link :to="{ name: 'LogList' }">日志管理</router-link>
+              <router-link :to="{ name: 'GeneratorList' }">代码生成器</router-link>
             </div>
           </a-card>
-          <a-card title="XX 指数" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false" :body-style="{ padding: 0 }">
-            <div style="min-height: 400px;">
-              <!-- :scale="scale" :axis1Opts="axis1Opts" :axis2Opts="axis2Opts"  -->
-              <radar :data="radarData" />
+          <a-card title="近一周访问量" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false" :body-style="{ padding: 0 }">
+            <div style="min-height: 300px;">
+              <g2-line :charData="serverData" :id="'c1'"></g2-line>
             </div>
           </a-card>
           <a-card :loading="loading" title="团队" :bordered="false">
@@ -116,13 +112,15 @@ import { mapGetters } from 'vuex'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
 import { Radar } from '@/components'
+import G2Line from '@/components/G2/G2Line'
 
 export default {
   name: 'Workplace',
   components: {
     PageView,
     HeadInfo,
-    Radar
+    Radar,
+    G2Line
   },
   data () {
     return {
@@ -130,10 +128,42 @@ export default {
       user: {},
       posts: '',
       orgs: '',
-
-      projects: [],
+      projects: [
+        { cover: '/avatar.png', title: 'zh-admin', description: '基于springboot权限管理系统', repository: 'https://github.com/zhaozhenghao1993/zh-admin' },
+        { cover: '/avatar.png', title: 'zh-web-vue', description: 'zh-admin 权限系统前端, ant-design-vue', repository: 'https://github.com/zhaozhenghao1993/zh-web-vue' },
+        { cover: '', title: 'zh-boot-oauth', description: '基于springboot和OAuth2搭建的简易授权登陆', repository: 'https://github.com/zhaozhenghao1993/zh-boot-oauth' },
+        { cover: '', title: 'zh-boot-dubbo', description: 'springboot搭建dubbo, dubbo注解开发实例', repository: 'https://github.com/zhaozhenghao1993/zh-boot-dubbo' }
+      ],
       loading: true,
       radarLoading: true,
+      serverData: [{
+        x: '2010',
+        y: 3
+      }, {
+        x: '2011',
+        y: 4
+      }, {
+        x: '2012',
+        y: 3.5
+      }, {
+        x: '2013',
+        y: 5
+      }, {
+        x: '2014',
+        y: 4.9
+      }, {
+        x: '2015',
+        y: 6
+      }, {
+        x: '2016',
+        y: 7
+      }, {
+        x: '2017',
+        y: 9
+      }, {
+        x: '2018',
+        y: 13
+      }],
       activities: [],
       teams: [],
 
@@ -189,6 +219,8 @@ export default {
     this.getActivity()
     this.getTeams()
     this.initRadar()
+    this.loading = false
+    this.radarLoading = false
   },
   methods: {
     ...mapGetters(['nickname', 'welcome', 'avatar']),

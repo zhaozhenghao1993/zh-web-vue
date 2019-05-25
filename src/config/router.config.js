@@ -19,16 +19,16 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse },
         children: [
-          {
+          /* {
             path: '/dashboard/analysis',
             name: 'Analysis',
             component: () => import('@/views/dashboard/Analysis'),
             meta: { title: '分析页', keepAlive: false }
-          },
+          }, */
           // 外部链接
           {
             path: 'https://www.baidu.com/',
-            name: 'Monitor',
+            name: 'MonitorExample',
             meta: { title: '监控页（外部）', target: '_blank' }
           },
           {
