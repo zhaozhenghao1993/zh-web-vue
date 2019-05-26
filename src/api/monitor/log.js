@@ -22,3 +22,17 @@ export function logClearDelete (type) {
     method: 'delete'
   })
 }
+
+export function logVisit () {
+  return axios({
+    url: '/monitor/log/visit',
+    method: 'get'
+  })
+}
+
+export function logVisitWeek () {
+  return axios({
+    url: '/monitor/log/visit/week',
+    method: 'get'
+  })
+}

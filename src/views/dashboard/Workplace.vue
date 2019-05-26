@@ -6,14 +6,11 @@
     </div>
     <div slot="extra">
       <a-row class="more-info">
-        <a-col :span="8">
-          <head-info title="项目数" content="56" :center="false" :bordered="false"/>
+        <a-col :span="12">
+          <head-info title="今日访问" :content="todayVisitCount" :center="false" :bordered="false"/>
         </a-col>
-        <a-col :span="8">
-          <head-info title="团队排名" content="8/24" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="项目访问" content="2,223" :center="false" />
+        <a-col :span="12">
+          <head-info title="总访问量" :content="totalVisitCount" :center="false" />
         </a-col>
       </a-row>
     </div>
@@ -49,21 +46,35 @@
             </div>
           </a-card>
 
-          <a-card :loading="loading" title="动态" :bordered="false">
-            <a-list>
-              <a-list-item :key="index" v-for="(item, index) in activities">
-                <a-list-item-meta>
-                  <a-avatar slot="avatar" :src="item.user.avatar" />
-                  <div slot="title">
-                    <span>{{ item.user.nickname }}</span>&nbsp;
-                    在&nbsp;<a href="#">{{ item.project.name }}</a>&nbsp;
-                    <span>{{ item.project.action }}</span>&nbsp;
-                    <a href="#">{{ item.project.event }}</a>
-                  </div>
-                  <div slot="description">{{ item.time }}</div>
-                </a-list-item-meta>
-              </a-list-item>
-            </a-list>
+          <a-card :loading="loading" title="技术选型" :bordered="false">
+            <a-tabs defaultActiveKey="1">
+              <a-tab-pane tab="zh-admin" key="1">
+                <a-timeline>
+                  <a-timeline-item>基础框架 springboot 2.1.1.RELEASE</a-timeline-item>
+                  <a-timeline-item>持久层 mybatis.spring.boot 1.3.2</a-timeline-item>
+                  <a-timeline-item>持久层缓存 ehcache 2.10.4</a-timeline-item>
+                  <a-timeline-item>数据库连接池 druid-spring-boot 1.1.9</a-timeline-item>
+                  <a-timeline-item>安全框架 jwt 3.2.0 jjwt 0.9.1</a-timeline-item>
+                  <a-timeline-item>分页 pagehelper 1.2.5</a-timeline-item>
+                  <a-timeline-item>摸板引擎 velocity 1.7</a-timeline-item>
+                </a-timeline>
+                <p>权限控制精确到每个请求的 uri 和 method ,支持通配符批量放行</p>
+              </a-tab-pane>
+              <a-tab-pane tab="zh-web-vue" key="2" forceRender>
+                <a-timeline>
+                  <a-timeline-item>vue</a-timeline-item>
+                  <a-timeline-item>vuex</a-timeline-item>
+                  <a-timeline-item>axios</a-timeline-item>
+                  <a-timeline-item>@vue/cli ~3</a-timeline-item>
+                  <a-timeline-item>ant-design-vue</a-timeline-item>
+                  <a-timeline-item>ant-design-vue-pro - 脚手架</a-timeline-item>
+                  <a-timeline-item>vue-cropper - 头像裁剪组件</a-timeline-item>
+                  <a-timeline-item>@antv/g2 - Alipay AntV 数据可视化图表</a-timeline-item>
+                  <a-timeline-item>Viser-vue - antv/g2 封装实现</a-timeline-item>
+                </a-timeline>
+                <p>权限控制精确到每个路由页面,每个操作按钮</p>
+              </a-tab-pane>
+            </a-tabs>
           </a-card>
         </a-col>
         <a-col
@@ -82,21 +93,9 @@
               <router-link :to="{ name: 'GeneratorList' }">代码生成器</router-link>
             </div>
           </a-card>
-          <a-card title="近一周访问量" style="margin-bottom: 24px" :loading="radarLoading" :bordered="false" :body-style="{ padding: 0 }">
+          <a-card title="近一周访问量" style="margin-bottom: 24px" :loading="visitLoading" :bordered="false" :body-style="{ padding: 0 }">
             <div style="min-height: 300px;">
-              <g2-line :charData="serverData" :id="'c1'"></g2-line>
-            </div>
-          </a-card>
-          <a-card :loading="loading" title="团队" :bordered="false">
-            <div class="members">
-              <a-row>
-                <a-col :span="12" v-for="(item, index) in teams" :key="index">
-                  <a>
-                    <a-avatar size="small" :src="item.avatar" />
-                    <span class="member">{{ item.name }}</span>
-                  </a>
-                </a-col>
-              </a-row>
+              <g2-line :dataSource="visitWeekSource" :xScale="xScale" :yScale="yScale" :id="'visitWeekCount'"></g2-line>
             </div>
           </a-card>
         </a-col>
@@ -113,6 +112,7 @@ import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
 import { Radar } from '@/components'
 import G2Line from '@/components/G2/G2Line'
+import { logVisit, logVisitWeek } from '@/api/monitor/log'
 
 export default {
   name: 'Workplace',
@@ -135,75 +135,27 @@ export default {
         { cover: '', title: 'zh-boot-dubbo', description: 'springboot搭建dubbo, dubbo注解开发实例', repository: 'https://github.com/zhaozhenghao1993/zh-boot-dubbo' }
       ],
       loading: true,
-      radarLoading: true,
-      serverData: [{
-        x: '2010',
-        y: 3
-      }, {
-        x: '2011',
-        y: 4
-      }, {
-        x: '2012',
-        y: 3.5
-      }, {
-        x: '2013',
-        y: 5
-      }, {
-        x: '2014',
-        y: 4.9
-      }, {
-        x: '2015',
-        y: 6
-      }, {
-        x: '2016',
-        y: 7
-      }, {
-        x: '2017',
-        y: 9
-      }, {
-        x: '2018',
-        y: 13
-      }],
-      activities: [],
-      teams: [],
-
-      // data
-      axis1Opts: {
-        dataKey: 'item',
-        line: null,
-        tickLine: null,
-        grid: {
-          lineStyle: {
-            lineDash: null
-          },
-          hideFirstLine: false
-        }
+      visitLoading: true,
+      todayVisitCount: 0,
+      totalVisitCount: 0,
+      visitWeekSource: [],
+      xScale: {
       },
-      axis2Opts: {
-        dataKey: 'score',
-        line: null,
-        tickLine: null,
-        grid: {
-          type: 'polygon',
-          lineStyle: {
-            lineDash: null
-          }
-        }
+      yScale: {
+        alias: '访问量'
       },
-      scale: [{
-        dataKey: 'score',
-        min: 0,
-        max: 80
-      }],
-      axisData: [
-        { item: '引用', a: 70, b: 30, c: 40 },
-        { item: '口碑', a: 60, b: 70, c: 40 },
-        { item: '产量', a: 50, b: 60, c: 40 },
-        { item: '贡献', a: 40, b: 50, c: 40 },
-        { item: '热度', a: 60, b: 70, c: 40 },
-        { item: '引用', a: 70, b: 50, c: 40 }
-      ],
-      radarData: []
+      searchUserScale: [
+        {
+          dataKey: 'x',
+          alias: '时间'
+        },
+        {
+          dataKey: 'y',
+          alias: '用户数',
+          min: 0,
+          max: 10
+        }
+      ]
     }
   },
   computed: {
@@ -215,12 +167,9 @@ export default {
     this.loadUserInfo()
   },
   mounted () {
-    this.getProjects()
-    this.getActivity()
-    this.getTeams()
-    this.initRadar()
+    this.getVisitCount()
+    this.getVisitWeek()
     this.loading = false
-    this.radarLoading = false
   },
   methods: {
     ...mapGetters(['nickname', 'welcome', 'avatar']),
@@ -237,13 +186,23 @@ export default {
       this.posts = posts.join(' ')
       this.orgs = orgs.join(' - ')
     },
-    getProjects () {
+    getVisitCount () {
+      logVisit().then((res) => {
+        const data = res.data
+        this.todayVisitCount = data.todayVisitCount
+        this.totalVisitCount = data.totalVisitCount
+      }).catch(err => {
+        this.$message.error(err.msg)
+      })
     },
-    getActivity () {
-    },
-    getTeams () {
-    },
-    initRadar () {
+    getVisitWeek () {
+      logVisitWeek().then((res) => {
+        this.visitWeekSource = res.data
+      }).catch(err => {
+        this.$message.error(err.msg)
+      }).finally(() => {
+        this.visitLoading = false
+      })
     }
   }
 }
