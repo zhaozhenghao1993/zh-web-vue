@@ -15,7 +15,7 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-input placeholder="ID" v-decorator="[ 'roleId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
       </a-form-item>
 
       <a-form-item
@@ -82,10 +82,10 @@ export default {
       // 每次都重置form表单
       this.form.resetFields()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { roleId: 0 })
+      this.modal = Object.assign({}, { id: 0 })
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'roleId', 'roleName', 'roleSign', 'remark'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'roleName', 'roleSign', 'remark'))
       })
     },
     handleEdit (record) {
@@ -95,7 +95,7 @@ export default {
       this.modal = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'roleId', 'roleName', 'roleSign', 'remark'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'roleName', 'roleSign', 'remark'))
       })
     },
     handleOk (e) {
@@ -117,7 +117,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            roleEdit(values.roleId, values).then(() => {
+            roleEdit(values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')

@@ -16,7 +16,7 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-input placeholder="ID" v-decorator="[ 'orgId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
       </a-form-item>
 
       <a-form-item
@@ -107,11 +107,11 @@ export default {
       this.form.resetFields()
       this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { orgId: 0, parentId: record.orgId })
-      this.selectTree = record.orgId + ''
+      this.modal = Object.assign({}, { id: 0, parentId: record.id })
+      this.selectTree = record.id + ''
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'orgId', 'parentId', 'orgName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'orgName', 'orderNum'))
       })
     },
     handleEdit (record) {
@@ -123,7 +123,7 @@ export default {
       this.selectTree = record.parentId + ''
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'orgId', 'parentId', 'orgName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'orgName', 'orderNum'))
       })
     },
     handleOk (e) {
@@ -150,7 +150,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            orgEdit(values.orgId, values).then(() => {
+            orgEdit(values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')

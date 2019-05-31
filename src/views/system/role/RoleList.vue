@@ -40,7 +40,6 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="roleId"
       :alert="options.alert"
       :rowSelection="options.rowSelection"
     >
@@ -98,7 +97,7 @@ export default {
       columns: [
         {
           title: 'ID',
-          dataIndex: 'roleId'
+          dataIndex: 'id'
         },
         {
           title: '角色名',
@@ -165,7 +164,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return roleDelete(record.roleId).then(() => {
+          return roleDelete(record.id).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

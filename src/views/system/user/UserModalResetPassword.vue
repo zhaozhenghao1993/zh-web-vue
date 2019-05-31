@@ -13,7 +13,7 @@
         :wrapperCol="wrapperCol"
         label="ID"
       >
-        <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
       </a-form-item>
 
       <a-form-item
@@ -74,7 +74,7 @@ export default {
       this.visibleResetPassword = true
       this.modal = Object.assign({}, record)
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'username', 'password', 'confirm'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'username', 'password', 'confirm'))
       })
     },
     handleOkForResetPassword (e) {
@@ -83,7 +83,7 @@ export default {
       this.resetPasswordConfirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          userResetPassword(values.userId, values).then(() => {
+          userResetPassword(values.id, values).then(() => {
             // Do something
             this.$message.success('保存成功')
             this.$emit('ok')

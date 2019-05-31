@@ -3,7 +3,7 @@
 
     <div class="table-operator">
       <a-button type="primary" icon="sync" @click="handleFilter()">刷新</a-button>
-      <a-button type="primary" v-if="checkPermission('sys:org:save')" icon="plus" @click="$refs.modal.handleCreate({orgId: 0})">新建</a-button>
+      <a-button type="primary" v-if="checkPermission('sys:org:save')" icon="plus" @click="$refs.modal.handleCreate({id: 0})">新建</a-button>
     </div>
 
     <s-table
@@ -11,7 +11,6 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="orgId"
       :showPagination="false"
     >
       <span slot="action" slot-scope="text, record">
@@ -109,7 +108,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return orgDelete(record.orgId).then(() => {
+          return orgDelete(record.id).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

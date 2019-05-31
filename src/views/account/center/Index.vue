@@ -146,7 +146,7 @@ export default {
       this.spinning = false
     },
     handleUserInfo () {
-      this.userId = this.userInfo.userId
+      this.userId = this.userInfo.id
       this.nickname = this.userInfo.name
       this.username = this.userInfo.username
       this.status = this.userInfo.status
@@ -180,7 +180,7 @@ export default {
         this.permissions.map(perm => {
           perm.action = []
           actions.map((action, index) => {
-            if (perm.menuId === action.parentId) {
+            if (perm.id === action.parentId) {
               perm.action.push(action)
             }
           })

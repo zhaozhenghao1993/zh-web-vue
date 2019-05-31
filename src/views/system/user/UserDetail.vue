@@ -145,7 +145,7 @@ export default {
       })
     },
     handleUserInfo () {
-      this.userId = this.userInfo.userId
+      this.userId = this.userInfo.id
       this.avatar = this.userInfo.avatar
       this.nickname = this.userInfo.name
       this.username = this.userInfo.username
@@ -180,7 +180,7 @@ export default {
         this.permissions.map(perm => {
           perm.action = []
           actions.map((action, index) => {
-            if (perm.menuId === action.parentId) {
+            if (perm.id === action.parentId) {
               perm.action.push(action)
             }
           })

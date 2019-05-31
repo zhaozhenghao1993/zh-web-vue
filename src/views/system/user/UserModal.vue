@@ -18,7 +18,7 @@
             hasFeedback
             validateStatus="success"
           >
-            <a-input placeholder="ID" v-decorator="[ 'userId', {rules: []} ]" disabled="disabled" />
+            <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
           </a-form-item>
 
           <a-divider orientation="left">基本信息</a-divider>
@@ -128,7 +128,7 @@
             hasFeedback
           >
             <a-select mode="multiple" v-model="userPostList" optionFilterProp="children" placeholder="Please select">
-              <a-select-option v-for="post in postList" :key="post.postId">{{ post.postName }}</a-select-option>
+              <a-select-option v-for="post in postList" :key="post.id">{{ post.postName }}</a-select-option>
             </a-select>
           </a-form-item>
 
@@ -140,7 +140,7 @@
             label="角色"
           >
             <a-checkbox-group v-model="userRoleList">
-              <a-checkbox v-for="role in roleList" :key="role.roleId" :value="role.roleId">{{ role.roleName }}</a-checkbox>
+              <a-checkbox v-for="role in roleList" :key="role.id" :value="role.id">{{ role.roleName }}</a-checkbox>
             </a-checkbox-group>
           </a-form-item>
         </a-form>
@@ -208,12 +208,12 @@ export default {
       this.loadRoleSelect()
       this.editInputDisabled = false
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { userId: 0, orgId: 0, status: 0 })
+      this.modal = Object.assign({}, { id: 0, orgId: 0, status: 0 })
       this.selectTree = '0'
       this.treeExpandedKeys.push('0')
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'orgId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'orgId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
       })
     },
     handleEdit (record) {
@@ -226,7 +226,7 @@ export default {
       this.treeExpandedKeys = []
       this.spinning = true
       // 加载角色列表
-      this.loadRoleSelect(record.userId)
+      this.loadRoleSelect(record.id)
       // 如果是修改操作, 则password disabled 制空
       this.editInputDisabled = true
       this.modalStatus = 'edit'
@@ -238,7 +238,7 @@ export default {
       this.modal.confirm = '******'
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'userId', 'orgId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'orgId', 'username', 'password', 'name', 'confirm', 'email', 'mobile', 'status'))
       })
     },
     handleOk (e) {
@@ -262,7 +262,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            userEdit(values.userId, values).then(() => {
+            userEdit(values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')

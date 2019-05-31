@@ -15,7 +15,7 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-input placeholder="ID" v-decorator="[ 'postId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
       </a-form-item>
       <a-form-item
         :labelCol="labelCol"
@@ -79,10 +79,10 @@ export default {
       // 每次都重置form表单
       this.form.resetFields()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { postId: 0 })
+      this.modal = Object.assign({}, { id: 0 })
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'postId', 'postCode', 'postName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'postCode', 'postName', 'orderNum'))
       })
     },
     handleEdit (record) {
@@ -92,7 +92,7 @@ export default {
       this.modal = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'postId', 'postCode', 'postName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'postCode', 'postName', 'orderNum'))
       })
     },
     handleOk (e) {
@@ -114,7 +114,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            postEdit(values.postId, values).then(() => {
+            postEdit(values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')

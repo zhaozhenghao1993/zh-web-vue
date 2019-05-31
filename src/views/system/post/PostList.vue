@@ -40,7 +40,6 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="postId"
       :alert="options.alert"
       :rowSelection="options.rowSelection"
     >
@@ -91,7 +90,7 @@ export default {
       columns: [
         {
           title: 'ID',
-          dataIndex: 'postId'
+          dataIndex: 'id'
         },
         {
           title: '岗位名称',
@@ -159,7 +158,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return postDelete(record.postId).then(() => {
+          return postDelete(record.id).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

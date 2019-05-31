@@ -62,7 +62,6 @@
           size="default"
           :columns="columns"
           :data="loadData"
-          rowKey="userId"
           :alert="options.alert"
           :rowSelection="options.rowSelection"
         >
@@ -80,7 +79,7 @@
               </a>
               <a-menu slot="overlay">
                 <a-menu-item>
-                  <router-link :to="{ path: '/sys/user/' + record.userId }">详情</router-link>
+                  <router-link :to="{ path: '/sys/user/' + record.id }">详情</router-link>
                 </a-menu-item>
                 <a-menu-item v-if="checkPermission('sys:user:reset')">
                   <a href="javascript:;" @click="$refs.modalResetPassword.handleResetPassword(record)">重置密码</a>
@@ -138,7 +137,7 @@ export default {
       columns: [
         {
           title: 'ID',
-          dataIndex: 'userId'
+          dataIndex: 'id'
         },
         {
           title: '用户名',
@@ -247,7 +246,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return userDelete(record.userId).then(() => {
+          return userDelete(record.id).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

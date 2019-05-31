@@ -52,14 +52,14 @@ export default {
       this.expandedKeys = []
       this.role = record
       this.loadData()
-      this.loadRoleInfo(record.roleId)
-      this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: '主目录', parentId: 0 })
+      this.loadRoleInfo(record.id)
+      // this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: '主目录', parentId: 0 })
       this.visible = true
     },
     handleOk (e) {
       e.preventDefault()
       this.confirmLoading = true
-      roleAuthorize(this.role.roleId, this.checkedKeys.checked === undefined ? [] : this.checkedKeys.checked).then(() => {
+      roleAuthorize(this.role.id, this.checkedKeys.checked === undefined ? [] : this.checkedKeys.checked).then(() => {
         // Do something
         this.$message.success('保存成功')
         this.$emit('ok')

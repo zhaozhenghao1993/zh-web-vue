@@ -3,7 +3,7 @@
 
     <div class="table-operator">
       <a-button type="primary" icon="sync" @click="handleFilter()">刷新</a-button>
-      <a-button type="primary" v-if="checkPermission('sys:menu:save')" icon="plus" @click="$refs.modal.handleCreate({name: '主目录', menuId: 0})">新建</a-button>
+      <a-button type="primary" v-if="checkPermission('sys:menu:save')" icon="plus" @click="$refs.modal.handleCreate({name: '主目录', id: 0})">新建</a-button>
     </div>
 
     <s-table
@@ -11,7 +11,6 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      rowKey="menuId"
       :showPagination="false"
     >
       <template
@@ -128,7 +127,7 @@ export default {
         okType: 'danger',
         okText: '删除',
         onOk () {
-          return menuDelete(record.menuId).then(() => {
+          return menuDelete(record.id).then(() => {
             that.$message.success('删除成功')
           }).catch(err => {
             that.$message.error(err.msg)

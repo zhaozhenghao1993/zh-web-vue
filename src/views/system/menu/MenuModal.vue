@@ -16,7 +16,7 @@
         hasFeedback
         validateStatus="success"
       >
-        <a-input placeholder="ID" v-decorator="[ 'menuId', {rules: []} ]" disabled="disabled" />
+        <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
       </a-form-item>
 
       <a-form-item
@@ -186,11 +186,11 @@ export default {
       this.form.resetFields()
       this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { menuId: 0, type: 0, parentName: record.name, parentId: record.menuId })
+      this.modal = Object.assign({}, { id: 0, type: 0, parentName: record.name, parentId: record.id })
       this.selectTree = this.modal.parentId + ''
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'menuId', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
       })
     },
     handleEdit (record) {
@@ -202,7 +202,7 @@ export default {
       this.selectTree = record.parentId + ''
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'menuId', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'parentName', 'name', 'uri', 'method', 'perms', 'type', 'orderNum', 'description'))
       })
     },
     handleOk (e) {
@@ -229,7 +229,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            menuEdit(values.menuId, values).then(() => {
+            menuEdit(values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
