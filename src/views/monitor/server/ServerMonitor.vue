@@ -62,7 +62,7 @@
     <a-card title="平台参数" style="margin-top: 24px" :bordered="false">
       <detail-list :col="1">
         <detail-list-item term="当前工作路径">{{ appInfo.appDir }}</detail-list-item>
-        <detail-list-item term="日志存放路径">*** 演示模式，不展示数据 ***</detail-list-item>
+        <!--<detail-list-item term="日志存放路径">*** 演示模式，不展示数据 ***</detail-list-item>-->
         <detail-list-item term="上传文件路径">{{ appInfo.uploadDir }}</detail-list-item>
       </detail-list>
     </a-card>

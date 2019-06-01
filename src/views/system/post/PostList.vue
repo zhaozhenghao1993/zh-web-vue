@@ -154,7 +154,7 @@ export default {
       this.$confirm({
         type: 'error',
         title: '提示',
-        content: '真的要删除岗位<' + record.postName + '>吗吗 ?',
+        content: '真的要删除岗位<' + record.postName + '>吗 ?',
         okType: 'danger',
         okText: '删除',
         onOk () {
