@@ -130,7 +130,7 @@ export default {
       orgs: '',
       projects: [
         { cover: '/avatar.png', title: 'zh-admin', description: '基于springboot权限管理系统', repository: 'https://github.com/zhaozhenghao1993/zh-admin' },
-        { cover: '/avatar.png', title: 'zh-web-vue', description: 'zh-admin 权限系统前端, ant-design-vue', repository: 'https://github.com/zhaozhenghao1993/zh-web-vue' },
+        { cover: '/avatar.png', title: 'zh-web-vue', description: 'zh-admin 权限系统前端, 基于ant-design-vue', repository: 'https://github.com/zhaozhenghao1993/zh-web-vue' },
         { cover: '', title: 'zh-boot-oauth', description: '基于springboot和OAuth2搭建的简易授权登陆', repository: 'https://github.com/zhaozhenghao1993/zh-boot-oauth' },
         { cover: '', title: 'zh-boot-dubbo', description: 'springboot搭建dubbo, dubbo注解开发实例', repository: 'https://github.com/zhaozhenghao1993/zh-boot-dubbo' }
       ],
