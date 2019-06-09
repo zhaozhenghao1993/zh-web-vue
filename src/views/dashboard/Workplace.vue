@@ -143,19 +143,7 @@ export default {
       },
       yScale: {
         alias: '访问量'
-      },
-      searchUserScale: [
-        {
-          dataKey: 'x',
-          alias: '时间'
-        },
-        {
-          dataKey: 'y',
-          alias: '用户数',
-          min: 0,
-          max: 10
-        }
-      ]
+      }
     }
   },
   computed: {
