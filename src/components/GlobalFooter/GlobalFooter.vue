@@ -2,7 +2,7 @@
   <div class="footer">
     <div class="links">
       <a
-        href="https://pro.loacg.com/"
+        href="https://github.com/zhaozhenghao1993"
         target="_blank"
       >首页</a>
       <a
