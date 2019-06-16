@@ -6,6 +6,7 @@
           <a href="#" slot="extra" @click="loadOrgData">刷新</a>
           <a-spin :spinning="treeSpinning">
             <a-tree
+              style="width: 100%;white-space: nowrap;overflow-x: auto;"
               showLine
               :expandedKeys="this.expandedKeys"
               :treeData="treeData"
