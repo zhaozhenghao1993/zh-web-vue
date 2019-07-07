@@ -99,28 +99,26 @@ const user = {
             data.orgs = []
           }
           // 处理主题样式
-          if (data.theme !== undefined) {
-            if (data.theme === 'dark') {
-              store.dispatch('ToggleTheme', 'dark')
-            } else if (data.theme === 'light') {
-              store.dispatch('ToggleTheme', 'light')
-            } else {
-              store.dispatch('ToggleTheme', 'dark')
-            }
+          if (data.theme === 'dark') {
+            store.dispatch('ToggleTheme', 'dark')
+          } else if (data.theme === 'light') {
+            store.dispatch('ToggleTheme', 'light')
+          } else {
+            store.dispatch('ToggleTheme', 'dark')
           }
 
           // 处理主题颜色
+          let color = '#1890FF'
           if (data.color !== undefined) {
-            let color = '#1890FF'
             colorList.forEach(items => {
               if (data.color === items.code) {
                 color = items.color
               }
             })
-            defaultConfig.primaryColor = color
-            store.dispatch('ToggleColor', color)
-            updateTheme(color)
           }
+          defaultConfig.primaryColor = color
+          store.dispatch('ToggleColor', color)
+          updateTheme(color)
 
           commit('SET_POSTS', data.posts)
           commit('SET_ORGS', data.orgs)
