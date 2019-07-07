@@ -72,7 +72,7 @@
                   <a-timeline-item>@antv/g2 - Alipay AntV 数据可视化图表</a-timeline-item>
                   <a-timeline-item>Viser-vue - antv/g2 封装实现</a-timeline-item>
                 </a-timeline>
-                <p>权限控制精确到每个路由页面,每个操作按钮</p>
+                <p>动态生成路由,权限控制精确到每个路由页面,每个操作按钮</p>
               </a-tab-pane>
             </a-tabs>
           </a-card>

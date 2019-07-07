@@ -49,22 +49,20 @@ service.interceptors.request.use(config => {
 // response interceptor
 service.interceptors.response.use((response) => {
   // 处理不同模式响应
-  if (Blob.prototype.constructor === response.data.constructor) {
-    // 下载流输出
-    const headers = response.headers
-    if (headers['content-type'] === 'application/octet-stream;charset=UTF-8') {
-      return response.data
-    } else if (headers['content-type'] === 'application/json;charset=UTF-8') {
-      // 为json说明存在后台异常，则将 response.data 的 blob 转为json串
-      const reader = new FileReader()
-      reader.onload = e => {
-        response.data = JSON.parse(e.target.result)
-        return responseHandle(response.data)
-      }
-      reader.readAsText(response.data)
+  // 下载流输出
+  const headers = response.headers
+  if (headers['content-type'] === 'application/octet-stream;charset=UTF-8') {
+    // 统一下载响应流为 responseType: 'arraybuffer', 拿到结果后再判断是否可以解析，是json还是文件流，文件流的话就转 Blob
+    const blob = new Blob([response.data], { type: 'application/octet-stream' })
+    return blob
+  } else if (headers['content-type'] === 'application/json;charset=UTF-8') {
+    if (ArrayBuffer.prototype.constructor === response.data.constructor) {
+      // this.response为arraybuffer对象，转为uint8数组
+      const uint8 = new Uint8Array(response.data)
+      // 解决使用fromCharCode后中文乱码的问题
+      const resToString = decodeURIComponent(escape((String.fromCharCode(...uint8))))
+      response.data = JSON.parse(resToString)
     }
-  } else {
-    // 正常处理后台响应json
     return responseHandle(response.data)
   }
 }, err)

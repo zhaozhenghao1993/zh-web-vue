@@ -13,6 +13,6 @@ export function generatorCode (parameter) {
     url: '/tool/generator/code',
     method: 'get',
     params: parameter,
-    responseType: 'blob'
+    responseType: 'arraybuffer'
   })
 }

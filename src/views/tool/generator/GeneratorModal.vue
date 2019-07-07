@@ -143,12 +143,10 @@ export default {
       this.visible = false
     },
     // 下载文件
-    download (data, fileName) {
-      if (!data) {
+    download (blob, fileName) {
+      if (!blob) {
         return
       }
-      const content = data
-      const blob = new Blob([content])
       fileName = fileName + '.zip'
       if ('download' in document.createElement('a')) { // 非IE下载
         const elink = document.createElement('a')
