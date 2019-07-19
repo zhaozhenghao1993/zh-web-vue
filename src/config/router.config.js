@@ -6,7 +6,7 @@ export const asyncRouterMap = [
 
   {
     path: '/',
-    name: 'Index',
+    name: 'index',
     component: BasicLayout,
     meta: { title: '首页' },
     redirect: '/dashboard/workplace',
@@ -19,16 +19,10 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse },
         children: [
-          /* {
-            path: '/dashboard/analysis',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: '分析页', keepAlive: false }
-          }, */
           // 外部链接
           {
             path: 'https://www.baidu.com/',
-            name: 'MonitorExample',
+            name: 'Outside',
             meta: { title: '监控页（外部）', target: '_blank' }
           },
           {
@@ -202,25 +196,25 @@ export const asyncRouterMap = [
                 path: '/account/settings/security',
                 name: 'SecuritySettings',
                 component: () => import('@/views/account/settings/Security'),
-                meta: { title: '安全设置', hidden: true }
+                meta: { title: '安全设置', hidden: true, keepAlive: true }
               },
               {
                 path: '/account/settings/custom',
                 name: 'CustomSettings',
                 component: () => import('@/views/account/settings/Custom'),
-                meta: { title: '个性化设置', hidden: true }
+                meta: { title: '个性化设置', hidden: true, keepAlive: true }
               },
               {
                 path: '/account/settings/binding',
                 name: 'BindingSettings',
                 component: () => import('@/views/account/settings/Binding'),
-                meta: { title: '账户绑定', hidden: true }
+                meta: { title: '账户绑定', hidden: true, keepAlive: true }
               },
               {
                 path: '/account/settings/notification',
                 name: 'NotificationSettings',
                 component: () => import('@/views/account/settings/Notification'),
-                meta: { title: '新消息通知', hidden: true }
+                meta: { title: '新消息通知', hidden: true, keepAlive: true }
               }
             ]
           }

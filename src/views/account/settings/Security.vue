@@ -1,46 +1,44 @@
 <template>
-  <div>
-    <a-collapse :bordered="false">
-      <a-collapse-panel header="修改密码" key="1">
-        <a-form :form="passwordForm" layout="vertical">
-          <a-form-item
-            label="Old password"
-            hasFeedback
-            :required="false"
-          >
-            <a-input placeholder="Old password" v-decorator="['oldPassword',{rules: [{required: true, message: 'Please input your old password!',}, {validator: validateToNextPassword,}],}]" type="password" />
-          </a-form-item>
+  <a-collapse :bordered="false">
+    <a-collapse-panel header="修改密码" key="1">
+      <a-form :form="passwordForm" layout="vertical">
+        <a-form-item
+          label="Old password"
+          hasFeedback
+          :required="false"
+        >
+          <a-input placeholder="Old password" v-decorator="['oldPassword',{rules: [{required: true, message: 'Please input your old password!',}, {validator: validateToNextPassword,}],}]" type="password" />
+        </a-form-item>
 
-          <a-form-item
-            label="New password"
-            hasFeedback
-            :required="false"
-          >
-            <a-input placeholder="New password" v-decorator="['password',{rules: [{required: true, message: 'Please input your new password!',}, {validator: validateToNextPassword,}],}]" type="password"/>
-          </a-form-item>
+        <a-form-item
+          label="New password"
+          hasFeedback
+          :required="false"
+        >
+          <a-input placeholder="New password" v-decorator="['password',{rules: [{required: true, message: 'Please input your new password!',}, {validator: validateToNextPassword,}],}]" type="password"/>
+        </a-form-item>
 
-          <a-form-item
-            label="Confirm new password"
-            hasFeedback
-            :required="false"
-          >
-            <a-input placeholder="Confirm new password" v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your new password!',}, {validator: compareToFirstPassword,}],}]" type="password" @blur="handleConfirmBlur"/>
-          </a-form-item>
+        <a-form-item
+          label="Confirm new password"
+          hasFeedback
+          :required="false"
+        >
+          <a-input placeholder="Confirm new password" v-decorator="['confirm',{rules: [{required: true, message: 'Please confirm your new password!',}, {validator: compareToFirstPassword,}],}]" type="password" @blur="handleConfirmBlur"/>
+        </a-form-item>
 
-          <a-form-item>
-            <a-button type="primary" @click="handlePasswordSubmit" :loading="confirmPasswordLoading">修改密码</a-button>
-            <a-button @click="handlePasswordClear" style="margin-left: 8px">重置</a-button>
-          </a-form-item>
-        </a-form>
-      </a-collapse-panel>
-      <a-collapse-panel header="This is panel header 2" key="2">
-        <p>{{ text }}</p>
-      </a-collapse-panel>
-      <a-collapse-panel header="This is panel header 3" key="3">
-        <p>{{ text }}</p>
-      </a-collapse-panel>
-    </a-collapse>
-  </div>
+        <a-form-item>
+          <a-button type="primary" @click="handlePasswordSubmit" :loading="confirmPasswordLoading">修改密码</a-button>
+          <a-button @click="handlePasswordClear" style="margin-left: 8px">重置</a-button>
+        </a-form-item>
+      </a-form>
+    </a-collapse-panel>
+    <a-collapse-panel header="This is panel header 2" key="2">
+      <p>{{ text }}</p>
+    </a-collapse-panel>
+    <a-collapse-panel header="This is panel header 3" key="3">
+      <p>{{ text }}</p>
+    </a-collapse-panel>
+  </a-collapse>
 </template>
 
 <script>
@@ -49,7 +47,7 @@ import { profilePassword } from '@/api/account/profile'
 export default {
   data () {
     return {
-      text: `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`,
+      text: `待开发`,
       passwordForm: this.$form.createForm(this),
       confirmPasswordLoading: false
     }

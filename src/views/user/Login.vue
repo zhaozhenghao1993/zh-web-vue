@@ -119,6 +119,7 @@
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
+// import { getSmsCaptcha, get2step } from '@/api/login'
 
 export default {
   components: {
@@ -149,8 +150,8 @@ export default {
       })
       .catch(() => {
         this.requiredTwoStepCaptcha = false
-      }) */
-    // this.requiredTwoStepCaptcha = true
+      })
+    // this.requiredTwoStepCaptcha = true */
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
@@ -184,7 +185,7 @@ export default {
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          // console.log('login form', values)
+          console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
@@ -219,8 +220,8 @@ export default {
             }
           }, 1000)
 
-          // const hide = this.$message.loading('验证码发送中..', 0)
-          /* getSmsCaptcha({ mobile: values.mobile }).then(res => {
+          /* const hide = this.$message.loading('验证码发送中..', 0)
+          getSmsCaptcha({ mobile: values.mobile }).then(res => {
             setTimeout(hide, 2500)
             this.$notification['success']({
               message: '提示',
@@ -247,7 +248,7 @@ export default {
       })
     },
     loginSuccess (res) {
-      // console.log(res)
+      console.log(res)
       this.$router.push({ name: 'Dashboard' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {

@@ -9,6 +9,7 @@ import MiniProgress from '@/components/Charts/MiniProgress'
 import Radar from '@/components/Charts/Radar'
 import RankList from '@/components/Charts/RankList'
 import TransferBar from '@/components/Charts/TransferBar'
+import TagCloud from '@/components/Charts/TagCloud'
 
 // pro components
 import AvatarList from '@/components/AvatarList'
@@ -23,7 +24,10 @@ import STable from '@/components/Table'
 import MultiTab from '@/components/MultiTab'
 import Result from '@/components/Result'
 import IconSelector from '@/components/IconSelector'
+import TagSelect from '@/components/TagSelect'
 import ExceptionPage from '@/components/Exception'
+import StandardFormRow from '@/components/StandardFormRow'
+import ArticleListContent from '@/components/ArticleListContent'
 
 export {
   AvatarList,
@@ -35,6 +39,7 @@ export {
   MiniBar,
   MiniProgress,
   Radar,
+  TagCloud,
   RankList,
   TransferBar,
   Trend,
@@ -50,5 +55,8 @@ export {
   MultiTab,
   Result,
   ExceptionPage,
-  IconSelector
+  IconSelector,
+  TagSelect,
+  StandardFormRow,
+  ArticleListContent
 }

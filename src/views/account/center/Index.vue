@@ -29,10 +29,9 @@
             <div class="tagsTitle">角色</div>
             <a-spin :spinning="spinning">
               <div>
-                <template v-for="(role, index) in roles">
+                <template v-for="role in roles">
                   <a-tag
                     :key="role"
-                    :closable="index !== 0"
                     color="blue"
                   >{{ role }}</a-tag>
                 </template>
@@ -76,6 +75,7 @@
 import { PageView, RouteView } from '@/layouts'
 import PermissionPage from '@/components/PermissionPage'
 import { AppPage, ArticlePage, ProjectPage } from './page'
+
 import { mapGetters } from 'vuex'
 
 export default {

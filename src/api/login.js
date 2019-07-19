@@ -11,14 +11,6 @@ import { axios } from '@/utils/request'
  * @param parameter
  * @returns {*}
  */
-/**
- * get user 2step code open?
- * @param parameter {*}
- */
-export function get2step (parameter) {
-  // 获取google 身份验证器，后期增加
-}
-
 export function login (parameter) {
   return axios({
     url: '/sys/login',
@@ -27,9 +19,13 @@ export function login (parameter) {
   })
 }
 
-export function getSmsCaptcha (parameter) {
-  // 获取短信验证码，依照需求决定
-}
+/* export function getSmsCaptcha (parameter) {
+  return axios({
+    url: api.SendSms,
+    method: 'post',
+    data: parameter
+  })
+} */
 
 export function getInfo () {
   return axios({
@@ -50,3 +46,15 @@ export function logout () {
     }
   })
 }
+
+/**
+ * get user 2step code open?
+ * @param parameter {*}
+ */
+/* export function get2step (parameter) {
+  return axios({
+    url: api.twoStepCode,
+    method: 'post',
+    data: parameter
+  })
+} */

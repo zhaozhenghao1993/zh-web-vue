@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="banner">
-      <img alt="Vue logo" style="width: 64px; height: 64px" src="../assets/logo.svg">
+      <img alt="Vue logo" style="width: 64px; height: 64px" src="../assets/logo.png">
       <h3 style="margin-top: 1rem">Welcome to Your Vue.js App</h3>
     </div>
 
@@ -134,6 +134,11 @@
         <description-list-item term="描述">这段描述很长很长很长很长很长很长很长很长很长很长很长很长很长很长...</description-list-item>
       </description-list>
     </a-card>
+
+    <a-divider> TagCloud </a-divider>
+    <a-card style="margin-bottom: 3rem">
+      <tag-cloud :tag-list="tagCloudData"></tag-cloud>
+    </a-card>
   </div>
 </template>
 
@@ -146,7 +151,7 @@ import CountDown from '@/components/CountDown/CountDown'
 import Ellipsis from '@/components/Ellipsis'
 import NumberInfo from '@/components/NumberInfo'
 import TagSelect from '@/components/TagSelect'
-import { DescriptionList } from '@/components/'
+import { DescriptionList, TagCloud } from '@/components/'
 
 const AvatarListItem = AvatarList.AvatarItem
 const TagSelectOption = TagSelect.Option
@@ -164,13 +169,18 @@ export default {
     AvatarListItem,
     TagSelect,
     TagSelectOption,
+    TagCloud,
     DescriptionList,
     DescriptionListItem
   },
   data () {
     return {
-      targetTime: new Date().getTime() + 3900000
+      targetTime: new Date().getTime() + 3900000,
+      tagCloudData: []
     }
+  },
+  created () {
+    this.getTagCloudData()
   },
   methods: {
     onEndHandle () {
@@ -180,6 +190,11 @@ export default {
       this.$notification.open({
         message: 'Notification Title',
         description: 'This is the content of the notification. This is the content of the notification. This is the content of the notification.'
+      })
+    },
+    getTagCloudData () {
+      this.$http.get('/data/antv/tag-cloud').then(res => {
+        this.tagCloudData = res.result
       })
     }
   }

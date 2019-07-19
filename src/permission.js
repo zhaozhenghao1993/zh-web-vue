@@ -5,7 +5,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import notification from 'ant-design-vue/es/notification'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
-import { getToken } from '@/utils/auth' // getToken from cookie
+import { getToken, removeToken } from '@/utils/auth' // getToken from cookie
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -44,7 +44,10 @@ router.beforeEach((to, from, next) => {
               message: '错误',
               description: '请求用户信息失败，请重试'
             })
-            /* store.dispatch('FedLogOut').then(() => {
+            // 请求用户信息失败，就则删除TOKEN，让其自动转到 login
+            removeToken()
+            // 避免多次跳转登录页
+            /* store.dispatch('Logout').then(() => {
               next({ path: '/user/login', query: { redirect: to.fullPath } })
             }) */
           })

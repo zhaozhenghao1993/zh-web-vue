@@ -5,7 +5,6 @@
     :maskClosable="false"
     :confirmLoading="confirmLoading"
     :width="800"
-    :destroyOnClose="true"
     @cancel="cancelHandel">
     <a-row>
       <a-col :xs="24" :md="12" :style="{height: '350px'}">
@@ -47,14 +46,10 @@
   </a-modal>
 </template>
 <script>
-import { VueCropper } from 'vue-cropper'
 import { profileAvatar } from '@/api/account/profile'
 import store from '@/store'
 
 export default {
-  components: {
-    VueCropper
-  },
   data () {
     return {
       visible: false,
@@ -151,12 +146,14 @@ export default {
 <style lang="less" scoped>
 
   .avatar-upload-preview {
-    overflow: hidden;
-    margin: 5px;
-    border-radius: 50%;
     position: absolute;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
     box-shadow: 0 0 4px #ccc;
-    transform: translate3d(88px, 75px, 0px);
+    overflow: hidden;
 
     img {
       width: 100%;

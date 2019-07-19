@@ -1,7 +1,8 @@
 import { message } from 'ant-design-vue/es'
 // import defaultSettings from '../defaultSettings';
+import themeColor from './themeColor.js'
 
-let lessNodesAppended
+// let lessNodesAppended
 
 const colorList = [
   {
@@ -30,11 +31,19 @@ const colorList = [
   }
 ]
 
+const updateTheme = newPrimaryColor => {
+  const hideMessage = message.loading('正在切换主题！', 0)
+  themeColor.changeColor(newPrimaryColor).finally(t => {
+    hideMessage()
+  })
+}
+
+/*
 const updateTheme = primaryColor => {
   // Don't compile less in production!
   /* if (process.env.NODE_ENV === 'production') {
     return;
-  } */
+  } * /
   // Determine if the component is remounted
   if (!primaryColor) {
     return
@@ -72,7 +81,7 @@ const updateTheme = primaryColor => {
         javascriptEnabled: true
       };
     `
-    lessScriptNode.src = '../../js/less.min.js'
+    lessScriptNode.src = 'https://gw.alipayobjects.com/os/lib/less.js/3.8.1/less.min.js'
     lessScriptNode.async = true
     lessScriptNode.onload = () => {
       buildIt()
@@ -86,6 +95,7 @@ const updateTheme = primaryColor => {
     buildIt()
   }
 }
+*/
 
 const updateColorWeak = colorWeak => {
   // document.body.className = colorWeak ? 'colorWeak' : '';

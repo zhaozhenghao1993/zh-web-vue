@@ -121,7 +121,7 @@ export default {
   },
   data () {
     return {
-      description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
+      description: '',
       selectStatus: [
         { statusCode: 0, statusText: '正常' },
         { statusCode: 1, statusText: '锁定' }
@@ -339,7 +339,7 @@ export default {
     },
     loadOrgData () {
       this.treeSpinning = true
-      orgTree({}).then(res => {
+      orgTree().then(res => {
         this.treeData[0].children = res.data
         // 为什么这里要递归？ 就是想让进来就展示所有嗷！ 好看！
         this.loadDefaultExpandedKeys(this.treeData)

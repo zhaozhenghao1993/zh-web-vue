@@ -2,7 +2,6 @@ import { login, getInfo, logout } from '@/api/login'
 import { welcome } from '@/utils/util'
 import store from '@/store'
 import { updateTheme, colorList } from '@/components/SettingDrawer/settingConfig'
-import defaultConfig from '@/config/defaultSettings'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -116,7 +115,7 @@ const user = {
               }
             })
           }
-          defaultConfig.primaryColor = color
+          // defaultConfig.primaryColor = color
           store.dispatch('ToggleColor', color)
           updateTheme(color)
 
@@ -139,7 +138,6 @@ const user = {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         // Vue.ls.remove(ACCESS_TOKEN)
-        removeToken()
 
         logout(state.token).then(() => {
           resolve()

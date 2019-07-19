@@ -42,9 +42,6 @@ export default {
     this.selectedLastPath()
   },
   methods: {
-    isActive (route) {
-      return route.path === this.$route.path
-    },
     onEdit (targetKey, action) {
       this[action](targetKey)
     },

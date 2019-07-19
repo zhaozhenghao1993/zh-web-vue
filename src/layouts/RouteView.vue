@@ -19,7 +19,7 @@ export default {
     // const { $route: { meta }, $store: { getters } } = this
     const inKeep = (
       <keep-alive {...{ include: this.cachedViews }}>
-        <router-view/>
+        <router-view />
       </keep-alive>
     )
     // const notKeep = (
@@ -32,7 +32,6 @@ export default {
     //   return notKeep
     // }
     // return this.keepAlive || getters.multiTab || meta.keepAlive ? inKeep : notKeep
-    // return meta.keepAlive ? inKeep : notKeep
     return inKeep
   }
 }
