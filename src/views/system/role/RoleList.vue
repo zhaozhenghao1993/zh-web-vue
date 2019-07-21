@@ -51,8 +51,8 @@
             更多 <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
-            <a-menu-item v-if="checkPermission('sys:role:remove')">
-              <a href="javascript:;" @click="$refs.treeModal.handleAuthorize(record)">分配权限</a>
+            <a-menu-item v-if="checkPermission('sys:role:authorize')">
+              <a href="javascript:;" @click="$refs.roleMenuModal.handleAuthorize(record)">分配权限</a>
             </a-menu-item>
             <a-menu-item v-if="checkPermission('sys:role:remove')">
               <a href="javascript:;" @click="handleDelete(record)">删除</a>
@@ -64,7 +64,7 @@
 
     <role-modal ref="modal" :tableRefresh="this.handleTableRefresh" ></role-modal>
 
-    <menu-tree-modal ref="treeModal" :tableRefresh="this.handleTableRefresh"></menu-tree-modal>
+    <role-menu-modal ref="roleMenuModal" :tableRefresh="this.handleTableRefresh"></role-menu-modal>
 
   </a-card>
 </template>
@@ -74,18 +74,18 @@ import STable from '@/components/Table/'
 import checkPermission from '@/utils/permissions'
 import { roleList, roleDelete, roleBatchDelete } from '@/api/system/role'
 import RoleModal from './RoleModal'
-import MenuTreeModal from '../menu/MenuTreeModal'
+import RoleMenuModal from './RoleMenuModal'
 
 export default {
   name: 'RoleList',
   components: {
     RoleModal,
-    MenuTreeModal,
+    RoleMenuModal,
     STable
   },
   data () {
     return {
-      description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
+      description: '',
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数

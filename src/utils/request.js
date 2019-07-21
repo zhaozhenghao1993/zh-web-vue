@@ -17,6 +17,10 @@ const err = (error) => {
   if (error.response) {
     const data = error.response.data
     const token = getToken()
+    if (error.response.status === 404) {
+      notification.error({ message: 'Forbidden', description: '请求不存在' })
+      router.push({ path: '/exception/404' })
+    }
     if (error.response.status === 403) {
       notification.error({ message: 'Forbidden', description: data.message })
     }
@@ -68,6 +72,10 @@ service.interceptors.response.use((response) => {
 }, err)
 
 const responseHandle = (data) => {
+  if (data.success === undefined) {
+    // 如果后台响应数据不为正常格式，则直接返回，交由下级Promise处理
+    return data
+  }
   if (!data.success) {
     const token = getToken()
     if (data.code === 500) {

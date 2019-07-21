@@ -103,6 +103,33 @@ export const asyncRouterMap = [
             meta: { title: '服务器监控', permission: [ 'monitor:server' ] }
           },
           {
+            path: '/monitor/performance',
+            name: 'PerformanceMonitor',
+            component: () => import('@/views/monitor/performance/MonitorLayout'),
+            redirect: '/monitor/performance/system',
+            meta: { title: '性能监控', keepAlive: true, permission: [ 'monitor:performance' ] },
+            children: [
+              {
+                path: '/monitor/performance/system',
+                name: 'SystemInfo',
+                component: () => import('@/views/monitor/performance/SystemInfo'),
+                meta: { title: '系统信息', permission: [ 'monitor:performance:system' ] }
+              },
+              {
+                path: '/monitor/performance/jvm',
+                name: 'JvmInfo',
+                component: () => import('@/views/monitor/performance/JvmInfo'),
+                meta: { title: 'JVM信息', permission: [ 'monitor:performance:jvm' ] }
+              },
+              {
+                path: '/monitor/performance/tomcat',
+                name: 'TomcatInfo',
+                component: () => import('@/views/monitor/performance/TomcatInfo'),
+                meta: { title: 'Tomcat信息', permission: [ 'monitor:performance:tomcat' ] }
+              }
+            ]
+          },
+          {
             path: '/monitor/druid',
             name: 'DruidMonitor',
             component: () => import('@/views/monitor/druid/DruidMonitor'),
