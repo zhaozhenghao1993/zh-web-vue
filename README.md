@@ -10,6 +10,7 @@
 
 zh-admin 的前端框架.
 
+[![Release](https://img.shields.io/github/release/zhaozhenghao1993/zh-web-vue)](https://github.com/zhaozhenghao1993/zh-web-vue/releases)
 [![Build Status](https://www.travis-ci.org/zhaozhenghao1993/zh-web-vue.svg?branch=master)](https://www.travis-ci.org/zhaozhenghao1993/zh-web-vue)
 
 </div>
@@ -23,6 +24,10 @@ zh-web-vue 是 zh-admin 的前端框架。采用前后端分离，代码简单�
 ## 后端地址
 
 [zh-admin](https://github.com/zhaozhenghao1993/zh-admin)
+
+## 演示环境
+
+[http://106.12.21.222](http://106.12.21.222)
 
 ## 技术选型
 
