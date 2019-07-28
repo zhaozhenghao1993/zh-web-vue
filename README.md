@@ -1,165 +1,177 @@
-English | [简体中文](./README.zh-CN.md)
+<p align="center">
+  <a href="#">
+    <img src="https://raw.githubusercontent.com/zhaozhenghao1993/zh-web-vue/master/public/logo.png">
+  </a>
+</p>
 
-<h1 align="center">Ant Design Pro Vue</h1>
+<h1 align="center">zh-web-vue</h1>
 
 <div align="center">
-An out-of-box UI solution for enterprise applications as a Vue boilerplate. based on  <a href="https://vuecomponent.github.io/ant-design-vue/docs/vue/introduce-cn/" target="_blank">Ant Design of Vue</a>
-</div>
 
-<div align="center">
+zh-admin 的前端框架.
 
-[![Backers on Open Collective](https://opencollective.com/ant-design-pro-vue/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/ant-design-pro-vue/sponsors/badge.svg)](#sponsors) [![License](https://img.shields.io/npm/l/package.json.svg?style=flat)](https://github.com/sendya/ant-design-pro-vue/blob/master/LICENSE)
-[![Release](https://img.shields.io/github/release/sendya/ant-design-pro-vue.svg?style=flat)](https://github.com/sendya/ant-design-pro-vue/releases/latest)
-[![Travis branch](https://travis-ci.org/sendya/ant-design-pro-vue.svg?branch=master)](https://travis-ci.org/sendya/ant-design-pro-vue)
+[![Build Status](https://www.travis-ci.org/zhaozhenghao1993/zh-web-vue.svg?branch=master)](https://www.travis-ci.org/zhaozhenghao1993/zh-web-vue)
 
 </div>
 
-- Preview: https://preview.pro.loacg.com
-- Home Page: https://pro.loacg.com
-- Documentation: https://pro.loacg.com/docs/getting-started
-- ChangeLog: https://pro.loacg.com/docs/changelog
-- FAQ: https://pro.loacg.com/docs/faq
-- Branches: 
-  - demo/router-view-table: CRUD view in router
-  - feature/demand_load: loaded on demand
-  - feature/lang: i18n support
-  - feature/dynamic-menu: dynamic menu demo
-  - lite: lite template (legacy)
+## 项目介绍
 
+zh-web-vue 是 zh-admin 的前端框架。采用前后端分离，代码简单，方便二次开发，包含鉴权管理、服务器监控、代码生成器、个人自定义主题等模块，拿来即用，降低繁杂的开发成本。
 
-Overview
-----
+前端动态生成路由，权限控制精确到每个路由页面，每个操作按钮。
 
-![dashboard + multi-tabs](https://static-2.loacg.com/open/static/github/20190224163345.jpg)
+## 后端地址
 
-![dashboard + setting](https://static-2.loacg.com/open/static/github/20181126112124.png)
+[zh-admin](https://github.com/zhaozhenghao1993/zh-admin)
 
-![user profile](https://static-2.loacg.com/open/static/github/20180916-134251.png)
+## 技术选型
 
-![permission list](https://static-2.loacg.com/open/static/github/20180916-154937.png)
+#### 后端
 
+- 基础框架 springboot 2.1.1.RELEASE
+- 持久层 mybatis.spring.boot 1.3.2
+- 持久层缓存 ehcache 2.10.4
+- 数据库连接池 druid-spring-boot 1.1.9
+- 安全框架 jwt 3.2.0 jjwt 0.9.1
+- 分页 pagehelper 1.2.5
+- 摸板引擎 velocity 1.7
 
-### Env and dependencies
+#### 前端
 
-- node
-- yarn
-- webpack
-- eslint
+- vue
+- vuex
+- axios
 - @vue/cli ~3
-- [ant-design-vue](https://github.com/vueComponent/ant-design-vue) - Ant Design Of Vue 
-- [vue-cropper](https://github.com/xyxiao001/vue-cropper) - Picture edit
-- [@antv/g2](https://antv.alipay.com/zh-cn/index.html) - AntV G2
-- [Viser-vue](https://viserjs.github.io/docs.html#/viser/guide/installation)  - Antv/G2 of Vue
+- [ant-design-vue](https://github.com/vueComponent/ant-design-vue)
+- [ant-design-vue-pro](https://github.com/sendya/ant-design-pro-vue) - 脚手架
+- [vue-cropper](https://github.com/xyxiao001/vue-cropper) - 头像裁剪组件
+- [@antv/g2](https://antv.alipay.com/zh-cn/index.html) - Alipay AntV 数据可视化图表
+- [Viser-vue](https://viserjs.github.io/docs.html#/viser/guide/installation) - antv/g2 封装实现
 
-> Note:  [Yarn](https://yarnpkg.com/) package management is recommended, the exact same version loaded with the demo site of this project (yarn.lock) . but you can also use npm
+由于使用 ant-design-vue 和 ant-design-vue-pro，开发文档可参照
 
+https://vue.ant.design/docs/vue/introduce-cn/
 
-### Project setup
+https://pro.loacg.com/docs/getting-started
 
-- Clone repo
-```bash
-git clone https://github.com/sendya/ant-design-pro-vue.git
-cd ant-design-pro-vue
+## 项目模块
+
+```
+├─仪表盘
+│  └─工作台
+├─系统管理
+│  ├─用户管理
+│  ├─角色管理
+│  ├─权限管理
+│  ├─部门管理
+│  └─岗位管理
+├─系统监控
+│  ├─日志管理
+│  ├─服务器监控
+│  ├─性能监控
+│  │  ├─服务器信息
+│  │  ├─jvm信息
+│  │  └─Tomcat信息
+│  └─数据库监控
+│─开发工具
+│  ├─IconSelector
+│  └─代码生成器
+│─个人页
+└─ ├─个人中心
+   └─个人设置
+      ├─基本设置
+      ├─安全设置
+      └─个性化设置
 ```
 
-- Install dependencies
+```
+├── docker
+│   └── build.sh             # 构建镜像脚本
+│   └── start.sh             # 启动镜像脚本
+|   └── nginx.conf           # nginx配置
+├── public
+│   └── logo.png             # LOGO
+|   └── index.html           # Vue 入口模板
+├── src
+│   ├── api                  # Api ajax 等
+│   ├── assets               # 本地静态资源
+│   ├── config               # 项目基础配置，包含路由，全局设置
+│   ├── components           # 业务通用组件
+│   ├── core                 # 项目引导, 全局配置初始化，依赖包引入等
+│   ├── router               # Vue-Router
+│   ├── store                # Vuex
+│   ├── utils                # 工具库
+│   ├── locales              # 国际化资源
+│   ├── views                # 业务页面入口和常用模板
+│   ├── App.vue              # Vue 模板入口
+│   └── main.js              # Vue 入口 JS
+│   └── permission.js        # 路由守卫(路由权限控制)
+├── tests                    # 测试工具
+├── README.md
+└── package.json
+```
+
+## 快速开始
+
+#### 拉取项目代码
+
+```
+git clone https://github.com/zhaozhenghao1993/zh-web-vue.git
+cd zh-web-vue
+```
+
+#### 安装依赖
+
 ```
 yarn install
 ```
 
-- Compiles and hot-reloads for development
+#### 开发模式运行
+
 ```
 yarn run serve
 ```
 
-- Compiles and minifies for production
+#### 编译项目
+
 ```
 yarn run build
 ```
 
-- Lints and fixes files
+#### Lints and fixes files
+
 ```
 yarn run lint
 ```
 
+#### 后端项目编译
 
-### Other
+请查看 [zh-admin](https://github.com/zhaozhenghao1993/zh-admin)
 
-- **IMPORTANT : About Issue feedback !! when opening Issue read [Issue / PR Contributing](https://github.com/sendya/ant-design-pro-vue/issues/90)**
+## docker镜像
 
-- [Vue-cli3](https://cli.vuejs.org/guide/) used by the project.
-- Disable Eslint (not recommended): remove `eslintConfig`  field in `package.json`  and `vue.config.js` field `lintOnSave: false`
-
-- Load on Demand: modify `/src/main.js` L14,  replace to `import './core/lazy_use'` code.
-
-- Customize Theme:  `vue.config.js` 
-eg: 
-```ecmascript 6
-  css: {
-    loaderOptions: {
-      less: {
-        modifyVars: {
-          /* Less variables, required modifyVars*/
-
-          'primary-color': '#F5222D',
-          'link-color': '#F5222D',
-          'border-radius-base': '4px',
-        },
-        javascriptEnabled: true,
-      }
-    }
-  }
 ```
-- **polyfill**
+docker pull zhaozhenghao1993/zh-web-vue
 
-- remove polyfill: 
-  > [Vue CLI Polyfill](https://cli.vuejs.org/zh/guide/browser-compatibility.html#usebuiltins-usage)
-  
-  - remove `import '@babel/polyfill'`  field in  `src/main.js`
-  - `babel.conflg.js` remove
-    ```ecmascript 6
-    [
-      '@babel/preset-env',
-      {
-        'useBuiltIns': 'entry'
-      }
-    ]
-    ```
+docker run -p 8000:80 -v /root/Projects/zh-web-vue/docker/nginx.conf:/etc/nginx/conf.d/default.conf --name zh-web-vue -d zhaozhenghao1993/zh-web-vue:1.0.0
+```
 
-## Browsers support
+## 系统展示
 
-Modern browsers and IE10.
+![login](docs/login.png)
 
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
-| --- | --- | --- | --- | --- |
-| IE10, Edge | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+![workplace](docs/workplace.png)
 
+![user-list](docs/user-list.png)
 
-## Contributors
+![menu-list](docs/menu-list.png)
 
-This project exists thanks to all the people who contribute. 
-<a href="https://github.com/sendya/ant-design-pro-vue/graphs/contributors"><img src="https://opencollective.com/ant-design-pro-vue/contributors.svg?width=890&button=false" /></a>
+![server-monitor](docs/server-monitor.png)
 
+![druid](docs/druid.png)
 
-## Backers
+![icon](docs/icon.png)
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/ant-design-pro-vue#backer)]
+![user-center](docs/user-center.png)
 
-<a href="https://opencollective.com/ant-design-pro-vue#backers" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/backers.svg?width=890"></a>
-
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/ant-design-pro-vue#sponsor)]
-
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/0/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/1/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/2/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/3/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/4/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/5/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/6/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/7/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/8/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/ant-design-pro-vue/sponsor/9/website" target="_blank"><img src="https://opencollective.com/ant-design-pro-vue/sponsor/9/avatar.svg"></a>
-
+![user-setting](docs/user-setting.png)
