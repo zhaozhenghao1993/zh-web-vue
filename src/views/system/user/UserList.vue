@@ -1,7 +1,7 @@
 <template>
   <a-card :bordered="false">
     <a-row :gutter="8">
-      <a-col :span="4">
+      <a-col :md="5" :sm="24">
         <a-card title="组织机构">
           <a href="#" slot="extra" @click="loadOrgData">刷新</a>
           <a-spin :spinning="treeSpinning">
@@ -16,7 +16,7 @@
           </a-spin>
         </a-card>
       </a-col>
-      <a-col :span="20">
+      <a-col :md="19" :sm="24">
         <div class="table-page-search-wrapper">
           <a-form layout="inline">
             <a-row :gutter="48">
