@@ -93,7 +93,7 @@ export default {
       }
       profileTheme({ theme: theme }).then(() => {
         // Do something
-        this.$store.dispatch('GetInfo').then(res => {
+        this.$store.dispatch('GetInfo').then(() => {
           this.$message.success('保存成功')
           this.themeLoading = false
         })
@@ -107,7 +107,7 @@ export default {
       if (this.primaryColor !== color) {
         profileColor({ color: code }).then(() => {
           // Do something
-          this.$store.dispatch('GetInfo').then(res => {
+          this.$store.dispatch('GetInfo').then(() => {
             this.$message.success('保存成功')
             this.themeLoading = false
           })

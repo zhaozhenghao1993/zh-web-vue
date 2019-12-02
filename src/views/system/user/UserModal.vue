@@ -304,9 +304,9 @@ export default {
       callback()
     },
     loadRoleSelect (id) {
-      roleSelect().then(res => {
-        if (res.data !== undefined) {
-          this.roleList = res.data
+      roleSelect().then(response => {
+        if (response.data !== undefined) {
+          this.roleList = response.data
           if (id !== undefined) {
             // 如果当前是编辑则加载该用户角色信息
             this.loadUserInfo(id)
@@ -318,22 +318,22 @@ export default {
       })
     },
     loadUserInfo (id) {
-      userInfo(id).then(res => {
-        if (res.data.roleIdList !== undefined) {
-          this.userRoleList = res.data.roleIdList
-          this.userPostList = res.data.postIdList
+      userInfo(id).then(response => {
+        if (response.data.roleIdList !== undefined) {
+          this.userRoleList = response.data.roleIdList
+          this.userPostList = response.data.postIdList
         }
         this.spinning = false
       }).catch(e => {
       })
     },
     loadData () {
-      orgTree({ isRoot: true }).then(res => {
-        this.treeData = res.data
+      orgTree({ isRoot: true }).then(response => {
+        this.treeData = response.data
       }).catch(e => {
       })
-      postSelect().then(res => {
-        this.postList = res.data
+      postSelect().then(response => {
+        this.postList = response.data
       }).catch(e => {
       })
     },

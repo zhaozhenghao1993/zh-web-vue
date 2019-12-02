@@ -83,7 +83,7 @@ export default {
         if (!err) {
           profile(values).then(() => {
             // Do something
-            store.dispatch('GetInfo').then(res => {
+            store.dispatch('GetInfo').then(() => {
               this.$message.success('保存成功')
               this.confirmLoading = false
             })
