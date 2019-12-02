@@ -174,8 +174,8 @@ export default {
       this.visible = false
     },
     loadData () {
-      orgTree({ isRoot: true }).then(res => {
-        this.treeData = res.data
+      orgTree({ isRoot: true }).then(response => {
+        this.treeData = response.data
       }).catch(e => {
       })
     },

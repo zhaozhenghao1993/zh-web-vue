@@ -238,7 +238,7 @@ export default {
 
             const hide = $message.loading('验证码发送中..', 0)
 
-            getSmsCaptcha({ mobile: values.mobile }).then(res => {
+            getSmsCaptcha({ mobile: values.mobile }).then(response => {
               setTimeout(hide, 2500)
               $notification['success']({
                 message: '提示',

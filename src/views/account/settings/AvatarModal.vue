@@ -96,7 +96,7 @@ export default {
         formData.append('file', data, this.fileName)
         profileAvatar(formData).then(() => {
           // Do something
-          store.dispatch('GetInfo').then(res => {
+          store.dispatch('GetInfo').then(() => {
             this.$message.success('上传头像成功')
             this.visible = false
           })

@@ -253,8 +253,8 @@ export default {
       this.visible = false
     },
     loadData () {
-      menuTree({ isNotButton: true }).then(res => {
-        this.treeData = res.data
+      menuTree({ isNotButton: true }).then(response => {
+        this.treeData = response.data
       }).catch(e => {
       })
     },

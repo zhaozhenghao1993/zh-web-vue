@@ -55,8 +55,8 @@ export default {
   methods: {
     getMonthBar () {
       this.$http.get('/analysis/month-bar')
-        .then(res => {
-          this.data = res.result
+        .then(response => {
+          this.data = response.result
         })
     }
   }

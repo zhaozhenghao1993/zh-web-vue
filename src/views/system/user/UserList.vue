@@ -175,8 +175,8 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
         return userList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res
+          .then(response => {
+            return response.data
           }).catch(e => {
           })
       },
@@ -339,8 +339,8 @@ export default {
     },
     loadOrgData () {
       this.treeSpinning = true
-      orgTree().then(res => {
-        this.treeData[0].children = res.data
+      orgTree().then(response => {
+        this.treeData[0].children = response.data
         // 为什么这里要递归？ 就是想让进来就展示所有嗷！ 好看！
         this.loadDefaultExpandedKeys(this.treeData)
       }).catch(e => {

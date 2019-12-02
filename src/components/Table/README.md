@@ -72,8 +72,8 @@ Table 重封装组件说明
         loadData: parameter => {
           return this.$http.get('/service', {
             params: Object.assign(parameter, this.queryParam)
-          }).then(res => {
-            return res.result
+          }).then(response => {
+            return response.result
           })
         },
         selectedRowKeys: [],
@@ -171,8 +171,8 @@ Table 重封装组件说明
         loadData: parameter => {
           return this.$http.get('/service', {
             params: Object.assign(parameter, this.queryParam)
-          }).then(res => {
-            return res.result
+          }).then(response => {
+            return response.result
           })
         },
       }
@@ -208,7 +208,7 @@ Table 重封装组件说明
 
 内置属性
 ----
-> 除去 `a-table` 自带属性外，还而外提供了一些额外属性属性  
+> 除去 `a-table` 自带属性外，还而外提供了一些额外属性属性
 
 
 | 属性           | 说明                                            | 类型              | 默认值 |
@@ -222,7 +222,7 @@ Table 重封装组件说明
 
 ```javascript
 alert: {
-  show: Boolean, 
+  show: Boolean,
   clear: [Function, Boolean]
 }
 ```

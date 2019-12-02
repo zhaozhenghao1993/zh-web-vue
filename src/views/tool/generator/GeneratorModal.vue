@@ -120,9 +120,9 @@ export default {
       this.confirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          generatorCode(values).then(res => {
+          generatorCode(values).then(response => {
             // Do something
-            this.download(res, values.tableName)
+            this.download(response, values.tableName)
             this.$message.success('生成代码成功')
             this.$emit('ok')
             this.tableRefresh(true)
