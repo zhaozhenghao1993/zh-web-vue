@@ -125,20 +125,20 @@ export default {
       if (this.$route.params.id === undefined) {
         return
       }
-      userDetail(this.$route.params.id).then(res => {
-        if (res.data.roles === undefined) {
-          res.data.roles = []
+      userDetail(this.$route.params.id).then(response => {
+        if (response.data.roles === undefined) {
+          response.data.roles = []
         }
-        if (res.data.perms === undefined) {
-          res.data.perms = []
+        if (response.data.perms === undefined) {
+          response.data.perms = []
         }
-        if (res.data.posts === undefined) {
-          res.data.posts = []
+        if (response.data.posts === undefined) {
+          response.data.posts = []
         }
-        if (res.data.orgs === undefined) {
-          res.data.orgs = []
+        if (response.data.orgs === undefined) {
+          response.data.orgs = []
         }
-        this.userInfo = res.data
+        this.userInfo = response.data
         this.handleUserInfo()
         this.spinning = false
       }).catch(e => {

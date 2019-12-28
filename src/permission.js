@@ -23,8 +23,8 @@ router.beforeEach((to, from, next) => {
       if (!store.getters.userInfo.username) {
         store
           .dispatch('GetInfo')
-          .then(res => {
-            const routes = res.data.routes
+          .then(response => {
+            const routes = response.data.routes
             store.dispatch('GenerateRoutes', { routes }).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表

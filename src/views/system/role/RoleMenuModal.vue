@@ -132,8 +132,8 @@ export default {
       })
     },
     loadData () {
-      menuTree().then(res => {
-        this.treeData = res.data
+      menuTree().then(response => {
+        this.treeData = response.data
         this.loadAllTreeKeys(this.treeData)
       }).catch(e => {
       })
@@ -147,10 +147,10 @@ export default {
       })
     },
     loadRoleInfo (id) {
-      roleInfo(id).then(res => {
-        if (res.data.menuIdList !== undefined) {
-          this.checkedKeys = res.data.menuIdList
-          this.expandedKeys = res.data.menuIdList
+      roleInfo(id).then(response => {
+        if (response.data.menuIdList !== undefined) {
+          this.checkedKeys = response.data.menuIdList
+          this.expandedKeys = response.data.menuIdList
         }
         this.spinning = false
       }).catch(e => {

@@ -83,8 +83,8 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
         return generatorList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res
+          .then(response => {
+            return response.data
           }).catch(e => {
           })
       }

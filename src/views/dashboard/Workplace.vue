@@ -50,12 +50,12 @@
             <a-tabs defaultActiveKey="1">
               <a-tab-pane tab="zh-admin" key="1">
                 <a-timeline>
-                  <a-timeline-item>基础框架 springboot 2.1.1.RELEASE</a-timeline-item>
-                  <a-timeline-item>持久层 mybatis.spring.boot 1.3.2</a-timeline-item>
+                  <a-timeline-item>基础框架 spring-boot 2.1.1.RELEASE</a-timeline-item>
+                  <a-timeline-item>持久层 mybatis.spring.boot 2.1.1</a-timeline-item>
                   <a-timeline-item>持久层缓存 ehcache 2.10.4</a-timeline-item>
                   <a-timeline-item>数据库连接池 druid-spring-boot 1.1.9</a-timeline-item>
                   <a-timeline-item>安全框架 jwt 3.2.0 jjwt 0.9.1</a-timeline-item>
-                  <a-timeline-item>分页 pagehelper 1.2.5</a-timeline-item>
+                  <a-timeline-item>分页 page-helper 1.2.5</a-timeline-item>
                   <a-timeline-item>摸板引擎 velocity 1.7</a-timeline-item>
                 </a-timeline>
                 <p>权限控制精确到每个请求的 uri 和 method ,支持通配符批量放行</p>
@@ -131,6 +131,7 @@ export default {
       projects: [
         { cover: '/avatar.png', title: 'zh-admin', description: '基于springboot权限管理系统', repository: 'https://github.com/zhaozhenghao1993/zh-admin' },
         { cover: '/avatar.png', title: 'zh-web-vue', description: 'zh-admin 权限系统前端, 基于ant-design-vue', repository: 'https://github.com/zhaozhenghao1993/zh-web-vue' },
+        { cover: '/avatar.png', title: 'zh-generator', description: '代码生成器，剥离出admin，方便随时使用', repository: 'https://github.com/zhaozhenghao1993/zh-generator' },
         { cover: '', title: 'zh-boot-oauth', description: '基于springboot和OAuth2搭建的简易授权登陆', repository: 'https://github.com/zhaozhenghao1993/zh-boot-oauth' },
         { cover: '', title: 'zh-boot-dubbo', description: 'springboot搭建dubbo, dubbo注解开发实例', repository: 'https://github.com/zhaozhenghao1993/zh-boot-dubbo' }
       ],
