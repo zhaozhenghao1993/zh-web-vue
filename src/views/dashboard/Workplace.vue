@@ -50,12 +50,12 @@
             <a-tabs defaultActiveKey="1">
               <a-tab-pane tab="zh-admin" key="1">
                 <a-timeline>
-                  <a-timeline-item>基础框架 springboot 2.1.1.RELEASE</a-timeline-item>
-                  <a-timeline-item>持久层 mybatis.spring.boot 1.3.2</a-timeline-item>
+                  <a-timeline-item>基础框架 spring-boot 2.1.1.RELEASE</a-timeline-item>
+                  <a-timeline-item>持久层 mybatis.spring.boot 2.1.1</a-timeline-item>
                   <a-timeline-item>持久层缓存 ehcache 2.10.4</a-timeline-item>
                   <a-timeline-item>数据库连接池 druid-spring-boot 1.1.9</a-timeline-item>
                   <a-timeline-item>安全框架 jwt 3.2.0 jjwt 0.9.1</a-timeline-item>
-                  <a-timeline-item>分页 pagehelper 1.2.5</a-timeline-item>
+                  <a-timeline-item>分页 page-helper 1.2.5</a-timeline-item>
                   <a-timeline-item>摸板引擎 velocity 1.7</a-timeline-item>
                 </a-timeline>
                 <p>权限控制精确到每个请求的 uri 和 method ,支持通配符批量放行</p>
