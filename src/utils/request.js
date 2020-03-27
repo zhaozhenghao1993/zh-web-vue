@@ -9,7 +9,7 @@ import { getToken } from '@/utils/auth'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: '/api/v1', // api base_url
+  baseURL: '/api', // api base_url
   timeout: 6000 // 请求超时时间
 })
 
