@@ -5,7 +5,6 @@
     v-model="visible"
     :confirmLoading="confirmLoading"
     @ok="handleOk"
-    :destroyOnClose="true"
   >
     <a-form :form="form">
 
@@ -18,64 +17,56 @@
       >
         <a-input placeholder="ID" v-decorator="[ 'id', {rules: []} ]" disabled="disabled" />
       </a-form-item>
-
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="组织名称"
+        label="名称"
         hasFeedback
       >
-        <a-input placeholder="请输入组织名称" v-decorator="['orgName',{rules: [{required: true, message: '请输入组织名称!'}]}]"/>
+        <a-input placeholder="请输入字典元素名称" v-decorator="['name',{rules: [{required: true, message: '请输入元素名称!'}]}]"/>
       </a-form-item>
-
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="上级组织ID"
+        label="值"
         hasFeedback
-        v-show="false"
       >
-        <a-input placeholder="请输入上级组织ID" v-decorator="['parentId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+        <a-input placeholder="请输入字典元素值" v-decorator="['value',{rules: [{required: true, message: '请输入元素值!'}]}]"/>
       </a-form-item>
-
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="上级组织"
+        label="描述"
         hasFeedback
       >
-        <a-tree-select
-          v-model="selectTree"
-          showSearch
-          :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-          :treeData="treeData"
-          placeholder="Please select"
-          treeNodeFilterProp="title"
-          @change="onChange"
-        >
-        </a-tree-select>
+        <a-input placeholder="请输入描述" v-decorator="['description',{rules: []}]"/>
       </a-form-item>
-
+      <a-form-item
+        :labelCol="labelCol"
+        :wrapperCol="wrapperCol"
+        label="状态"
+        hasFeedback
+      >
+        <a-switch v-model="checkedStatus" checked-children="正常" un-checked-children="禁用" default-checked />
+      </a-form-item>
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
         label="排序"
         hasFeedback
       >
-        <a-input-number v-decorator="['orderNum',{rules: [{ pattern: /^[0-9]+$/, message: '请输入数字' }]}]" />
+        <a-input-number placeholder="请输入排序" v-decorator="['order',{rules: []}]"/>
       </a-form-item>
-
-      <a-divider />
     </a-form>
   </a-modal>
 </template>
 
 <script>
-import { orgSave, orgEdit, orgTree } from '@/api/system/org'
+import { dictItemSave, dictItemEdit } from '@/api/system/dict'
 import pick from 'lodash.pick'
 
 export default {
-  name: 'OrgModal',
+  name: 'DictItemModal',
   data () {
     return {
       visible: false,
@@ -91,8 +82,8 @@ export default {
       form: this.$form.createForm(this),
       modal: {},
       modalStatus: 'create',
-      treeData: [],
-      selectTree: ''
+      checkedStatus: true,
+      dictCode: null
     }
   },
   props: {
@@ -102,28 +93,28 @@ export default {
     }
   },
   methods: {
-    handleCreate (record) {
+    handleCreate (dictCode) {
       // 每次都重置form表单
       this.form.resetFields()
-      this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { id: 0, parentId: record.id })
-      this.selectTree = record.id + ''
+      this.modal = Object.assign({}, { id: 0 })
       this.visible = true
+      this.checkedStatus = true
+      this.dictCode = dictCode
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'orgName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'name', 'value', 'description', 'order'))
       })
     },
-    handleEdit (record) {
+    handleEdit (dictCode, record) {
       // 每次都重置form表单
       this.form.resetFields()
-      this.loadData()
       this.modalStatus = 'edit'
       this.modal = Object.assign({}, record)
-      this.selectTree = record.parentId + ''
       this.visible = true
+      this.checkedStatus = record.status === 0
+      this.dictCode = dictCode
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'orgName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'name', 'value', 'description', 'order'))
       })
     },
     handleOk (e) {
@@ -131,8 +122,13 @@ export default {
       this.confirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          if (this.checkedStatus) {
+            values.status = 0
+          } else {
+            values.status = 1
+          }
           if (this.modalStatus === 'create') {
-            orgSave(values).then(() => {
+            dictItemSave(this.dictCode, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -145,7 +141,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            orgEdit(values.id, values).then(() => {
+            dictItemEdit(this.dictCode, values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -158,7 +154,6 @@ export default {
               this.confirmLoading = false
             })
           }
-          this.confirmLoading = false
         } else {
           this.confirmLoading = false
         }
@@ -167,15 +162,6 @@ export default {
     handleCancel () {
       this.$emit('close')
       this.visible = false
-    },
-    loadData () {
-      orgTree({ isRoot: true }).then(response => {
-        this.treeData = response.data
-      }).catch(e => {
-      })
-    },
-    onChange (value, label) {
-      this.form.setFieldsValue({ parentId: value })
     }
   }
 }

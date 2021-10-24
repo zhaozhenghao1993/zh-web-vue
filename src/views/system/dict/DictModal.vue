@@ -5,7 +5,6 @@
     v-model="visible"
     :confirmLoading="confirmLoading"
     @ok="handleOk"
-    :destroyOnClose="true"
   >
     <a-form :form="form">
 
@@ -22,60 +21,37 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="组织名称"
+        label="字典名称"
         hasFeedback
       >
-        <a-input placeholder="请输入组织名称" v-decorator="['orgName',{rules: [{required: true, message: '请输入组织名称!'}]}]"/>
+        <a-input placeholder="请输入字典名称" v-decorator="['name',{rules: [{required: true, message: '请输入字典名称!'}]}]"/>
       </a-form-item>
-
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="上级组织ID"
+        label="字典编码"
         hasFeedback
-        v-show="false"
       >
-        <a-input placeholder="请输入上级组织ID" v-decorator="['parentId',{rules: [{required: true, message: '请输入上级菜单ID!'}]}]"/>
+        <a-input placeholder="请输入字典编码" v-decorator="['code',{rules: [{required: true, message: '请输入字典编码!'}]}]"/>
       </a-form-item>
-
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="上级组织"
+        label="描述"
         hasFeedback
       >
-        <a-tree-select
-          v-model="selectTree"
-          showSearch
-          :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
-          :treeData="treeData"
-          placeholder="Please select"
-          treeNodeFilterProp="title"
-          @change="onChange"
-        >
-        </a-tree-select>
+        <a-input placeholder="请输入描述" v-decorator="['description',{rules: []}]"/>
       </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="排序"
-        hasFeedback
-      >
-        <a-input-number v-decorator="['orderNum',{rules: [{ pattern: /^[0-9]+$/, message: '请输入数字' }]}]" />
-      </a-form-item>
-
-      <a-divider />
     </a-form>
   </a-modal>
 </template>
 
 <script>
-import { orgSave, orgEdit, orgTree } from '@/api/system/org'
+import { dictSave, dictEdit } from '@/api/system/dict'
 import pick from 'lodash.pick'
 
 export default {
-  name: 'OrgModal',
+  name: 'DictModal',
   data () {
     return {
       visible: false,
@@ -90,9 +66,7 @@ export default {
       },
       form: this.$form.createForm(this),
       modal: {},
-      modalStatus: 'create',
-      treeData: [],
-      selectTree: ''
+      modalStatus: 'create'
     }
   },
   props: {
@@ -102,28 +76,24 @@ export default {
     }
   },
   methods: {
-    handleCreate (record) {
+    handleCreate () {
       // 每次都重置form表单
       this.form.resetFields()
-      this.loadData()
       this.modalStatus = 'create'
-      this.modal = Object.assign({}, { id: 0, parentId: record.id })
-      this.selectTree = record.id + ''
+      this.modal = Object.assign({}, { id: 0 })
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'orgName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'name', 'code', 'description'))
       })
     },
     handleEdit (record) {
       // 每次都重置form表单
       this.form.resetFields()
-      this.loadData()
       this.modalStatus = 'edit'
       this.modal = Object.assign({}, record)
-      this.selectTree = record.parentId + ''
       this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.modal, 'id', 'parentId', 'orgName', 'orderNum'))
+        this.form.setFieldsValue(pick(this.modal, 'id', 'name', 'code', 'description'))
       })
     },
     handleOk (e) {
@@ -132,7 +102,7 @@ export default {
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           if (this.modalStatus === 'create') {
-            orgSave(values).then(() => {
+            dictSave(values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -145,7 +115,7 @@ export default {
               this.confirmLoading = false
             })
           } else if (this.modalStatus === 'edit') {
-            orgEdit(values.id, values).then(() => {
+            dictEdit(values.id, values).then(() => {
               // Do something
               this.$message.success('保存成功')
               this.$emit('ok')
@@ -158,7 +128,6 @@ export default {
               this.confirmLoading = false
             })
           }
-          this.confirmLoading = false
         } else {
           this.confirmLoading = false
         }
@@ -167,15 +136,6 @@ export default {
     handleCancel () {
       this.$emit('close')
       this.visible = false
-    },
-    loadData () {
-      orgTree({ isRoot: true }).then(response => {
-        this.treeData = response.data
-      }).catch(e => {
-      })
-    },
-    onChange (value, label) {
-      this.form.setFieldsValue({ parentId: value })
     }
   }
 }

@@ -154,6 +154,8 @@ import { userSave, userEdit, userInfo } from '@/api/system/user'
 import { orgTree } from '@/api/system/org'
 import { roleSelect } from '@/api/system/role'
 import { postSelect } from '@/api/system/post'
+import { getRsaKey } from '@/api/login'
+import JSEncrypt from 'jsencrypt/bin/jsencrypt'
 import pick from 'lodash.pick'
 
 export default {
@@ -185,7 +187,8 @@ export default {
       userPostList: [],
       treeData: [],
       selectTree: '',
-      treeExpandedKeys: []
+      treeExpandedKeys: [],
+      rsaPublicKey: ''
     }
   },
   props: {
@@ -195,6 +198,19 @@ export default {
     }
   },
   methods: {
+    getSysRsaKey () {
+      getRsaKey()
+        .then((res) => {
+          this.rsaPublicKey = res.data
+        })
+        .catch(() => {
+          this.$notification['error']({
+            message: '错误',
+            description: '请重新刷新页面',
+            duration: 4
+          })
+        })
+    },
     handleCreate () {
       // 每次都重置form表单
       this.form.resetFields()
@@ -249,6 +265,12 @@ export default {
           values.roleIdList = this.userRoleList
           values.postIdList = this.userPostList
           if (this.modalStatus === 'create') {
+            // 新建JSEncrypt对象
+            const encryptor = new JSEncrypt()
+            // 设置公钥
+            encryptor.setPublicKey(this.rsaPublicKey)
+            // 对需要加密的数据进行加密
+            values.password = encryptor.encrypt(values.password)
             userSave(values).then(() => {
               // Do something
               this.$message.success('保存成功')
@@ -258,6 +280,7 @@ export default {
               this.visible = false
             }).catch(() => {
               // Do something
+              this.getSysRsaKey()
               this.$message.error('保存失败')
               this.confirmLoading = false
             })
@@ -328,6 +351,7 @@ export default {
       })
     },
     loadData () {
+      this.getSysRsaKey()
       orgTree({ isRoot: true }).then(response => {
         this.treeData = response.data
       }).catch(e => {

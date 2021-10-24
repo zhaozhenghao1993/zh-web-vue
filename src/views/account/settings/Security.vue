@@ -43,20 +43,46 @@
 
 <script>
 import { profilePassword } from '@/api/account/profile'
+import { getRsaKey } from '@/api/login'
+import JSEncrypt from 'jsencrypt/bin/jsencrypt'
 
 export default {
   data () {
     return {
       text: `待开发`,
       passwordForm: this.$form.createForm(this),
-      confirmPasswordLoading: false
+      confirmPasswordLoading: false,
+      rsaPublicKey: ''
     }
   },
+  created () {
+    this.getSysRsaKey()
+  },
   methods: {
+    getSysRsaKey () {
+      getRsaKey()
+        .then((res) => {
+          this.rsaPublicKey = res.data
+        })
+        .catch(() => {
+          this.$notification['error']({
+            message: '错误',
+            description: '请重新刷新页面',
+            duration: 4
+          })
+        })
+    },
     handlePasswordSubmit () {
       this.confirmPasswordLoading = true
       this.passwordForm.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          // 新建JSEncrypt对象
+          const encryptor = new JSEncrypt()
+          // 设置公钥
+          encryptor.setPublicKey(this.rsaPublicKey)
+          // 对需要加密的数据进行加密
+          values.password = encryptor.encrypt(values.password)
+          values.oldPassword = encryptor.encrypt(values.oldPassword)
           profilePassword(values).then(() => {
             // Do something
             this.$message.success('保存成功')
@@ -66,6 +92,8 @@ export default {
             // Do something
             this.$message.error('保存失败')
             this.confirmPasswordLoading = false
+          }).finally(() => {
+            this.getSysRsaKey()
           })
         } else {
           this.confirmPasswordLoading = false

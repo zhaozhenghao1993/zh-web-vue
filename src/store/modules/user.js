@@ -54,6 +54,7 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
+          console.log('response', response)
           const data = response.data
           setToken(data.token)
           commit('SET_TOKEN', data.token)
@@ -137,8 +138,9 @@ const user = {
       return new Promise((resolve) => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        commit('SET_NAME', {})
         // Vue.ls.remove(ACCESS_TOKEN)
-
+        removeToken()
         logout(state.token).then(() => {
           resolve()
         }).catch(() => {

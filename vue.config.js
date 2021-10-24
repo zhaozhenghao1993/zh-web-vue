@@ -7,7 +7,7 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-const serverDev = 'http://localhost:8081'
+const serverDev = 'http://localhost:8080'
 
 // vue.config.js
 module.exports = {
@@ -98,11 +98,6 @@ module.exports = {
     port: 8000,
     proxy: {
       '/api/': {
-        target: serverDev,
-        ws: false,
-        changeOrigin: true
-      },
-      '/druid/': {
         target: serverDev,
         ws: false,
         changeOrigin: true
