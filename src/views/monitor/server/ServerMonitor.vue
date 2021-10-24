@@ -1,5 +1,15 @@
 <template>
   <div>
+    <a-card :bordered="false" :style="{ marginBottom: '24px' }">
+      <a-alert type="info" :showIcon="true">
+        <div slot="message">
+          上次更新时间：{{ this.time }}
+          <a-divider type="vertical"/>
+          <a @click="loadInfo">立即更新</a>
+        </div>
+      </a-alert>
+    </a-card>
+
     <a-row :gutter="24">
       <a-col :sm="24" :md="12" :xl="8" :style="{ marginBottom: '24px' }">
         <chart-card :loading="loading" title="CPU" :percent="true" :total="cpuInfo.usedPercent">
@@ -7,7 +17,7 @@
             <a-icon type="info-circle-o" />
           </a-tooltip>
           <div>
-            <mini-area :data="cpuData" />
+            <!--<mini-area :data="cpuData" />-->
           </div>
           <template slot="footer">
             核心数<span> {{ cpuInfo.cpuNum }}</span>个
@@ -107,7 +117,7 @@ export default {
   data () {
     return {
       loading: true,
-      timer: null,
+      time: '',
       cpuData: [],
       cpuInfo: {},
       memInfo: {},
@@ -151,25 +161,13 @@ export default {
   filters: {
   },
   created () {
-    // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
-    clearInterval(this.timer)
-    this.timer = null
-    this.setTimer()
-    this.loadBaseInfo()
-    this.loadInstantInfo()
-  },
-  destroyed: function () {
-    // 每次离开当前界面时，清除定时器
-    clearInterval(this.timer)
-    this.timer = null
+    this.loadInfo()
   },
   methods: {
-    setTimer () {
-      if (this.timer == null) {
-        this.timer = setInterval(() => {
-          this.loadInstantInfo()
-        }, 5000)
-      }
+    loadInfo () {
+      this.time = moment().format('YYYY年MM月DD日 HH时mm分ss秒')
+      this.loadBaseInfo()
+      this.loadInstantInfo()
     },
     loadInstantInfo () {
       instantInfo().then(response => {

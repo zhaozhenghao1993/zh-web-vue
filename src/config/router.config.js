@@ -78,6 +78,12 @@ export const asyncRouterMap = [
             name: 'PostList',
             component: () => import('@/views/system/post/PostList'),
             meta: { title: '岗位管理', keepAlive: true, permission: [ 'sys:post' ] }
+          },
+          {
+            path: '/sys/dict',
+            name: 'DictList',
+            component: () => import('@/views/system/dict/DictList'),
+            meta: { title: '数据字典', keepAlive: true, permission: [ 'sys:dict' ] }
           }
         ]
       },

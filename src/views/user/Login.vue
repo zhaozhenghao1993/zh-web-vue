@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div class="main">
     <a-form
@@ -17,7 +18,7 @@
             <a-input
               size="large"
               type="text"
-              placeholder="帐户名 / admin / readonly"
+              placeholder="帐户名"
               v-decorator="[
                 'username',
                 {rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
@@ -32,7 +33,7 @@
               size="large"
               type="password"
               autocomplete="false"
-              placeholder="密码 / 123"
+              placeholder="密码"
               v-decorator="[
                 'password',
                 {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
@@ -40,6 +41,26 @@
             >
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
+          </a-form-item>
+
+          <a-form-item>
+            <a-col :span="16">
+              <a-input
+                size="large"
+                type="text"
+                autocomplete="false"
+                placeholder="验证码"
+                v-decorator="[
+                  'captcha',
+                  {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}
+                ]"
+              >
+                <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+              </a-input>
+            </a-col>
+            <a-col :span="8" style="text-align: right">
+              <img style="margin-bottom: 3px; height: 38px; width: 100px" :src="captchaUrl" @click="handleRefreshCaptcha"/>
+            </a-col>
           </a-form-item>
         </a-tab-pane>
         <!-- <a-tab-pane key="tab2" tab="手机号登录">
@@ -117,9 +138,11 @@
 <script>
 // import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
+import JSEncrypt from 'jsencrypt/bin/jsencrypt'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 // import { getSmsCaptcha, get2step } from '@/api/login'
+import { getRsaKey } from '@/api/login'
 
 export default {
   components: {
@@ -140,10 +163,13 @@ export default {
         // login type: 0 email, 1 username, 2 telephone
         loginType: 0,
         smsSendBtn: false
-      }
+      },
+      captchaUrl: '',
+      rsaPublicKey: ''
     }
   },
   created () {
+    this.getSysRsaKey()
     /* get2step({ })
       .then(res => {
         this.requiredTwoStepCaptcha = res.result.stepCode
@@ -156,6 +182,23 @@ export default {
   methods: {
     ...mapActions(['Login', 'Logout']),
     // handler
+    handleRefreshCaptcha () {
+      this.captchaUrl = '/api/admin/sys/captcha.jpg?t=' + (new Date().getTime())
+    },
+    getSysRsaKey () {
+      getRsaKey()
+        .then((res) => {
+          this.rsaPublicKey = res.data
+          this.handleRefreshCaptcha()
+        })
+        .catch(() => {
+          this.$notification['error']({
+            message: '错误',
+            description: '请重新刷新页面',
+            duration: 4
+          })
+        })
+    },
     handleUsernameOrEmail (rule, value, callback) {
       const { state } = this
       const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
@@ -181,16 +224,21 @@ export default {
 
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password', 'captcha'] : ['mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
           // loginParams.password = md5(values.password)
-          loginParams.password = values.password
+          // 新建JSEncrypt对象
+          const encryptor = new JSEncrypt()
+          // 设置公钥
+          encryptor.setPublicKey(this.rsaPublicKey)
+          // 对需要加密的数据进行加密
+          loginParams.password = encryptor.encrypt(values.password)
+          loginParams.captcha = values.captcha
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
@@ -248,7 +296,6 @@ export default {
       })
     },
     loginSuccess (res) {
-      console.log(res)
       this.$router.push({ name: 'Dashboard' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
@@ -259,6 +306,8 @@ export default {
       }, 1000)
     },
     requestFailed (err) {
+      this.handleRefreshCaptcha()
+      this.getSysRsaKey()
       this.$notification['error']({
         message: '错误',
         description: (err || {}).msg || '请求出现错误，请稍后再试',

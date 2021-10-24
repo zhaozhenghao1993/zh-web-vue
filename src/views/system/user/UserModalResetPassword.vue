@@ -47,6 +47,8 @@
 
 <script>
 import { userResetPassword } from '@/api/system/user'
+import { getRsaKey } from '@/api/login'
+import JSEncrypt from 'jsencrypt/bin/jsencrypt'
 import pick from 'lodash.pick'
 
 export default {
@@ -64,13 +66,28 @@ export default {
         sm: { span: 16 }
       },
       form: this.$form.createForm(this),
-      modal: {}
+      modal: {},
+      rsaPublicKey: ''
     }
   },
   methods: {
+    getSysRsaKey () {
+      getRsaKey()
+        .then((res) => {
+          this.rsaPublicKey = res.data
+        })
+        .catch(() => {
+          this.$notification['error']({
+            message: '错误',
+            description: '请重新刷新页面',
+            duration: 4
+          })
+        })
+    },
     handleResetPassword (record) {
       // 每次都重置form表单
       this.form.resetFields()
+      this.getSysRsaKey()
       this.visibleResetPassword = true
       this.modal = Object.assign({}, record)
       this.$nextTick(() => {
@@ -83,12 +100,19 @@ export default {
       this.resetPasswordConfirmLoading = true
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
+          // 新建JSEncrypt对象
+          const encryptor = new JSEncrypt()
+          // 设置公钥
+          encryptor.setPublicKey(this.rsaPublicKey)
+          // 对需要加密的数据进行加密
+          values.password = encryptor.encrypt(values.password)
           userResetPassword(values.id, values).then(() => {
             // Do something
             this.$message.success('保存成功')
             this.$emit('ok')
           }).catch(() => {
             // Do something
+            this.getSysRsaKey()
             this.$message.error('保存失败')
           }).finally(() => {
             this.resetPasswordConfirmLoading = false

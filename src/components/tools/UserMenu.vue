@@ -52,7 +52,7 @@ export default {
     NoticeIcon
   },
   methods: {
-    ...mapActions(['FedLogOut']),
+    ...mapActions(['Logout']),
     ...mapGetters(['nickname', 'avatar']),
     handleLogout () {
       const that = this
@@ -61,7 +61,7 @@ export default {
         title: '提示',
         content: '真的要注销登录吗 ?',
         onOk () {
-          return that.FedLogOut({}).then(() => {
+          return that.Logout({}).then(() => {
             window.location.reload()
           }).catch(err => {
             that.$message.error({
