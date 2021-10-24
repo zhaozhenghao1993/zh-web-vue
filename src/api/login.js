@@ -39,7 +39,7 @@ export function getInfo () {
 
 export function logout () {
   return axios({
-    url: '/auth/logout',
+    url: '/sys/logout',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -58,3 +58,17 @@ export function logout () {
     data: parameter
   })
 } */
+
+export function captcha () {
+  return axios({
+    url: '/sys/captcha.jpg',
+    method: 'get'
+  })
+}
+
+export function getRsaKey () {
+  return axios({
+    url: '/sys/rsa/key',
+    method: 'get'
+  })
+}
